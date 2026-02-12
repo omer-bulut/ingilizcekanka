@@ -23,43 +23,70 @@
       font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
-      height: 100vh; /* Sabit yükseklik */
-      height: 100dvh; /* Mobil tarayıcılar için dinamik yükseklik */
-      overflow: hidden; /* Kaydırmayı kapat */
+      height: 100vh; /* Masaüstü için varsayılan */
+      overflow: hidden; /* Masaüstünde scroll olmasın */
       display: flex;
       flex-direction: column;
     }
 
-    /* DESKTOP LAYOUT */
+    /* =========================================
+       DESKTOP LAYOUT (PC) - FIXED
+       ========================================= */
     @media (min-width: 992px) {
+      body {
+        height: 100vh;
+        overflow: hidden;
+      }
       .app-container {
         flex-grow: 1;
+        height: 100%; /* Konteyner tam boy */
+        padding: 20px !important;
         overflow: hidden;
-        padding: 15px;
+      }
+      /* Masaüstünde satır ve sütunların tam boy olması şart */
+      .app-container > .row {
+        height: 100%; 
+      }
+      .col-lg-3, .col-lg-5, .col-lg-4 {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
       }
       .h-100-responsive {
-        height: 100%;
+        height: 100% !important;
       }
       .app-card {
         height: 100%;
+        width: 100%;
       }
       .sidebar-col {
-        display: flex !important;
+        display: flex !important; /* Sidebar masaüstünde görünür */
         flex-direction: column;
         height: 100%;
+        position: relative; 
+        left: 0;
+        width: auto;
+        box-shadow: none;
+        z-index: 1;
       }
       .mobile-nav {
         display: none !important;
       }
       /* Desktop Sizes */
-      #robotFace { width: 140px; height: 140px; }
+      #robotFace { width: 150px; height: 150px; }
       .mic-btn-lg { width: 70px; height: 70px; font-size: 2rem; }
-      .slide-visual { font-size: 6rem; margin-bottom: 15px; }
-      .slide-text { font-size: 1.6rem; padding: 15px 25px; }
+      .slide-visual { font-size: 6rem; margin-bottom: 20px; }
+      .slide-text { font-size: 1.6rem; padding: 20px 30px; }
     }
 
-    /* MOBILE LAYOUT (Compact Single Screen) */
+    /* =========================================
+       MOBILE LAYOUT (Phone) - FIXED
+       ========================================= */
     @media (max-width: 991.98px) {
+      body {
+        height: 100dvh; /* Mobil tarayıcılar için dinamik yükseklik */
+        overflow: hidden; 
+      }
       .mobile-nav {
         flex-shrink: 0;
         padding: 5px 15px;
@@ -70,6 +97,7 @@
         flex-grow: 1;
         padding: 5px !important;
         overflow: hidden;
+        height: calc(100dvh - 50px); /* Nav bar payı */
       }
 
       .row {
@@ -87,6 +115,7 @@
         height: auto;
         min-height: 0;
         padding: 0;
+        width: 100%;
       }
       
       /* Alt Panel: Tahta (Ekranın %45'i) */
@@ -95,6 +124,7 @@
         height: auto;
         min-height: 0;
         padding: 0;
+        width: 100%;
       }
 
       .app-card {
@@ -106,6 +136,7 @@
       .col-lg-5 .card-body .text-center:first-child {
         padding-top: 5px !important;
         padding-bottom: 5px !important;
+        background: none !important; /* Mobilde gradient kaldırılabilir */
       }
       
       #robotFace {
@@ -209,6 +240,7 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+        background: white;
       }
       .sidebar-col.show {
         left: 0;
@@ -226,17 +258,7 @@
       }
     }
 
-    /* Mobile Navbar */
-    .mobile-nav {
-      background: white;
-      padding: 10px 15px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
-      z-index: 1030;
-    }
-
-    /* General Components */
+    /* Common Components */
     .custom-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: #93c5fd transparent; }
     .custom-scroll::-webkit-scrollbar { width: 6px; }
     .custom-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -253,7 +275,6 @@
       position: relative;
     }
 
-    /* Lesson List */
     .lesson-item {
       padding: 12px 15px;
       border-radius: 12px;
@@ -268,7 +289,6 @@
     .lesson-item.active { background-color: #fff; border-color: #0ea5e9; color: #0284c7; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15); }
     .lesson-badge { font-size: 1.1rem; margin-right: 12px; min-width: 25px; text-align: center; }
 
-    /* Chat Area */
     .chat-box { flex-grow: 1; overflow-y: auto; background: #fff; padding: 15px; background-image: radial-gradient(#e0f2fe 1px, transparent 1px); background-size: 20px 20px; }
     .chat-bubble {
       max-width: 85%;
@@ -283,17 +303,14 @@
     .chat-ai { background: white; border: 1px solid #e0f2fe; color: #334155; align-self: flex-start; margin-right: auto; border-bottom-left-radius: 4px; }
     .chat-user { background: #0ea5e9; color: white; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 4px; }
 
-    /* Visuals Common */
     .slide-visual { text-shadow: 0 5px 15px rgba(0,0,0,0.1); }
     .slide-text { font-weight: 800; color: #1e293b; background: rgba(255,255,255,0.9); border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 2px solid #f1f5f9; display: inline-block; max-width: 95%; }
     .slide-story { color: #64748b; font-weight: 600; display: block; }
 
-    /* Grammar Box Common */
     .grammar-box { background: #fff; border-radius: 15px; border: 1px solid #e2e8f0; text-align: center; }
     .g-block { display: inline-block; border-radius: 8px; color: white; font-weight: bold; margin: 3px; }
     .gb-sub { background: #3b82f6; } .gb-verb { background: #ef4444; } .gb-obj { background: #22c55e; } .gb-adj { background: #f59e0b; } .gb-prep { background: #8b5cf6; }
 
-    /* Robot & Controls Common */
     #robotFace { transition: transform 0.3s; }
     .mic-btn-lg {
       border-radius: 50%;
@@ -307,15 +324,12 @@
     .mic-btn-lg:active { transform: scale(0.9); }
     .mic-active { background: #f43f5e !important; animation: pulse-big 1s infinite; }
 
-    /* Overlay */
     #startOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f9ff; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
     .login-box { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 350px; }
 
-    /* Progress Bar */
     .progress-container { width: 100%; height: 6px; background-color: #f1f5f9; position: absolute; top: 0; left: 0; z-index: 10; }
     .progress-bar { height: 100%; background-color: var(--success-color); transition: width 0.3s ease; }
 
-    /* Keyframes */
     @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
     @keyframes pulse-big { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
@@ -698,6 +712,7 @@ const app = {
       this.renderRobot('surprised');
       this.speak("Oops! Try again.");
       setTimeout(() => {
+        // Retry logic could be here, or just move on. Let's move on for flow.
         if (this.state.q < LESSONS[this.state.l].quiz.length - 1) {
           this.state.q++;
           this.updateProgressBar();
@@ -730,18 +745,25 @@ const app = {
     this.addChat('ai', txt);
     window.speechSynthesis.cancel();
     
+    // Remove emojis for speech engine so it doesn't say "Smiling Face with Heart Eyes"
     const cleanTxt = txt.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
     
     const u = new SpeechSynthesisUtterance(cleanTxt);
     u.lang = 'en-US'; 
+    // 0.9 is clearer but not too slow (robotic). 1.0 is normal speed.
     u.rate = 0.9; 
+    // 1.2 makes it sound young/friendly without being robotic
     u.pitch = 1.2; 
     
     const voices = window.speechSynthesis.getVoices();
+    
+    // Advanced Voice Selection Strategy for "Natural Young Female"
     let v = voices.find(voice => voice.name.includes("Google US English")); 
     if(!v) v = voices.find(voice => voice.name.includes("Microsoft Zira"));
     if(!v) v = voices.find(voice => voice.name.includes("Samantha"));
-    if(!v) v = voices.find(voice => voice.lang === 'en-US');
+    if(!v) v = voices.find(voice => voice.name.includes("Natural") && voice.lang.includes("en"));
+    if(!v) v = voices.find(voice => voice.lang === 'en-US'); // Fallback to any US English
+    
     if(v) u.voice = v;
 
     u.onstart = () => this.renderRobot('talking');
