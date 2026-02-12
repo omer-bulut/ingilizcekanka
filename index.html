@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Robo-Kanka Ultimate Emoji Academy (Secure)</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #0ea5e9;
+      --secondary-color: #e0f2fe;
+      --accent-color: #f43f5e;
+      --success-color: #22c55e;
+      --bg-color: #f0f9ff;
+    }
+    body {
+      background-color: var(--bg-color);
+      font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Animation Keyframes */
+    @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+    @keyframes pulse-big { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes slide-in-right { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes error-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
+    /* Utility Classes for Anim */
+    .anim-float { animation: float 3s infinite ease-in-out; }
+    .anim-shake { animation: shake 1.5s infinite; }
+    .anim-pulse { animation: pulse-big 1.2s infinite; }
+    .anim-spin { animation: spin-slow 10s infinite linear; }
+    .anim-pop { animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+    .anim-error { animation: error-shake 0.3s ease-in-out; }
+
+    /* Main Layout */
+    .app-container { flex-grow: 1; overflow: hidden; padding: 15px; }
+    .h-100-responsive { height: 100%; }
+
+    /* Custom Scrollbar */
+    .custom-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: #93c5fd transparent; }
+    .custom-scroll::-webkit-scrollbar { width: 8px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background-color: #93c5fd; border-radius: 20px; border: 2px solid #fff; }
+
+    /* Cards */
+    .app-card {
+      background: white;
+      border-radius: 25px;
+      border: none;
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.15);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Lesson List */
+    .lesson-item {
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+      background: #f8fafc;
+      display: flex; align-items: center;
+    }
+    .lesson-item:hover { background-color: #e0f2fe; transform: scale(1.02); }
+    .lesson-item.active { background-color: #fff; border-color: #0ea5e9; color: #0284c7; box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2); }
+    .lesson-badge { font-size: 1.2rem; margin-right: 15px; }
+
+    /* Chat Area */
+    .chat-box { flex-grow: 1; overflow-y: auto; background: #fff; padding: 20px; background-image: radial-gradient(#e0f2fe 1px, transparent 1px); background-size: 20px 20px; }
+    .chat-bubble {
+      max-width: 85%;
+      border-radius: 20px;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      animation: slide-in-right 0.3s ease-out;
+    }
+    .chat-ai { background: white; border: 2px solid #e0f2fe; color: #334155; align-self: flex-start; margin-right: auto; border-bottom-left-radius: 5px; }
+    .chat-user { background: #0ea5e9; color: white; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 5px; }
+
+    /* Slide Area */
+    .slide-visual { font-size: 7rem; margin-bottom: 15px; text-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.3s; }
+    .slide-visual:hover { transform: scale(1.1) rotate(5deg); cursor: pointer; }
+    .slide-text { font-size: 1.8rem; font-weight: 800; color: #1e293b; background: rgba(255,255,255,0.9); padding: 15px 25px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 3px solid #f1f5f9; display: inline-block; max-width: 90%; }
+    .slide-story { font-size: 1.1rem; color: #64748b; margin-top: 10px; font-weight: 600; display: block; }
+
+    /* Grammar Blocks */
+    .grammar-box { background: #fff; border-radius: 20px; padding: 20px; margin-top: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 2px solid #e2e8f0; text-align: center; }
+    .g-block { display: inline-block; padding: 8px 15px; border-radius: 12px; color: white; font-weight: bold; margin: 3px; font-size: 1rem; box-shadow: 0 3px 0 rgba(0,0,0,0.2); }
+    .gb-sub { background: #3b82f6; } .gb-verb { background: #ef4444; } .gb-obj { background: #22c55e; } .gb-adj { background: #f59e0b; } .gb-prep { background: #8b5cf6; }
+
+    /* Robot */
+    #robotFace { width: 160px; height: 160px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    
+    /* Mic Button */
+    .mic-btn-lg {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+      box-shadow: 0 10px 25px rgba(14, 165, 233, 0.4);
+      border: 4px solid white;
+      transition: all 0.2s;
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      color: white;
+    }
+    .mic-btn-lg:active { transform: scale(0.9); }
+    .mic-active { background: #f43f5e !important; animation: pulse-big 1s infinite; }
+
+    /* Overlay & Login */
+    #startOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f9ff; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .login-container { max-width: 320px; width: 100%; text-align: center; background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+    /* Progress Bar */
+    .progress-container { width: 100%; height: 6px; background-color: #f1f5f9; position: absolute; top: 0; left: 0; z-index: 10; }
+    .progress-bar { height: 100%; background-color: var(--success-color); transition: width 0.3s ease; border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .sidebar-col { position: fixed; width: 300px; left: -320px; top:0; bottom:0; z-index: 1050; transition: left 0.3s; background: white; padding: 0; box-shadow: 5px 0 20px rgba(0,0,0,0.1); }
+      .sidebar-col.show { left: 0; }
+      .backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index:1040; display:none; }
+      .backdrop.show { display:block; }
+      .app-container { overflow-y: auto; }
+      .row { flex-direction: column; height: auto; }
+      .col-lg-5, .col-lg-4 { height: 600px; margin-bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Start/Login Screen -->
+<div id="startOverlay">
+  <div class="login-container">
+    <div class="mb-3 display-1 animate-bounce">🤖</div>
+    <h1 class="h3 fw-bold text-primary mb-2">Robo-Kanka</h1>
+    <p class="text-secondary small mb-4">Ultimate Emoji Academy 🎓</p>
+    
+    <div class="mb-3">
+      <input type="password" id="passwordInput" class="form-control form-control-lg text-center rounded-pill bg-light border-0" placeholder="Parola / Password">
+    </div>
+    
+    <div id="loginError" class="text-danger fw-bold small mb-3" style="display:none;">
+      🚫 Incorrect Password!
+    </div>
+
+    <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm hover-scale" onclick="app.checkLogin()">
+      GİRİŞ / LOGIN 🚀
+    </button>
+  </div>
+  <div class="mt-4 text-muted small"><i class="bi bi-lock-fill"></i> Secure Access</div>
+</div>
+
+<!-- Mobile Nav -->
+<nav class="navbar navbar-light bg-white d-lg-none px-3 shadow-sm sticky-top">
+  <button class="btn btn-light rounded-circle" onclick="app.toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
+  <span class="fw-bold text-primary fs-4">Robo-Kanka 🤖</span>
+  <span class="badge bg-warning text-dark rounded-pill fs-6" id="mobileScore">⭐ 0</span>
+</nav>
+<div class="backdrop" id="backdrop" onclick="app.toggleSidebar()"></div>
+
+<div class="app-container container-fluid" id="mainContent" style="filter: blur(5px);">
+  <div class="row h-100 g-3">
+    
+    <!-- LEFT: Map/Menu -->
+    <div class="col-lg-3 sidebar-col d-flex flex-column" id="sidebar">
+      <div class="app-card bg-white">
+        <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+          <h4 class="fw-bold text-primary m-0">🗺️ Journey Map</h4>
+          <span class="badge bg-info text-white rounded-pill">A1-A2</span>
+        </div>
+        <div class="p-2 custom-scroll flex-grow-1">
+          <div id="lessonList"></div>
+        </div>
+        <div class="p-3 border-top text-center bg-light">
+          <button class="btn btn-outline-danger btn-sm rounded-pill w-100" onclick="app.resetProgress()">🗑️ Reset Adventure</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Robot & Chat -->
+    <div class="col-lg-5 h-100-responsive">
+      <div class="app-card">
+        <div class="card-body p-0 d-flex flex-column h-100">
+          
+          <!-- Robot -->
+          <div class="text-center pt-3 pb-2 bg-gradient-to-b from-blue-50 to-white flex-shrink-0">
+            <div id="robotFace" class="mx-auto"></div>
+            <div class="mt-2"><span class="badge bg-success bg-opacity-25 text-success border border-success rounded-pill px-3 py-1" id="statusBadge">Ready to learn! 🎓</span></div>
+          </div>
+
+          <!-- Chat -->
+          <div id="chatBox" class="chat-box custom-scroll"></div>
+
+          <!-- Controls -->
+          <div class="p-3 bg-white border-top flex-shrink-0">
+            <div class="d-flex align-items-center justify-content-center gap-4">
+              <button class="btn btn-info rounded-circle p-3 text-white shadow hover-scale" style="width:60px;height:60px;" onclick="app.repeat()" title="Repeat">
+                <i class="bi bi-arrow-repeat fs-3"></i>
+              </button>
+              
+              <button id="micBtn" class="mic-btn-lg" onclick="app.toggleMic()">
+                <i class="bi bi-mic-fill"></i>
+              </button>
+              
+              <button class="btn btn-warning rounded-circle p-3 text-dark shadow hover-scale" style="width:60px;height:60px;" onclick="app.hint()" title="Hint">
+                <i class="bi bi-lightbulb-fill fs-3"></i>
+              </button>
+            </div>
+            <div class="text-center mt-2 text-muted fw-bold small">👆 Tap to Speak! 🗣️</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Smart Board -->
+    <div class="col-lg-4 h-100-responsive">
+      <div class="app-card border-top border-5 border-info position-relative">
+        <div class="progress-container">
+          <div id="lessonProgressBar" class="progress-bar" style="width: 0%"></div>
+        </div>
+        <div id="boardPanel" class="card-body p-0 h-100 position-relative d-flex flex-column">
+          <!-- Content injected via JS -->
+          <div class="d-flex h-100 justify-content-center align-items-center text-muted opacity-25">
+            <div class="text-center">
+              <i class="bi bi-easel display-1"></i>
+              <p class="fs-4 fw-bold">Smart Board</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/**
+ * 40 LESSONS - FULLY EXPANDED WITH PROGRESS
+ */
+const LESSONS = [
+  // --- UNIT 1 ---
+  {
+    title: "1. Hello Friends! 👋🌍",
+    slides: [
+      {v:"👋🤖", t:"Hello!", s:"Hello! 👋 I am Robo 🤖. I am your new friend! ✨", a:"anim-shake", c:"#f0f9ff"},
+      {v:"🌞🐦", t:"Good Morning", s:"Look! The Sun 🌞 is up. The birds 🐦 are singing 🎶. We say: Good Morning! 🌄", a:"anim-float", c:"#fff7ed"},
+      {v:"🌛🦉", t:"Good Night", s:"The Moon 🌛 is in the sky. The owl 🦉 says hoot hoot. Time to sleep 🛌. Good Night! 💤", a:"anim-pulse", c:"#e0e7ff"},
+      {v:"😊🤝", t:"How are you?", s:"I am Happy 😊 to see you! How are you today? 🤷‍♂️", a:"anim-pop", c:"#f0fdf4"},
+      {v:"👋🚌", t:"Goodbye", s:"The school bus 🚌 is going. Bye bye friends! 👋 See you later! 🐊", a:"anim-float", c:"#fff"}
+    ],
+    chat: [
+      {q:"Hello friend! What is your name? 📛", k:["name","is","i am","call me"], s:"Wow! 🌟 That is a beautiful name! ✨", f:"Say: My name is... 📛"},
+      {q:"How are you feeling today? 😊 or 😢?", k:["fine","good","happy","great","ok"], s:"Yay! 🎉 I am happy too! 🤖", f:"Say: I am Happy! 😊"},
+      {q:"It is time to go. Say Goodbye! 👋", k:["bye","goodbye","see you"], s:"See you later, Alligator! 🐊", f:"Say: Goodbye! 👋"}
+    ],
+    grammar: [
+      {t:"Meeting", r:"Subject + Verb + Name", b:[{t:"My Name",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Robo 🤖",c:"gb-obj"}]}
+    ],
+    quiz: [
+      {q:"When the moon 🌛 is up, we say...", o:["Good Morning 🌞","Good Night 💤","Hello 👋"], c:1},
+      {q:"'Nasılsın' in English? 🤔", o:["I am fine 👍","How are you? ❓","Who are you? 👤"], c:1}
+    ]
+  },
+  {
+    title: "2. The Rainbow World 🌈🎨",
+    slides: [
+      {v:"🌈✨", t:"Colors", s:"Welcome to the Rainbow World! 🌈 Let's paint! 🖌️", a:"anim-spin", c:"#fff"},
+      {v:"🍎🚒", t:"Red", s:"Look! A Red Apple 🍎. A Red Fire Truck 🚒. Wee-woo! 🚨 It is Red! 🔴", a:"anim-pulse", c:"#fef2f2"},
+      {v:"🚙🐳", t:"Blue", s:"The Ocean is Blue 🌊. The Whale 🐳 is Blue. The Car 🚙 is Blue. 🔵", a:"anim-float", c:"#eff6ff"},
+      {v:"🐸🥦", t:"Green", s:"The Frog 🐸 jumps! Hop hop! He likes Green Broccoli 🥦. 🟢", a:"anim-shake", c:"#f0fdf4"},
+      {v:"🌞🍌", t:"Yellow", s:"The Sun 🌞 is hot and Yellow. The Banana 🍌 is yummy and Yellow. 🟡", a:"anim-float", c:"#fefce8"},
+      {v:"🍊🦊", t:"Orange", s:"An Orange 🍊. A cute Orange Fox 🦊. 🟠", a:"anim-pop", c:"#fff7ed"}
+    ],
+    chat: [
+      {q:"What is your favorite color? 🌈", k:["red","blue","green","yellow","pink","purple","orange","black","white"], s:"Ooh! ✨ That is a magic color! 🎨", f:"Say: Red 🔴 or Blue 🔵"},
+      {q:"What color is a Banana? 🍌", k:["yellow"], s:"Yes! Yellow like the Sun! 🌞", f:"Think of the Sun 🌞. It is Yellow."},
+      {q:"Is the Sky ☁️ Green? Yes or No?", k:["no"], s:"Correct! The Sky is Blue! 🔵", f:"No, the sky is Blue 🔵."}
+    ],
+    grammar: [
+      {t:"Description", r:"The + Noun + is + Color", b:[{t:"The Apple 🍎",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Red 🔴",c:"gb-adj"}]}
+    ],
+    quiz: [
+      {q:"Which one is YELLOW? 🟡", o:["🍌 Banana","🍎 Apple","🍆 Eggplant"], c:0},
+      {q:"Grass 🌱 is...", o:["Red 🔴","Green 🟢","Purple 🟣"], c:1}
+    ]
+  },
+  // ... UNITS 3-10 EXPANDED ...
+  { title: "3. Counting Stars 1-10 🌟", slides:[{v:"1️⃣",t:"One",s:"One Lion 🦁"},{v:"2️⃣",t:"Two",s:"Two Eyes 👀"},{v:"3️⃣",t:"Three",s:"Three Balloons 🎈"},{v:"4️⃣",t:"Four",s:"Four Cars 🚗"},{v:"5️⃣",t:"Five",s:"High Five 🖐️"},{v:"🔟",t:"Ten",s:"Ten Fingers! 👐"}], chat:[{q:"1, 2, ...?",k:["3","three"],s:"Yes! 3",f:"Three"},{q:"Fingers on one hand?",k:["5","five"],s:"High five!",f:"Five"}], grammar:[{t:"Count",r:"Num + Noun",b:[{t:"Three",c:"gb-adj"},{t:"Cats 🐈",c:"gb-obj"}]}], quiz:[{q:"1 + 1 = ?",o:["2","3","4"],c:0},{q:"Ten is...",o:["10","1","5"],c:0}] },
+  { title: "4. My Lovely Family 👨‍👩‍👧‍👦", slides:[{v:"👨‍👩‍👧",t:"Family",s:"We love each other ❤️"},{v:"👩",t:"Mom",s:"Super Mom! 🦸‍♀️"},{v:"👨",t:"Dad",s:"Super Dad! 🦸‍♂️"},{v:"👶",t:"Baby",s:"Goo goo gaga 🍼"},{v:"👵",t:"Grandma",s:"Sweet Grandma 🍪"}], chat:[{q:"Who is Dad?",k:["father"],s:"Yes!",f:"Father"},{q:"Mom's mom?",k:["grandma"],s:"Correct",f:"Grandma"}], grammar:[{t:"Possession",r:"My + Person",b:[{t:"My",c:"gb-adj"},{t:"Mom ❤️",c:"gb-obj"}]}], quiz:[{q:"Dad is...",o:["Father","Sister","Cat"],c:0},{q:"Baby drinks...",o:["Milk","Pizza"],c:0}] },
+  { title: "5. Jungle Animals 🦁", slides:[{v:"🦁",t:"Lion",s:"Roar! King of Jungle 👑"},{v:"🐘",t:"Elephant",s:"Big nose (trunk) 👃"},{v:"🐵",t:"Monkey",s:"Eats bananas 🍌"},{v:"🦒",t:"Giraffe",s:"Very tall! 🦒"},{v:"🦓",t:"Zebra",s:"Stripes black & white"},{v:"🐍",t:"Snake",s:"Hiss... 🐍"}], chat:[{q:"Who says Roar?",k:["lion"],s:"Scary!",f:"Lion"},{q:"Monkey eats...?",k:["banana"],s:"Yum",f:"Banana"}], grammar:[{t:"Desc",r:"The + Animal + is + Adj",b:[{t:"The Lion",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Big",c:"gb-adj"}]}], quiz:[{q:"Tallest?",o:["Giraffe","Ant","Cat"],c:0},{q:"Zebra is...",o:["Striped","Blue","Green"],c:0}] },
+  { title: "6. My Body 🕺", slides:[{v:"👃",t:"Nose",s:"Smell flowers 🌸"},{v:"👀",t:"Eyes",s:"See stars ✨"},{v:"👂",t:"Ears",s:"Hear music 🎵"},{v:"👄",t:"Mouth",s:"Eat food 🍔"},{v:"🤚",t:"Hand",s:"Clap clap! 👏"},{v:"🦶",t:"Foot",s:"Walk walk 🚶"}], chat:[{q:"Smell with?",k:["nose"],s:"Good!",f:"Nose"},{q:"How many eyes?",k:["2","two"],s:"Yes 2",f:"Two"}], grammar:[{t:"Action",r:"I + Verb + with + Part",b:[{t:"I",c:"gb-sub"},{t:"See",c:"gb-verb"},{t:"with Eyes",c:"gb-obj"}]}], quiz:[{q:"See with...",o:["Eyes","Toes","Ears"],c:0},{q:"Hear with...",o:["Nose","Ears","Hair"],c:1}] },
+  { title: "7. Fashion Show 👕", slides:[{v:"👕",t:"T-Shirt",s:"Cool summer shirt 😎"},{v:"👖",t:"Pants",s:"Blue jeans 👖"},{v:"👗",t:"Dress",s:"Princess dress 👸"},{v:"🧢",t:"Hat",s:"Sun hat ☀️"},{v:"👟",t:"Shoes",s:"Running shoes 🏃"},{v:"🧥",t:"Jacket",s:"Warm coat ❄️"}], chat:[{q:"On head?",k:["hat","cap"],s:"Stylish!",f:"Hat"},{q:"On feet?",k:["shoes"],s:"Run fast!",f:"Shoes"}], grammar:[{t:"Wear",r:"I + wear + Item",b:[{t:"I",c:"gb-sub"},{t:"wear",c:"gb-verb"},{t:"a Hat",c:"gb-obj"}]}], quiz:[{q:"Winter wear?",o:["Jacket","Shorts"],c:0},{q:"Summer wear?",o:["T-Shirt","Coat"],c:0}] },
+  { title: "8. Fruit Market 🍎", slides:[{v:"🍎",t:"Apple",s:"Red & Crunchy"},{v:"🍌",t:"Banana",s:"Yellow & Long"},{v:"🍇",t:"Grapes",s:"Purple balls"},{v:"🍊",t:"Orange",s:"Juicy Orange"},{v:"🍉",t:"Melon",s:"Big & Green"},{v:"🍋",t:"Lemon",s:"Sour! 😖"}], chat:[{q:"Red fruit?",k:["apple"],s:"Yum",f:"Apple"},{q:"Lemon is...",k:["sour"],s:"Yes sour",f:"Sour"}], grammar:[{t:"Taste",r:"It + is + Adj",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Sweet",c:"gb-adj"}]}], quiz:[{q:"Yellow?",o:["Banana","Grape"],c:0},{q:"Sour?",o:["Lemon","Apple"],c:0}] },
+  { title: "9. Pizza Party 🍕", slides:[{v:"🍕",t:"Pizza",s:"Cheesy goodness 🧀"},{v:"🍔",t:"Burger",s:"Big sandwich 🥪"},{v:"🍟",t:"Fries",s:"Potato sticks"},{v:"🍦",t:"Ice Cream",s:"Cold dessert 🥶"},{v:"🥤",t:"Water",s:"Drink water 💧"},{v:"🥦",t:"Veggie",s:"Healthy food 💪"}], chat:[{q:"Hungry?",k:["yes"],s:"Eat!",f:"Yes"},{q:"Cold food?",k:["ice cream"],s:"Brr",f:"Ice Cream"}], grammar:[{t:"Want",r:"I + Want + Food",b:[{t:"I",c:"gb-sub"},{t:"Want",c:"gb-verb"},{t:"Pizza",c:"gb-obj"}]}], quiz:[{q:"Drink?",o:["Water","Pizza"],c:0},{q:"Healthy?",o:["Veggie","Candy"],c:0}] },
+  { title: "10. Sweet Home 🏠", slides:[{v:"🏠",t:"Home",s:"My house 🏡"},{v:"🛋️",t:"Living Room",s:"Watch TV 📺"},{v:"🍳",t:"Kitchen",s:"Cook food 🥘"},{v:"🛏️",t:"Bedroom",s:"Sleep here 😴"},{v:"🛁",t:"Bathroom",s:"Wash here 🧼"},{v:"🌳",t:"Garden",s:"Play outside ⚽"}], chat:[{q:"Sleep where?",k:["bed","bedroom"],s:"Zzz",f:"Bedroom"},{q:"Cook where?",k:["kitchen"],s:"Yum",f:"Kitchen"}], grammar:[{t:"Loc",r:"In + Room",b:[{t:"In",c:"gb-prep"},{t:"Kitchen",c:"gb-obj"}]}], quiz:[{q:"TV is in...",o:["Living Room","Bath"],c:0},{q:"Tree is in...",o:["Garden","Kitchen"],c:0}] },
+
+  // --- UNIT 2: EXPANDED 11-40 ---
+  {
+    title: "11. School Bus 🚌",
+    slides: [
+      {v:"🏫", t:"School", s:"Ding dong! School starts. 🔔", a:"anim-float", c:"#fff"},
+      {v:"🚌", t:"Bus", s:"Yellow bus. Beep beep! 🚸", a:"anim-shake", c:"#fff7ed"},
+      {v:"👩‍🏫", t:"Teacher", s:"Hello Teacher! She helps us. 🍎", a:"anim-pop", c:"#fff"},
+      {v:"🎒", t:"Backpack", s:"My bag for books. 📘", a:"anim-float", c:"#e0f2fe"},
+      {v:"✏️", t:"Pencil", s:"I write with this. 📝", a:"anim-float", c:"#fff"},
+      {v:"🖍️", t:"Crayon", s:"Color the picture! 🎨", a:"anim-pulse", c:"#fff"}
+    ],
+    chat: [
+      {q:"Do you go to school? 🏫", k:["yes","no"], s:"Learning is fun!", f:"Say Yes."},
+      {q:"What color is the bus? 🚌", k:["yellow"], s:"Yes, Yellow!", f:"Yellow."},
+      {q:"What do you write with? ✏️", k:["pencil","pen"], s:"Correct.", f:"A Pencil."}
+    ],
+    grammar: [{t:"Action", r:"I + Verb + Object", b:[{t:"I",c:"gb-sub"},{t:"Ride",c:"gb-verb"},{t:"the Bus 🚌",c:"gb-obj"}]}],
+    quiz: [{q:"Who teaches class?",o:["Teacher","Driver","Cook"],c:0},{q:"Books go in...",o:["Backpack","Fridge"],c:0}]
+  },
+  {
+    title: "12. Run & Jump 🏃",
+    slides: [
+      {v:"🏃", t:"Run", s:"Run fast like a cheetah! 🐆", a:"anim-shake", c:"#fff"},
+      {v:"🚶", t:"Walk", s:"Walk slow like a turtle. 🐢", a:"anim-float", c:"#fff"},
+      {v:"🤸", t:"Jump", s:"Jump high like a kangaroo! 🦘", a:"anim-pop", c:"#fff"},
+      {v:"🏊", t:"Swim", s:"Swim like a fish. 🐟", a:"anim-float", c:"#e0f2fe"},
+      {v:"🧘", t:"Sit", s:"Sit down on the chair. 🪑", a:"anim-pop", c:"#fff"},
+      {v:"💃", t:"Dance", s:"Dance to the music! 🎵", a:"anim-shake", c:"#fdf2f8"}
+    ],
+    chat: [
+      {q:"Can you jump? 🤸", k:["yes"], s:"Boing boing!", f:"Yes I can."},
+      {q:"Do you walk or fly? 🚶", k:["walk"], s:"We walk.", f:"Walk."},
+      {q:"Fish can...?", k:["swim"], s:"Splash!", f:"Swim."}
+    ],
+    grammar: [{t:"Ability", r:"I + Can + Verb", b:[{t:"I",c:"gb-sub"},{t:"Can",c:"gb-verb"},{t:"Jump 🤸",c:"gb-obj"}]}],
+    quiz: [{q:"Opposite of Run?",o:["Walk","Fly"],c:0},{q:"Fish...",o:["Swim","Talk"],c:0}]
+  },
+  {
+    title: "13. Wake Up ☀️",
+    slides: [
+      {v:"☀️",t:"Morning",s:"The sun is up! Rise and shine! 🌄", a:"anim-float", c:"#fff7ed"},
+      {v:"🥱",t:"Wake Up",s:"Open your eyes. Stretch! 🙆", a:"anim-pop", c:"#fff"},
+      {v:"🦷",t:"Brush",s:"Brush teeth. Sparkle! ✨", a:"anim-shake", c:"#e0f2fe"},
+      {v:"🍳",t:"Breakfast",s:"Eat eggs and toast. 🍞", a:"anim-pulse", c:"#fff"},
+      {v:"🚿",t:"Shower",s:"Wash your body. Clean! 🧼", a:"anim-float", c:"#e0f7fa"},
+      {v:"🛌",t:"Make Bed",s:"Tidy your room. 👍", a:"anim-pop", c:"#fff"}
+    ],
+    chat: [
+      {q:"What do you do first? 🥱", k:["wake","up"], s:"Good morning!", f:"Wake up."},
+      {q:"Do you brush teeth? 🦷", k:["yes"], s:"Clean teeth are good.", f:"Yes."}
+    ],
+    grammar: [{t:"Routine",r:"I + Verb",b:[{t:"I",c:"gb-sub"},{t:"Wake up",c:"gb-verb"}]}],
+    quiz: [{q:"Morning meal?",o:["Breakfast","Dinner"],c:0},{q:"Use toothpaste for...",o:["Teeth","Hair"],c:0}]
+  },
+  {
+    title: "14. Many Cats 🐈🐈‍⬛",
+    slides: [
+      {v:"🐈",t:"One Cat",s:"I see one cat. Meow.", a:"anim-pop", c:"#fff"},
+      {v:"🐈🐈",t:"Two Cats",s:"I see two cats. Meow Meow.", a:"anim-pop", c:"#fff"},
+      {v:"🍎",t:"One Apple",s:"One red apple.", a:"anim-pop", c:"#fff"},
+      {v:"🍎🍎",t:"Apples",s:"Many apples. Add 'S'.", a:"anim-pop", c:"#fff"},
+      {v:"🚌",t:"Bus",s:"One bus.", a:"anim-float", c:"#fff"},
+      {v:"🚌🚌",t:"Buses",s:"Two buses. Add 'ES'.", a:"anim-float", c:"#fff"}
+    ],
+    chat: [
+      {q:"One dog, two...?", k:["dogs"], s:"Yes, Dogs with S.", f:"Dogs."},
+      {q:"One box, two...?", k:["boxes"], s:"Boxes with ES.", f:"Boxes."}
+    ],
+    grammar: [{t:"Plural",r:"Noun + S",b:[{t:"One",c:"gb-adj"},{t:"Cat",c:"gb-sub"},{t:"Two",c:"gb-adj"},{t:"Cats",c:"gb-sub"}]}],
+    quiz: [{q:"3...",o:["Bird","Birds"],c:1},{q:"2...",o:["Fox","Foxes"],c:1}]
+  },
+  { title: "15. Near & Far 👉👇", slides: [{v:"👇",t:"This",s:"This is here."},{v:"👉",t:"That",s:"That is there."},{v:"👇🍎",t:"This Apple",s:"This apple (near)."},{v:"👉🍎",t:"That Apple",s:"That apple (far)."},{v:"👇🐶",t:"This Dog",s:"My dog here."},{v:"👉🐶",t:"That Dog",s:"Your dog there."}], chat: [{q:"Is the sun This or That?",k:["that"],s:"Far away!",f:"That"},{q:"Is your nose This or That?",k:["this"],s:"It is near.",f:"This"}], grammar: [{t:"Pointer",r:"This (Near) / That (Far)",b:[{t:"This",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"my Pen",c:"gb-obj"}]}], quiz: [{q:"Far away is...",o:["That","This"],c:0},{q:"Near me is...",o:["This","That"],c:0}] },
+  { title: "16. Big & Small 🐘🐜", slides: [{v:"🐘",t:"Big",s:"Elephant is Big."},{v:"🐜",t:"Small",s:"Ant is Small."},{v:"🔥",t:"Hot",s:"Fire is Hot."},{v:"❄️",t:"Cold",s:"Ice is Cold."},{v:"🚀",t:"Fast",s:"Rocket is Fast."},{v:"🐢",t:"Slow",s:"Turtle is Slow."}], chat: [{q:"Mouse is?",k:["small"],s:"Squeak",f:"Small"},{q:"Ice cream is?",k:["cold"],s:"Brrr",f:"Cold"}], grammar: [{t:"Desc",r:"It + is + Adj",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Big",c:"gb-adj"}]}], quiz: [{q:"Whale?",o:["Big","Small"],c:0},{q:"Fire?",o:["Hot","Cold"],c:0}] },
+  { title: "17. Happy Face 😊", slides: [{v:"😊",t:"Happy",s:"Smile!"},{v:"😢",t:"Sad",s:"Cry..."},{v:"😡",t:"Angry",s:"Grrr!"},{v:"😴",t:"Tired",s:"Yawn..."},{v:"😨",t:"Scared",s:"Eek!"},{v:"😂",t:"Funny",s:"Haha!"}], chat: [{q:"Are you happy?",k:["yes","happy"],s:"Good!",f:"Yes"},{q:"Ghost is...",k:["scary","scared"],s:"Boo!",f:"Scary"}], grammar: [{t:"Feel",r:"I + am + Adj",b:[{t:"I",c:"gb-sub"},{t:"am",c:"gb-verb"},{t:"Happy",c:"gb-adj"}]}], quiz: [{q:"Crying means...",o:["Sad","Happy"],c:0},{q:"Sleeping means...",o:["Tired","Angry"],c:0}] },
+  { title: "18. Jobs 👮", slides: [{v:"👮",t:"Police",s:"Stops bad guys."},{v:"👨‍⚕️",t:"Doctor",s:"Fixes you."},{v:"👨‍🚒",t:"Fireman",s:"Fights fire."},{v:"👨‍🍳",t:"Cook",s:"Makes food."},{v:"👨‍🌾",t:"Farmer",s:"Grows food."},{v:"👨‍🚀",t:"Astronaut",s:"Goes to space!"}], chat: [{q:"Who helps sick people?",k:["doctor"],s:"Yes",f:"Doctor"},{q:"Who flies to moon?",k:["astronaut"],s:"Zoom",f:"Astronaut"}], grammar: [{t:"Job",r:"He + is + a + Job",b:[{t:"He",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"a Cook",c:"gb-obj"}]}], quiz: [{q:"Works in kitchen?",o:["Cook","Police"],c:0},{q:"Drives tractor?",o:["Farmer","Doctor"],c:0}] },
+  { title: "19. Weather ☁️", slides: [{v:"☀️",t:"Sunny",s:"Wear hat."},{v:"🌧️",t:"Rainy",s:"Take umbrella."},{v:"☁️",t:"Cloudy",s:"No sun."},{v:"❄️",t:"Snowy",s:"Make snowman."},{v:"💨",t:"Windy",s:"Fly kite."},{v:"⛈️",t:"Stormy",s:"Boom!"}], chat: [{q:"Is it raining?",k:["no","yes"],s:"Check window",f:"Yes/No"},{q:"Hot weather?",k:["sunny"],s:"Beach time",f:"Sunny"}], grammar: [{t:"Weather",r:"It + is + Adj",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Sunny",c:"gb-adj"}]}], quiz: [{q:"Fly kite when...",o:["Windy","Rainy"],c:0},{q:"Umbrella for...",o:["Rain","Sun"],c:0}] },
+  { title: "20. Days 📅", slides: [{v:"1️⃣",t:"Monday",s:"Start week."},{v:"2️⃣",t:"Tuesday",s:"Second day."},{v:"3️⃣",t:"Wednesday",s:"Middle."},{v:"4️⃣",t:"Thursday",s:"Almost Friday."},{v:"5️⃣",t:"Friday",s:"Last school day."},{v:"🎉",t:"Weekend",s:"Saturday Sunday!"}], chat: [{q:"School start day?",k:["monday"],s:"Yes",f:"Monday"},{q:"Rest days?",k:["weekend","sunday","saturday"],s:"Play!",f:"Weekend"}], grammar: [{t:"Time",r:"Today + is + Day",b:[{t:"Today",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Friday",c:"gb-obj"}]}], quiz: [{q:"Days in week?",o:["7","5"],c:0},{q:"No school on...",o:["Sunday","Monday"],c:0}] },
+  { title: "21. Seasons 🍂", slides: [{v:"❄️",t:"Winter",s:"Cold & Snow"},{v:"🌸",t:"Spring",s:"Flowers & Rain"},{v:"☀️",t:"Summer",s:"Hot & Beach"},{v:"🍂",t:"Autumn",s:"Leaves fall"},{v:"☃️",t:"Snowman",s:"Build in winter"},{v:"🏖️",t:"Beach",s:"Swim in summer"}], chat: [{q:"When is it hot?",k:["summer"],s:"Ice cream time!",f:"Summer"},{q:"When do flowers grow?",k:["spring"],s:"Lovely",f:"Spring"}], grammar: [{t:"Season",r:"In + Season",b:[{t:"In",c:"gb-prep"},{t:"Summer",c:"gb-obj"}]}], quiz: [{q:"Snow in...",o:["Winter","Summer"],c:0},{q:"Leaves fall in...",o:["Autumn","Spring"],c:0}] },
+  { title: "22. Time ⏰", slides: [{v:"🕘",t:"9:00",s:"Nine O'clock"},{v:"🕛",t:"12:00",s:"Lunch time"},{v:"🕒",t:"3:00",s:"Play time"},{v:"🕕",t:"6:00",s:"Dinner time"},{v:"🕤",t:"9:30",s:"Sleep time"},{v:"⌚",t:"Watch",s:"On your arm"}], chat: [{q:"What time is lunch?",k:["12","twelve"],s:"Yum",f:"12"},{q:"Tells time?",k:["clock","watch"],s:"Tick tock",f:"Clock"}], grammar: [{t:"Time",r:"It + is + Time",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Five",c:"gb-obj"}]}], quiz: [{q:"Sleep at...",o:["Night","Morning"],c:0},{q:"Sun up at...",o:["Morning","Night"],c:0}] },
+  { title: "23. Action 2 🏊", slides: [{v:"🏊",t:"Swim",s:"Water fun"},{v:"🚲",t:"Bike",s:"Ride bike"},{v:"🧗",t:"Climb",s:"Go up"},{v:"🎨",t:"Paint",s:"Colors"},{v:"🎤",t:"Sing",s:"La la la"},{v:"🍳",t:"Cook",s:"Make food"}], chat: [{q:"Can you sing?",k:["yes","no"],s:"La la la",f:"Yes"},{q:"Ride a...?",k:["bike"],s:"Be safe",f:"Bike"}], grammar: [{t:"Do",r:"I + Verb",b:[{t:"I",c:"gb-sub"},{t:"Swim",c:"gb-verb"}]}], quiz: [{q:"In pool we...",o:["Swim","Fly"],c:0},{q:"With microphone we...",o:["Sing","Sleep"],c:0}] },
+  { title: "24. Can/Can't 🦅", slides: [{v:"🦅",t:"Fly",s:"Birds CAN"},{v:"🐧",t:"No Fly",s:"Penguins CAN'T"},{v:"🐟",t:"Swim",s:"Fish CAN"},{v:"🐈",t:"No Swim",s:"Cats CAN'T"},{v:"🏃",t:"Run",s:"I CAN"},{v:"🚙",t:"Drive",s:"I CAN'T"}], chat: [{q:"Can pig fly?",k:["no"],s:"Funny!",f:"No"},{q:"Can you read?",k:["yes"],s:"Good",f:"Yes"}], grammar: [{t:"Able",r:"Can + Verb",b:[{t:"I",c:"gb-sub"},{t:"Can",c:"gb-verb"},{t:"Read",c:"gb-obj"}]}], quiz: [{q:"Fish...",o:["Swim","Walk"],c:0},{q:"Bird...",o:["Fly","Drive"],c:0}] },
+  { title: "25. Yummy/Yuck 🤢", slides: [{v:"😋",t:"Yum",s:"I like it"},{v:"🤢",t:"Yuck",s:"I hate it"},{v:"🥦",t:"Veggie",s:"Good for you"},{v:"🍬",t:"Candy",s:"Sweet"},{v:"🕷️",t:"Spider",s:"Scary!"},{v:"❤️",t:"Love",s:"Very much"}], chat: [{q:"Like pizza?",k:["yes","yum"],s:"Me too",f:"Yes"},{q:"Eat spider?",k:["no","yuck"],s:"Eww",f:"No"}], grammar: [{t:"Like",r:"I + Like + Obj",b:[{t:"I",c:"gb-sub"},{t:"Like",c:"gb-verb"},{t:"Pizza",c:"gb-obj"}]}], quiz: [{q:"Chocolate is...",o:["Yum","Yuck"],c:0},{q:"Worm is...",o:["Yuck","Yum"],c:0}] },
+  { title: "26. -Ing Now 🏃", slides: [{v:"🏃",t:"Running",s:"He is running"},{v:"🚶",t:"Walking",s:"She is walking"},{v:"📖",t:"Reading",s:"I am reading"},{v:"🗣️",t:"Talking",s:"We are talking"},{v:"😴",t:"Sleeping",s:"Cat is sleeping"},{v:"📺",t:"Watching",s:"Watching TV"}], chat: [{q:"What are you doing?",k:["sitting","learning"],s:"Good student",f:"Learning"},{q:"Is cat running?",k:["no"],s:"It is sleeping",f:"No"}], grammar: [{t:"Cont",r:"Am/Is/Are + Ing",b:[{t:"She",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Runn-ing",c:"gb-adj"}]}], quiz: [{q:"Now I am...",o:["Reading","Read"],c:0},{q:"He is ...",o:["Play","Playing"],c:1}] },
+  { title: "27. Prepositions 📦", slides: [{v:"📦",t:"In",s:"Inside box"},{v:"⬆️",t:"On",s:"Top of box"},{v:"⬇️",t:"Under",s:"Below box"},{v:"↔️",t:"Between",s:"In middle"},{v:"🔙",t:"Behind",s:"At back"},{v:"🔜",t:"Next to",s:"Beside"}], chat: [{q:"Where is hat? On head?",k:["yes","on"],s:"Correct",f:"On head"},{q:"Fish in water?",k:["yes","in"],s:"Yes",f:"In water"}], grammar: [{t:"Loc",r:"It + is + Prep",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"On table",c:"gb-obj"}]}], quiz: [{q:"Hat is ... head",o:["On","In"],c:0},{q:"Ball ... table",o:["Under","Between"],c:0}] },
+  { title: "28. Transport 🚂", slides: [{v:"🚂",t:"Train",s:"Choo choo"},{v:"✈️",t:"Plane",s:"Fly high"},{v:"🚗",t:"Car",s:"Vroom"},{v:"🚲",t:"Bike",s:"Ring ring"},{v:"🚤",t:"Boat",s:"Float"},{v:"🚀",t:"Rocket",s:"Space"}], chat: [{q:"Goes in water?",k:["boat","ship"],s:"Float",f:"Boat"},{q:"Has wings?",k:["plane"],s:"Fly",f:"Plane"}], grammar: [{t:"Go",r:"Go + by + Veh",b:[{t:"Go",c:"gb-verb"},{t:"by",c:"gb-prep"},{t:"Car",c:"gb-obj"}]}], quiz: [{q:"2 wheels?",o:["Bike","Car"],c:0},{q:"On tracks?",o:["Train","Bus"],c:0}] },
+  { title: "29. City 🏙️", slides: [{v:"🏙️",t:"City",s:"Big town"},{v:"🏥",t:"Hospital",s:"Doctors"},{v:"🚓",t:"Police Stn",s:"Police"},{v:"🚒",t:"Fire Stn",s:"Fireman"},{v:"🛒",t:"Shop",s:"Buy food"},{v:"🌳",t:"Park",s:"Play"}], chat: [{q:"Sick? Go where?",k:["hospital","doctor"],s:"Get well",f:"Hospital"},{q:"Buy food?",k:["shop","market"],s:"Yum",f:"Shop"}], grammar: [{t:"Place",r:"Go + to + Place",b:[{t:"Go",c:"gb-verb"},{t:"to",c:"gb-prep"},{t:"Park",c:"gb-obj"}]}], quiz: [{q:"Swings are in...",o:["Park","Bank"],c:0},{q:"Money is in...",o:["Bank","Zoo"],c:0}] },
+  { title: "30. Traffic 🚦", slides: [{v:"🚦",t:"Light",s:"Traffic light"},{v:"🔴",t:"Red",s:"Stop"},{v:"🟡",t:"Yellow",s:"Wait"},{v:"🟢",t:"Green",s:"Go"},{v:"🚶",t:"Cross",s:"Cross road"},{v:"🛑",t:"Sign",s:"Stop sign"}], chat: [{q:"Red means?",k:["stop"],s:"Danger",f:"Stop"},{q:"Green means?",k:["go"],s:"Safe",f:"Go"}], grammar: [{t:"Rule",r:"Imp + Now",b:[{t:"Stop!",c:"gb-verb"}]}], quiz: [{q:"Wait on...",o:["Yellow","Green"],c:0},{q:"Walk on...",o:["Green","Red"],c:0}] },
+  { title: "31. Some/Any 🥣", slides: [{v:"🥣",t:"Some",s:"I have some"},{v:"🫗",t:"Any",s:"I don't have any"},{v:"🥛",t:"Milk",s:"Some milk"},{v:"🍪",t:"Cookie",s:"Any cookies?"},{v:"💧",t:"Water",s:"Some water"},{v:"🚫",t:"None",s:"Empty"}], chat: [{q:"Want some water?",k:["yes","some"],s:"Here",f:"Yes"},{q:"Have money?",k:["no","any"],s:"Empty pocket",f:"No"}], grammar: [{t:"Quant",r:"Have + Some/Any",b:[{t:"I",c:"gb-sub"},{t:"have",c:"gb-verb"},{t:"Some",c:"gb-adj"}]}], quiz: [{q:"Do you have ...?",o:["Any","Some"],c:0},{q:"I want ...",o:["Some","Any"],c:0}] },
+  { title: "32. Faster 🏎️", slides: [{v:"🏎️",t:"Fast",s:"Race car"},{v:"🐌",t:"Slow",s:"Snail"},{v:"🐘",t:"Bigger",s:"Than mouse"},{v:"🐜",t:"Smaller",s:"Than dog"},{v:"🦒",t:"Taller",s:"Than me"},{v:"👴",t:"Older",s:"Than baby"}], chat: [{q:"Turtle is?",k:["slow"],s:"Yes",f:"Slow"},{q:"Plane is?",k:["fast"],s:"Zoom",f:"Fast"}], grammar: [{t:"Comp",r:"Adj + er + Than",b:[{t:"A",c:"gb-sub"},{t:"is Faster",c:"gb-adj"},{t:"than B",c:"gb-obj"}]}], quiz: [{q:"Elephant is ... than ant",o:["Bigger","Smaller"],c:0},{q:"Ice is ... than fire",o:["Colder","Hotter"],c:0}] },
+  { title: "33. The Best 🥇", slides: [{v:"🥇",t:"Best",s:"Number 1"},{v:"🥉",t:"Third",s:"Number 3"},{v:"🐆",t:"Fastest",s:"Cheetah"},{v:"🐋",t:"Biggest",s:"Whale"},{v:"🐌",t:"Slowest",s:"Snail"},{v:"🏔️",t:"Highest",s:"Everest"}], chat: [{q:"Who is number 1?",k:["me","i am"],s:"Yes you!",f:"Me"},{q:"Biggest animal?",k:["whale"],s:"Huge",f:"Whale"}], grammar: [{t:"Super",r:"The + Adj + est",b:[{t:"The",c:"gb-sub"},{t:"Fastest",c:"gb-adj"}]}], quiz: [{q:"Gold medal is...",o:["Best","Worst"],c:0},{q:"Everest is...",o:["Highest","Lowest"],c:0}] },
+  { title: "34. Past Was 🔙", slides: [{v:"👶",t:"Was",s:"I was baby"},{v:"👴",t:"Am",s:"I am old"},{v:"🏫",t:"Were",s:"We were at school"},{v:"🏠",t:"Home",s:"Was at home"},{v:"📅",t:"Yesterday",s:"Past day"},{v:"🔙",t:"Past",s:"Before"}], chat: [{q:"Were you baby?",k:["yes","was"],s:"Cute",f:"Yes"},{q:"Yesterday hot?",k:["was","no"],s:"Ok",f:"It was..."}], grammar: [{t:"Past",r:"Was/Were",b:[{t:"I",c:"gb-sub"},{t:"Was",c:"gb-verb"},{t:"Small",c:"gb-adj"}]}], quiz: [{q:"I ... hungry",o:["Was","Were"],c:0},{q:"They ... happy",o:["Were","Was"],c:0}] },
+  { title: "35. Played 🎮", slides: [{v:"🎮",t:"Played",s:"Game over"},{v:"⚽",t:"Kicked",s:"Goal!"},{v:"📺",t:"Watched",s:"TV show"},{v:"🍳",t:"Cooked",s:"Dinner"},{v:"🧹",t:"Cleaned",s:"Room"},{v:"📞",t:"Called",s:"Phone"}], chat: [{q:"Played games?",k:["yes","played"],s:"Fun",f:"Yes"},{q:"Watched TV?",k:["yes","watched"],s:"Show?",f:"Yes"}], grammar: [{t:"Reg",r:"Verb + ed",b:[{t:"I",c:"gb-sub"},{t:"Play-ed",c:"gb-verb"}]}], quiz: [{q:"Yesterday I...",o:["Played","Play"],c:0},{q:"She ... dinner",o:["Cooked","Cook"],c:0}] },
+  { title: "36. Ate Pizza 🍕", slides: [{v:"🍕",t:"Ate",s:"Yum"},{v:"🥤",t:"Drank",s:"Slurp"},{v:"🏃",t:"Went",s:"Go -> Went"},{v:"🏊",t:"Swam",s:"Swim -> Swam"},{v:"😴",t:"Slept",s:"Sleep -> Slept"},{v:"👀",t:"Saw",s:"See -> Saw"}], chat: [{q:"Ate breakfast?",k:["ate","yes"],s:"Full",f:"Ate"},{q:"Went to school?",k:["went","yes"],s:"Good",f:"Went"}], grammar: [{t:"Irreg",r:"Special Word",b:[{t:"I",c:"gb-sub"},{t:"Ate",c:"gb-verb"},{t:"Food",c:"gb-obj"}]}], quiz: [{q:"Past of Eat",o:["Ate","Eated"],c:0},{q:"Past of Go",o:["Went","Goed"],c:0}] },
+  { title: "37. Future 🔮", slides: [{v:"🔮",t:"Will",s:"Future"},{v:"📅",t:"Tomorrow",s:"Next day"},{v:"🌧️",t:"Rain",s:"Will rain"},{v:"🎂",t:"Age",s:"Will be 10"},{v:"🚀",t:"Go",s:"Will go"},{v:"🤖",t:"Robot",s:"Will help"}], chat: [{q:"Tomorrow school?",k:["yes","will"],s:"Study",f:"Yes"},{q:"Will you play?",k:["yes","will"],s:"Fun",f:"Yes"}], grammar: [{t:"Fut",r:"Will + Verb",b:[{t:"I",c:"gb-sub"},{t:"Will",c:"gb-verb"},{t:"Go",c:"gb-obj"}]}], quiz: [{q:"Tomorrow I...",o:["Will","Did"],c:0},{q:"He ... come",o:["Will","Is"],c:0}] },
+  { title: "38. Plans 🗓️", slides: [{v:"🗓️",t:"Plan",s:"Going to"},{v:"🎒",t:"School",s:"Going to school"},{v:"🛌",t:"Sleep",s:"Going to sleep"},{v:"🍽️",t:"Eat",s:"Going to eat"},{v:"✈️",t:"Travel",s:"Going to fly"},{v:"👵",t:"Visit",s:"Going to grandma"}], chat: [{q:"Going to sleep?",k:["yes","going"],s:"Night",f:"Yes"},{q:"Going to eat?",k:["yes"],s:"Hungry",f:"Yes"}], grammar: [{t:"Plan",r:"Going to + Verb",b:[{t:"I am",c:"gb-sub"},{t:"Going to",c:"gb-verb"},{t:"Eat",c:"gb-obj"}]}], quiz: [{q:"I am ... to run",o:["Going","Will"],c:0},{q:"She ... going",o:["Is","Am"],c:0}] },
+  { title: "39. Sick 🤒", slides: [{v:"🤒",t:"Fever",s:"Hot head"},{v:"🤧",t:"Cold",s:"Achoo!"},{v:"🤕",t:"Ouch",s:"Pain"},{v:"💊",t:"Pill",s:"Medicine"},{v:"🛌",t:"Rest",s:"Sleep"},{v:"🩺",t:"Doctor",s:"Help"}], chat: [{q:"Feel sick?",k:["no","yes"],s:"Good/Oh no",f:"Yes/No"},{q:"Need doctor?",k:["yes"],s:"Call 911",f:"Yes"}], grammar: [{t:"Feel",r:"I + have + Sick",b:[{t:"I",c:"gb-sub"},{t:"Have",c:"gb-verb"},{t:"a Cold",c:"gb-obj"}]}], quiz: [{q:"Hot head?",o:["Fever","Cold"],c:0},{q:"Take...",o:["Medicine","Candy"],c:0}] },
+  { title: "40. Graduation 🎓🎉", slides: [{v:"🎓",t:"Graduation",s:"You finished 40 lessons!"},{v:"🏆",t:"Winner",s:"You are a winner!"},{v:"🧠",t:"Smart",s:"Your brain is big!"},{v:"🗣️",t:"English",s:"You speak English!"},{v:"🥳",t:"Party",s:"Let's celebrate!"},{v:"👋",t:"The End",s:"Good luck friend!"}],
+    chat: [{q:"Are you happy?",k:["yes"],s:"I am proud of you!",f:"Yes"}],
+    grammar: [{t:"Success",r:"You + Are + Adj",b:[{t:"You",c:"gb-sub"},{t:"Are",c:"gb-verb"},{t:"Smart 🧠",c:"gb-adj"}]}],
+    quiz: [{q:"You are a...",o:["Baby","Master","Cat"],c:1}]
+  }
+];
+
+const app = {
+  state: { l: 0, s: 0, q: 0, c: 0, mode: 'intro', score: 0, listening: false, lastMsg: "", done: [] },
+  
+  // Login Check
+  checkLogin() {
+    const input = document.getElementById('passwordInput').value;
+    const err = document.getElementById('loginError');
+    
+    // Simple Base64 hash for offline usage
+    // "2244TAYLAN" -> "MjI0NFRBWUxBTg=="
+    const targetHash = "MjI0NFRBWUxBTg=="; 
+    
+    if(btoa(input) === targetHash) {
+      this.startApp();
+    } else {
+      err.style.display = 'block';
+      err.classList.remove('anim-error');
+      void err.offsetWidth; // trigger reflow
+      err.classList.add('anim-error');
+    }
+  },
+
+  startApp() {
+    document.getElementById('startOverlay').style.display = 'none';
+    document.getElementById('mainContent').style.filter = 'none';
+    this.renderSidebar();
+    this.renderRobot('happy');
+    this.load();
+    this.speak("Welcome to Robo Kanka Academy! Let's start.");
+    setTimeout(() => this.startLesson(this.state.l), 1000);
+  },
+
+  startLesson(idx) {
+    this.state.l = idx; this.state.s = 0; this.state.q = 0; this.state.c = 0; this.state.mode = 'slide';
+    this.renderSidebar();
+    this.renderSlide();
+    document.getElementById('chatBox').innerHTML = ''; 
+    document.getElementById('statusBadge').innerText = "Topic: " + LESSONS[idx].title;
+    this.updateProgressBar();
+  },
+
+  updateProgressBar() {
+    const lesson = LESSONS[this.state.l];
+    // Simple progress logic: 
+    // Slide phase: 0-50%
+    // Chat phase: 50-70%
+    // Grammar phase: 70-80%
+    // Quiz phase: 80-100%
+    let pct = 0;
+    const totalSlides = lesson.slides.length;
+    const totalChat = lesson.chat.length;
+    const totalQuiz = lesson.quiz.length;
+    
+    if(this.state.mode === 'slide') {
+        pct = (this.state.s / totalSlides) * 50;
+    } else if(this.state.mode === 'chat') {
+        pct = 50 + (this.state.c / totalChat) * 20;
+    } else if(this.state.mode === 'grammar') {
+        pct = 75;
+    } else if(this.state.mode === 'quiz') {
+        pct = 80 + (this.state.q / totalQuiz) * 20;
+    }
+    
+    document.getElementById('lessonProgressBar').style.width = `${pct}%`;
+  },
+
+  renderSidebar() {
+    const list = document.getElementById('lessonList');
+    list.innerHTML = LESSONS.map((les, i) => `
+      <div class="lesson-item ${i === this.state.l ? 'active' : ''}" onclick="app.startLesson(${i})">
+        <div class="lesson-badge">${this.state.done.includes(i) ? '✅' : '🔒'}</div>
+        <div class="fw-bold text-truncate">${les.title}</div>
+      </div>
+    `).join('');
+  },
+
+  renderSlide() {
+    const slide = LESSONS[this.state.l].slides[this.state.s];
+    document.getElementById('boardPanel').innerHTML = `
+      <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center p-3" style="background:${slide.c || '#fff'}">
+        <div class="slide-visual ${slide.a || ''}">${slide.v}</div>
+        <div class="slide-text">
+          <div>${slide.t}</div>
+          <small class="slide-story">${slide.s}</small>
+        </div>
+        <div class="mt-4 d-flex gap-3 w-100 px-3">
+          ${this.state.s > 0 ? `<button class="btn btn-light rounded-circle shadow" onclick="app.navSlide(-1)">⬅️</button>` : ''}
+          <button class="btn btn-primary flex-grow-1 rounded-pill shadow fs-4 fw-bold animate-pulse" onclick="app.navSlide(1)">
+            ${this.state.s < LESSONS[this.state.l].slides.length-1 ? 'NEXT ➡️' : 'CHAT 💬'}
+          </button>
+        </div>
+      </div>
+    `;
+    this.speak(slide.s);
+    this.updateProgressBar();
+  },
+
+  navSlide(dir) {
+    const max = LESSONS[this.state.l].slides.length - 1;
+    if (dir === 1 && this.state.s < max) { this.state.s++; this.renderSlide(); }
+    else if (dir === -1 && this.state.s > 0) { this.state.s--; this.renderSlide(); }
+    else if (dir === 1 && this.state.s === max) { this.startChat(); }
+  },
+
+  startChat() {
+    this.state.mode = 'chat';
+    this.updateProgressBar();
+    document.getElementById('boardPanel').innerHTML = `
+      <div class="d-flex flex-column justify-content-center align-items-center h-100 bg-white p-4">
+        <div class="display-1 mb-3 anim-float">💬</div>
+        <h2 class="fw-bold text-primary">Let's Talk!</h2>
+        <p class="text-muted fs-5">I will ask you a question.</p>
+        <div class="badge bg-warning text-dark fs-6 mt-3">Press Microphone 🎤</div>
+      </div>
+    `;
+    this.chatStep();
+  },
+
+  chatStep() {
+    const q = LESSONS[this.state.l].chat[this.state.c];
+    this.addChat('ai', q.q);
+    this.speak(q.q);
+  },
+
+  handleSpeech(txt) {
+    if (this.state.mode !== 'chat') return;
+    this.addChat('user', txt);
+    const step = LESSONS[this.state.l].chat[this.state.c];
+    
+    // Fuzzy Check
+    const match = step.k.some(k => txt.toLowerCase().includes(k));
+    
+    if (match || txt.length > 2) { 
+      this.renderRobot('happy');
+      this.speak(step.s);
+      setTimeout(() => {
+        this.state.c++;
+        if (this.state.c < LESSONS[this.state.l].chat.length) {
+            this.chatStep(); 
+            this.updateProgressBar();
+        }
+        else this.startGrammar();
+      }, 2500);
+    } else {
+      this.renderRobot('surprised');
+      this.speak("Try again! " + step.f);
+    }
+  },
+
+  startGrammar() {
+    this.state.mode = 'grammar';
+    this.updateProgressBar();
+    const g = LESSONS[this.state.l].grammar;
+    let html = `<div class="h-100 overflow-auto p-4 bg-white text-center"><h2 class="fw-bold text-primary mb-3">Grammar Lab 🧪</h2>`;
+    
+    if(g && g.length > 0) {
+      g.forEach(rule => {
+        let blocks = rule.b.map(x => `<span class="g-block ${x.c}">${x.t}</span>`).join('');
+        html += `<div class="grammar-box"><div class="fw-bold text-secondary mb-1">${rule.t}</div><div class="small text-muted mb-2">${rule.r}</div><div>${blocks}</div></div>`;
+      });
+    } else {
+        html += `<div class="p-4 text-muted">Just practice! No new rules.</div>`;
+    }
+    
+    html += `<button class="btn btn-success btn-lg rounded-pill mt-4 shadow w-100 anim-pulse" onclick="app.startQuiz()">START QUIZ 🧠</button></div>`;
+    document.getElementById('boardPanel').innerHTML = html;
+    this.speak("Look at the magic sentence blocks! Then let's do a quiz.");
+  },
+
+  startQuiz() {
+    this.state.mode = 'quiz';
+    this.state.q = 0;
+    this.updateProgressBar();
+    this.renderQuiz();
+  },
+
+  renderQuiz() {
+    const q = LESSONS[this.state.l].quiz[this.state.q];
+    document.getElementById('boardPanel').innerHTML = `
+      <div class="d-flex flex-column justify-content-center h-100 p-4 bg-white text-center">
+        <div class="badge bg-info mb-3 fs-6">Question ${this.state.q+1}</div>
+        <h3 class="fw-bold text-dark mb-4">${q.q}</h3>
+        <div class="d-grid gap-3">
+          ${q.o.map((opt, i) => `<button class="btn btn-outline-primary p-3 fs-5 rounded-pill fw-bold text-start" onclick="app.ans(${i}, this)">${opt}</button>`).join('')}
+        </div>
+      </div>
+    `;
+    this.speak(q.q);
+  },
+
+  ans(i, btn) {
+    const q = LESSONS[this.state.l].quiz[this.state.q];
+    const btns = document.querySelectorAll('#boardPanel button');
+    btns.forEach(b => b.disabled = true);
+    
+    if (i === q.c) {
+      btn.className = "btn btn-success p-3 fs-5 rounded-pill fw-bold text-start text-white shadow";
+      this.state.score += 10;
+      this.updateScore();
+      this.renderRobot('happy');
+      this.speak("Correct! You are a star! 🌟");
+      setTimeout(() => {
+        if (this.state.q < LESSONS[this.state.l].quiz.length - 1) {
+          this.state.q++;
+          this.updateProgressBar();
+          this.renderQuiz();
+        } else {
+          this.finish();
+        }
+      }, 2000);
+    } else {
+      btn.className = "btn btn-danger p-3 fs-5 rounded-pill fw-bold text-start text-white";
+      this.renderRobot('surprised');
+      this.speak("Oops! Try again.");
+      setTimeout(() => {
+        // Retry logic could be here, or just move on. Let's move on for flow.
+        if (this.state.q < LESSONS[this.state.l].quiz.length - 1) {
+          this.state.q++;
+          this.updateProgressBar();
+          this.renderQuiz();
+        } else {
+          this.finish();
+        }
+      }, 2000);
+    }
+  },
+
+  finish() {
+    document.getElementById('lessonProgressBar').style.width = "100%";
+    if(!this.state.done.includes(this.state.l)) this.state.done.push(this.state.l);
+    this.save();
+    this.renderSidebar();
+    document.getElementById('boardPanel').innerHTML = `
+      <div class="d-flex flex-column justify-content-center align-items-center h-100 bg-success bg-opacity-10 text-center">
+        <div class="display-1 anim-pop">🏆</div>
+        <h2 class="fw-bold text-success mt-3">Lesson Complete!</h2>
+        <p class="fs-4">You earned points! ⭐</p>
+        <button class="btn btn-success btn-lg rounded-pill mt-4 shadow anim-pulse" onclick="app.startLesson(${Math.min(this.state.l+1, LESSONS.length-1)})">Next Adventure ➡️</button>
+      </div>
+    `;
+    this.speak("Congratulations! Lesson Complete!");
+  },
+
+  speak(txt) {
+    this.state.lastMsg = txt;
+    this.addChat('ai', txt);
+    window.speechSynthesis.cancel();
+    
+    // Remove emojis for speech engine so it doesn't say "Smiling Face with Heart Eyes"
+    const cleanTxt = txt.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+    
+    const u = new SpeechSynthesisUtterance(cleanTxt);
+    u.lang = 'en-US'; 
+    // 0.9 is clearer but not too slow (robotic). 1.0 is normal speed.
+    u.rate = 0.9; 
+    // 1.2 makes it sound young/friendly without being robotic
+    u.pitch = 1.2; 
+    
+    const voices = window.speechSynthesis.getVoices();
+    
+    // Advanced Voice Selection Strategy for "Natural Young Female"
+    let v = voices.find(voice => voice.name.includes("Google US English")); 
+    if(!v) v = voices.find(voice => voice.name.includes("Microsoft Zira"));
+    if(!v) v = voices.find(voice => voice.name.includes("Samantha"));
+    if(!v) v = voices.find(voice => voice.name.includes("Natural") && voice.lang.includes("en"));
+    if(!v) v = voices.find(voice => voice.lang === 'en-US'); // Fallback to any US English
+    
+    if(v) u.voice = v;
+
+    u.onstart = () => this.renderRobot('talking');
+    u.onend = () => this.renderRobot('happy');
+    window.speechSynthesis.speak(u);
+  },
+
+  toggleMic() {
+    if (!this.state.listening) {
+      try {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        this.recognition = new SpeechRecognition();
+        this.recognition.lang = 'en-US';
+        this.recognition.onstart = () => {
+          this.state.listening = true;
+          document.getElementById('micBtn').classList.add('mic-active');
+          this.renderRobot('listening');
+        };
+        this.recognition.onend = () => {
+          this.state.listening = false;
+          document.getElementById('micBtn').classList.remove('mic-active');
+          this.renderRobot('happy');
+        };
+        this.recognition.onresult = (e) => this.handleSpeech(e.results[0][0].transcript);
+        this.recognition.start();
+      } catch(e) { alert("Mic error or not supported."); }
+    } else {
+      this.recognition.stop();
+    }
+  },
+
+  addChat(sender, txt) {
+    const d = document.createElement('div');
+    d.className = `chat-bubble ${sender === 'user' ? 'chat-user' : 'chat-ai'}`;
+    d.innerHTML = txt;
+    const box = document.getElementById('chatBox');
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+  },
+
+  renderRobot(state) {
+    let eyes, mouth;
+    const color = "#334155";
+    if(state === 'happy') { eyes=`<path d="M35 45 Q40 35 45 45" stroke="${color}" stroke-width="4" fill="none"/><path d="M55 45 Q60 35 65 45" stroke="${color}" stroke-width="4" fill="none"/>`; mouth=`<path d="M35 65 Q50 80 65 65" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round"/>`; }
+    else if(state === 'talking') { eyes=`<circle cx="40" cy="45" r="5" fill="${color}"/><circle cx="60" cy="45" r="5" fill="${color}"/>`; mouth=`<rect x="40" y="65" width="20" height="10" rx="5" fill="${color}" class="anim-pulse"/>`; }
+    else if(state === 'listening') { eyes=`<circle cx="40" cy="45" r="5" fill="${color}"/><circle cx="60" cy="45" r="5" fill="${color}"/>`; mouth=`<circle cx="50" cy="70" r="5" fill="#0ea5e9" class="anim-pulse"/>`; }
+    else { eyes=`<circle cx="40" cy="40" r="6" fill="${color}"/><circle cx="60" cy="40" r="6" fill="${color}"/>`; mouth=`<circle cx="50" cy="70" r="8" fill="none" stroke="${color}" stroke-width="3"/>`; }
+    
+    document.getElementById('robotFace').innerHTML = `
+      <svg viewBox="0 0 100 100" class="w-100 h-100 drop-shadow">
+        <line x1="50" y1="15" x2="50" y2="0" stroke="#bae6fd" stroke-width="4"/><circle cx="50" cy="0" r="6" fill="#f43f5e" class="anim-pulse"/>
+        <rect x="15" y="15" width="70" height="75" rx="20" fill="#fff" stroke="#bae6fd" stroke-width="4"/>
+        <rect x="25" y="30" width="50" height="50" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+        <circle cx="20" cy="60" r="4" fill="#fda4af" opacity="0.6"/><circle cx="80" cy="60" r="4" fill="#fda4af" opacity="0.6"/>
+        ${eyes}${mouth}
+      </svg>`;
+  },
+
+  hint() { 
+    if(this.state.mode === 'chat') this.speak("Hint: " + LESSONS[this.state.l].chat[this.state.c].f); 
+    else this.speak("Listen and look at the screen! 👀");
+  },
+  
+  repeat() { this.speak(this.state.lastMsg); },
+  toggleSidebar() { 
+    document.getElementById('sidebar').classList.toggle('show'); 
+    document.getElementById('backdrop').classList.toggle('show');
+  },
+  
+  save() { localStorage.setItem('roboEmoji', JSON.stringify({s:this.state.score, d:this.state.done})); },
+  load() { 
+    const d = JSON.parse(localStorage.getItem('roboEmoji')); 
+    if(d) { this.state.score=d.s; this.state.done=d.d; this.updateScore(); }
+  },
+  updateScore() { document.getElementById('mobileScore').innerText = `⭐ ${this.state.score}`; },
+  resetProgress() { 
+    if(confirm("Reset?")) { localStorage.removeItem('roboEmoji'); location.reload(); } 
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
