@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Robo-Kanka Ultimate Emoji Academy (Secure)</title>
+  <title>Robo-Kanka Ultimate Emoji Academy (Secure & Full)</title>
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
@@ -17,248 +17,19 @@
       --bg-color: #f0f9ff;
     }
 
-    /* GLOBAL STYLES */
     body {
       background-color: var(--bg-color);
       font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      height: 100vh; /* Masaüstü için varsayılan */
-      overflow: hidden; /* Masaüstünde scroll olmasın */
+      height: 100vh;
+      /* Mobil tarayıcı adres çubuğu sorununu çözer */
+      height: 100dvh; 
+      overflow: hidden;
       display: flex;
       flex-direction: column;
+      margin: 0;
     }
 
-    /* =========================================
-       DESKTOP LAYOUT (PC) - FIXED
-       ========================================= */
-    @media (min-width: 992px) {
-      body {
-        height: 100vh;
-        overflow: hidden;
-      }
-      .app-container {
-        flex-grow: 1;
-        height: 100%; /* Konteyner tam boy */
-        padding: 20px !important;
-        overflow: hidden;
-      }
-      /* Masaüstünde satır ve sütunların tam boy olması şart */
-      .app-container > .row {
-        height: 100%; 
-      }
-      .col-lg-3, .col-lg-5, .col-lg-4 {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-      .h-100-responsive {
-        height: 100% !important;
-      }
-      .app-card {
-        height: 100%;
-        width: 100%;
-      }
-      .sidebar-col {
-        display: flex !important; /* Sidebar masaüstünde görünür */
-        flex-direction: column;
-        height: 100%;
-        position: relative; 
-        left: 0;
-        width: auto;
-        box-shadow: none;
-        z-index: 1;
-      }
-      .mobile-nav {
-        display: none !important;
-      }
-      /* Desktop Sizes */
-      #robotFace { width: 150px; height: 150px; }
-      .mic-btn-lg { width: 70px; height: 70px; font-size: 2rem; }
-      .slide-visual { font-size: 6rem; margin-bottom: 20px; }
-      .slide-text { font-size: 1.6rem; padding: 20px 30px; }
-    }
-
-    /* =========================================
-       MOBILE LAYOUT (Phone) - FIXED
-       ========================================= */
-    @media (max-width: 991.98px) {
-      body {
-        height: 100dvh; /* Mobil tarayıcılar için dinamik yükseklik */
-        overflow: hidden; 
-      }
-      .mobile-nav {
-        flex-shrink: 0;
-        padding: 5px 15px;
-        z-index: 1030;
-      }
-      
-      .app-container {
-        flex-grow: 1;
-        padding: 5px !important;
-        overflow: hidden;
-        height: calc(100dvh - 50px); /* Nav bar payı */
-      }
-
-      .row {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        gap: 8px; /* Paneller arası boşluk */
-        margin: 0;
-      }
-
-      /* Üst Panel: Robot ve Chat (Ekranın %55'i) */
-      .col-lg-5 {
-        flex: 55; 
-        height: auto;
-        min-height: 0;
-        padding: 0;
-        width: 100%;
-      }
-      
-      /* Alt Panel: Tahta (Ekranın %45'i) */
-      .col-lg-4 {
-        flex: 45;
-        height: auto;
-        min-height: 0;
-        padding: 0;
-        width: 100%;
-      }
-
-      .app-card {
-        height: 100%;
-        border-radius: 12px;
-      }
-
-      /* Robot Alanını Küçült */
-      .col-lg-5 .card-body .text-center:first-child {
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
-        background: none !important; /* Mobilde gradient kaldırılabilir */
-      }
-      
-      #robotFace {
-        width: 70px; /* Çok daha küçük robot */
-        height: 70px;
-      }
-      
-      #statusBadge {
-        font-size: 0.7rem;
-        padding: 1px 6px !important;
-        margin-top: 2px !important;
-      }
-
-      /* Chat Alanı */
-      .chat-box {
-        padding: 8px;
-      }
-      .chat-bubble {
-        padding: 6px 10px;
-        font-size: 0.85rem;
-        margin-bottom: 5px;
-        border-radius: 10px;
-      }
-
-      /* Butonlar */
-      .col-lg-5 .p-3.border-top {
-        padding: 5px !important;
-      }
-      
-      .mic-btn-lg {
-        width: 45px;
-        height: 45px;
-        font-size: 1.2rem;
-        border-width: 2px;
-      }
-      
-      .btn-info, .btn-warning {
-        width: 35px !important;
-        height: 35px !important;
-        padding: 0 !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      
-      .btn-info i, .btn-warning i {
-        font-size: 1rem !important;
-      }
-      
-      #micStatusText {
-        font-size: 0.65rem;
-        margin-top: 2px !important;
-      }
-
-      /* Akıllı Tahta Küçültme */
-      .slide-visual {
-        font-size: 3rem; /* Küçük emoji */
-        margin-bottom: 5px;
-      }
-      
-      .slide-text {
-        font-size: 1rem;
-        padding: 5px 10px;
-        margin-bottom: 2px;
-        border-radius: 10px;
-      }
-      
-      .slide-story {
-        font-size: 0.8rem;
-        margin-top: 2px;
-      }
-      
-      #boardPanel .mt-4 {
-        margin-top: 5px !important;
-      }
-      
-      #boardPanel .btn {
-        padding: 4px 10px;
-        font-size: 0.9rem !important;
-      }
-      
-      /* Grammar Box Mobile */
-      .grammar-box {
-        padding: 8px;
-        margin-top: 5px;
-      }
-      .g-block {
-        padding: 2px 6px;
-        font-size: 0.8rem;
-      }
-
-      /* Sidebar (Offcanvas) */
-      .sidebar-col {
-        position: fixed;
-        width: 260px;
-        top: 0; bottom: 0; left: -100%;
-        z-index: 1050;
-        transition: left 0.3s ease-in-out;
-        padding: 0;
-        box-shadow: 5px 0 20px rgba(0,0,0,0.2);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        background: white;
-      }
-      .sidebar-col.show {
-        left: 0;
-      }
-      
-      .backdrop {
-        position: fixed;
-        top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(0,0,0,0.5);
-        z-index: 1040;
-        display: none;
-      }
-      .backdrop.show {
-        display: block;
-      }
-    }
-
-    /* Common Components */
+    /* === COMMON COMPONENTS === */
     .custom-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: #93c5fd transparent; }
     .custom-scroll::-webkit-scrollbar { width: 6px; }
     .custom-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -266,13 +37,15 @@
 
     .app-card {
       background: white;
-      border-radius: 20px;
+      border-radius: 15px; /* Mobilde daha az yuvarlak köşe yer kazandırır */
       border: none;
-      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.15);
+      box-shadow: 0 4px 10px rgba(14, 165, 233, 0.1);
       display: flex;
       flex-direction: column;
       overflow: hidden;
       position: relative;
+      height: 100%;
+      width: 100%;
     }
 
     .lesson-item {
@@ -287,36 +60,33 @@
     }
     .lesson-item:hover { background-color: #e0f2fe; }
     .lesson-item.active { background-color: #fff; border-color: #0ea5e9; color: #0284c7; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15); }
-    .lesson-badge { font-size: 1.1rem; margin-right: 12px; min-width: 25px; text-align: center; }
-
-    .chat-box { flex-grow: 1; overflow-y: auto; background: #fff; padding: 15px; background-image: radial-gradient(#e0f2fe 1px, transparent 1px); background-size: 20px 20px; }
+    
+    .chat-box { flex-grow: 1; overflow-y: auto; padding: 10px; background-image: radial-gradient(#e0f2fe 1px, transparent 1px); background-size: 20px 20px; }
     .chat-bubble {
       max-width: 85%;
-      border-radius: 18px;
-      padding: 12px 16px;
-      margin-bottom: 10px;
-      font-size: 1rem;
-      line-height: 1.4;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      animation: slide-in-right 0.3s ease-out;
+      border-radius: 15px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.3;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      animation: popIn 0.3s;
     }
     .chat-ai { background: white; border: 1px solid #e0f2fe; color: #334155; align-self: flex-start; margin-right: auto; border-bottom-left-radius: 4px; }
     .chat-user { background: #0ea5e9; color: white; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 4px; }
 
-    .slide-visual { text-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    .slide-text { font-weight: 800; color: #1e293b; background: rgba(255,255,255,0.9); border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 2px solid #f1f5f9; display: inline-block; max-width: 95%; }
-    .slide-story { color: #64748b; font-weight: 600; display: block; }
+    .slide-story { color: #64748b; font-weight: 600; display: block; margin-top:5px; font-size: 0.9em; }
 
-    .grammar-box { background: #fff; border-radius: 15px; border: 1px solid #e2e8f0; text-align: center; }
-    .g-block { display: inline-block; border-radius: 8px; color: white; font-weight: bold; margin: 3px; }
+    .grammar-box { background: #fff; border-radius: 15px; border: 1px solid #e2e8f0; text-align: center; padding: 10px; margin-top: 5px; }
+    .g-block { display: inline-block; border-radius: 8px; color: white; font-weight: bold; margin: 2px; padding: 4px 8px; font-size: 0.9rem; }
     .gb-sub { background: #3b82f6; } .gb-verb { background: #ef4444; } .gb-obj { background: #22c55e; } .gb-adj { background: #f59e0b; } .gb-prep { background: #8b5cf6; }
 
     #robotFace { transition: transform 0.3s; }
     .mic-btn-lg {
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
-      border: 4px solid white;
+      box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
+      border: 3px solid white;
       transition: all 0.2s;
       background: linear-gradient(135deg, #0ea5e9, #0284c7);
       color: white;
@@ -330,6 +100,122 @@
     .progress-container { width: 100%; height: 6px; background-color: #f1f5f9; position: absolute; top: 0; left: 0; z-index: 10; }
     .progress-bar { height: 100%; background-color: var(--success-color); transition: width 0.3s ease; }
 
+    /* === LAYOUT FIXES FOR DESKTOP === */
+    @media (min-width: 992px) {
+      .app-container {
+        flex-grow: 1;
+        padding: 20px !important;
+        overflow: hidden;
+        height: 100%;
+      }
+      .row { height: 100%; }
+      .col-lg-3, .col-lg-5, .col-lg-4 {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .sidebar-col { display: flex !important; flex-direction: column; height: 100%; }
+      .mobile-nav { display: none !important; }
+      
+      /* Desktop Sizes */
+      #robotFace { width: 160px; height: 160px; }
+      .mic-btn-lg { width: 70px; height: 70px; font-size: 2rem; }
+      .slide-visual { font-size: 6rem; margin-bottom: 20px; text-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+      .slide-text { font-size: 1.6rem; padding: 20px 30px; font-weight: 800; color: #1e293b; background: rgba(255,255,255,0.9); border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 2px solid #f1f5f9; display: inline-block; max-width: 95%; }
+    }
+
+    /* === MOBILE LAYOUT (Compact Fit) === */
+    @media (max-width: 991.98px) {
+      .mobile-nav {
+        flex-shrink: 0;
+        height: 50px;
+        padding: 5px 15px;
+        z-index: 1030;
+      }
+      
+      .app-container {
+        padding: 5px !important;
+        height: calc(100dvh - 50px);
+        overflow: hidden; /* No scroll on container */
+        display: flex;
+        flex-direction: column;
+      }
+
+      .row {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 8px; /* Small gap */
+        margin: 0;
+        height: 100%;
+      }
+
+      /* Top Panel: Robot + Chat (55% height) */
+      .col-lg-5 {
+        flex: 55; 
+        height: 55%;
+        min-height: 0;
+        padding: 0;
+        width: 100%;
+      }
+      
+      /* Bottom Panel: Board (45% height) */
+      .col-lg-4 {
+        flex: 45;
+        height: 45%;
+        min-height: 0;
+        padding: 0;
+        width: 100%;
+      }
+
+      /* Compact Robot UI */
+      .col-lg-5 .text-center {
+        padding-top: 5px !important;
+        padding-bottom: 2px !important;
+      }
+      #robotFace { width: 80px; height: 80px; }
+      #statusBadge { font-size: 0.7rem; padding: 2px 8px !important; }
+      
+      /* Compact Controls */
+      .col-lg-5 .p-3.border-top { padding: 5px !important; }
+      .mic-btn-lg { width: 50px; height: 50px; font-size: 1.5rem; }
+      .btn-info, .btn-warning { width: 40px !important; height: 40px !important; padding: 0 !important; }
+      .btn-info i, .btn-warning i { font-size: 1.2rem !important; }
+      #micStatusText { display: none; } /* Save space */
+
+      /* Compact Board UI */
+      .slide-visual { font-size: 3.5rem; margin-bottom: 5px; text-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+      .slide-text { font-size: 1.1rem; padding: 8px 15px; margin-bottom: 5px; font-weight: 800; color: #1e293b; background: rgba(255,255,255,0.9); border-radius: 15px; border: 1px solid #f1f5f9; display: inline-block; max-width: 98%; }
+      #boardPanel .p-4 { padding: 10px !important; }
+      #boardPanel .mt-4 { margin-top: 5px !important; }
+      
+      /* Sidebar Offcanvas */
+      .sidebar-col {
+        position: fixed;
+        width: 280px;
+        top: 0; bottom: 0; left: -320px;
+        z-index: 1050;
+        background: white;
+        transition: left 0.3s;
+        padding: 0;
+        box-shadow: 5px 0 20px rgba(0,0,0,0.2);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .sidebar-col.show { left: 0; }
+      .backdrop {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.5);
+        z-index: 1040;
+        display: none;
+      }
+      .backdrop.show { display: block; }
+    }
+
+    /* Animations */
     @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
     @keyframes pulse-big { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
@@ -342,47 +228,37 @@
     .anim-shake { animation: shake 1.5s infinite; }
     .anim-pulse { animation: pulse-big 1.2s infinite; }
     .anim-spin { animation: spin-slow 10s infinite linear; }
-    .anim-pop { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .anim-error { animation: error-shake 0.3s; }
   </style>
 </head>
 <body>
 
-<!-- Login / Start Screen -->
+<!-- Login -->
 <div id="startOverlay">
   <div class="login-box">
-    <div class="display-1 mb-3 animate-bounce">🤖</div>
+    <div class="display-1 mb-3 anim-float">🤖</div>
     <h1 class="h3 fw-bold text-primary mb-1">Robo-Kanka</h1>
-    <p class="text-secondary small mb-4">Ultimate Emoji Academy</p>
-    
-    <div class="mb-3">
-      <input type="password" id="passwordInput" class="form-control form-control-lg text-center rounded-pill bg-light border-0" placeholder="Password">
-    </div>
+    <p class="text-secondary small mb-4">Ultimate Emoji Academy 🎓</p>
+    <div class="mb-3"><input type="password" id="passwordInput" class="form-control form-control-lg text-center rounded-pill bg-light border-0" placeholder="Password"></div>
     <div id="loginError" class="text-danger fw-bold small mb-3" style="display:none;">🚫 Incorrect!</div>
-    
-    <button class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm" onclick="app.checkLogin()">
-      LOGIN 🚀
-    </button>
+    <button class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm" onclick="app.checkLogin()">LOGIN 🚀</button>
   </div>
-  <div class="mt-4 text-muted small"><i class="bi bi-lock-fill"></i> Secure Access (2244TAYLAN)</div>
+  <div class="mt-4 text-muted small"><i class="bi bi-lock-fill"></i> 2244TAYLAN</div>
 </div>
 
 <!-- Mobile Header -->
-<nav class="mobile-nav d-lg-none d-flex justify-content-between align-items-center">
-  <button class="btn btn-light rounded-circle shadow-sm text-primary" onclick="app.toggleSidebar()">
-    <i class="bi bi-list fs-3"></i>
-  </button>
+<nav class="mobile-nav d-lg-none d-flex justify-content-between align-items-center bg-white p-2 shadow-sm sticky-top">
+  <button class="btn btn-light rounded-circle shadow-sm text-primary" onclick="app.toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
   <span class="fw-bold text-primary fs-5">Robo-Kanka</span>
   <span class="badge bg-warning text-dark rounded-pill" id="mobileScore">⭐ 0</span>
 </nav>
-
-<!-- Mobile Menu Backdrop -->
 <div class="backdrop" id="backdrop" onclick="app.toggleSidebar()"></div>
 
+<!-- Main App -->
 <div class="app-container container-fluid" id="mainContent" style="filter: blur(5px);">
   <div class="row g-3">
     
-    <!-- LEFT SIDEBAR -->
+    <!-- LEFT: Menu -->
     <div class="col-lg-3 sidebar-col" id="sidebar">
       <div class="app-card">
         <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-white">
@@ -398,21 +274,15 @@
       </div>
     </div>
 
-    <!-- MIDDLE COLUMN: Robot & Chat -->
+    <!-- MIDDLE: Robot -->
     <div class="col-lg-5">
       <div class="app-card h-100-responsive">
         <div class="card-body p-0 d-flex flex-column h-100">
-          
-          <!-- Robot -->
           <div class="text-center pt-3 pb-2 bg-gradient-to-b from-blue-50 to-white flex-shrink-0">
             <div id="robotFace" class="mx-auto"></div>
             <div class="mt-2"><span class="badge bg-success bg-opacity-25 text-success border border-success rounded-pill px-3 py-1" id="statusBadge">Ready!</span></div>
           </div>
-
-          <!-- Chat -->
           <div id="chatBox" class="chat-box custom-scroll"></div>
-
-          <!-- Controls -->
           <div class="p-3 bg-white border-top flex-shrink-0">
             <div class="d-flex align-items-center justify-content-center gap-4">
               <button class="btn btn-info rounded-circle p-3 text-white shadow" style="width:55px;height:55px;" onclick="app.repeat()" title="Repeat"><i class="bi bi-arrow-repeat fs-4"></i></button>
@@ -425,19 +295,13 @@
       </div>
     </div>
 
-    <!-- RIGHT COLUMN: Smart Board -->
+    <!-- RIGHT: Board -->
     <div class="col-lg-4">
       <div class="app-card border-top border-5 border-info h-100-responsive position-relative">
-        <div class="progress-container">
-          <div id="lessonProgressBar" class="progress-bar" style="width: 0%"></div>
-        </div>
+        <div class="progress-container"><div id="lessonProgressBar" class="progress-bar" style="width: 0%"></div></div>
         <div id="boardPanel" class="card-body p-0 h-100 position-relative d-flex flex-column">
-          <!-- Content via JS -->
           <div class="d-flex h-100 justify-content-center align-items-center text-muted opacity-25">
-            <div class="text-center">
-              <i class="bi bi-easel display-1"></i>
-              <p class="fs-5 fw-bold">Smart Board</p>
-            </div>
+            <div class="text-center"><i class="bi bi-easel display-1"></i><p class="fs-5 fw-bold">Smart Board</p></div>
           </div>
         </div>
       </div>
@@ -447,66 +311,54 @@
 </div>
 
 <script>
-/**
- * LESSON DATA
- */
+// FULL 40 LESSONS CONTENT
 const LESSONS = [
-  // --- UNIT 1 ---
-  {
-    title: "1. Hello Friends! 👋",
-    slides: [
-      {v:"👋", t:"Hello!", s:"Hello! I am Robo. 👋", a:"anim-shake", c:"#f0f9ff"},
-      {v:"🌞", t:"Good Morning", s:"Sun is up. Good Morning! 🌄", a:"anim-float", c:"#fff7ed"},
-      {v:"🌛", t:"Good Night", s:"Moon is up. Good Night! 💤", a:"anim-pulse", c:"#e0e7ff"},
-      {v:"😊", t:"How are you?", s:"Are you happy? 😊", a:"anim-pop", c:"#f0fdf4"},
-      {v:"👋", t:"Goodbye", s:"See you later! 👋", a:"anim-float", c:"#fff"}
-    ],
-    chat: [
-      {q:"What is your name?", k:["name","is","i am"], s:"Nice name! ✨", f:"Say: My name is..."},
-      {q:"How are you?", k:["fine","good","happy"], s:"I am happy too! 😊", f:"Say: I am Happy!"}
-    ],
-    grammar: [{t:"Intro", r:"My Name + is...", b:[{t:"My Name",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Robo",c:"gb-obj"}]}],
-    quiz: [{q:"Sun is up...", o:["Good Morning","Good Night"], c:0}, {q:"My ... is Ali", o:["Name","Hello"], c:0}]
-  },
-  {
-    title: "2. Colors 🎨",
-    slides: [
-      {v:"🎨", t:"Colors", s:"Let's paint! 🖌️", a:"anim-spin", c:"#fff"},
-      {v:"🍎", t:"Red", s:"Red Apple 🍎", a:"anim-pulse", c:"#fef2f2"},
-      {v:"🚙", t:"Blue", s:"Blue Car 🚙", a:"anim-float", c:"#eff6ff"},
-      {v:"🐸", t:"Green", s:"Green Frog 🐸", a:"anim-shake", c:"#f0fdf4"},
-      {v:"🍌", t:"Yellow", s:"Yellow Banana 🍌", a:"anim-float", c:"#fefce8"},
-      {v:"🍊", t:"Orange", s:"Orange Fruit 🍊", a:"anim-pop", c:"#fff7ed"}
-    ],
-    chat: [
-      {q:"Favorite color?", k:["red","blue","green","yellow"], s:"Nice color! 🌈", f:"Red or Blue?"},
-      {q:"Color of banana?", k:["yellow"], s:"Yes, Yellow! 🍌", f:"Yellow."}
-    ],
-    grammar: [{t:"Desc", r:"The + Noun + is + Color", b:[{t:"The Apple",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Red",c:"gb-adj"}]}],
-    quiz: [{q:"Yellow fruit?", o:["Banana","Apple"], c:0}, {q:"Grass is...", o:["Red","Green"], c:1}]
-  },
-  // ... (Full 40 lessons structure supported, shortened here for file limit, but logic handles all)
-  { title: "3. Counting 1-10 🔢", slides:[{v:"1️⃣",t:"One",s:"One"},{v:"2️⃣",t:"Two",s:"Two"},{v:"3️⃣",t:"Three",s:"Three"},{v:"5️⃣",t:"Five",s:"High five!"},{v:"🔟",t:"Ten",s:"Ten!"}], chat:[{q:"1, 2...?",k:["3","three"],s:"Yes 3",f:"Three"},{q:"Fingers?",k:["5","five"],s:"Five!",f:"Five"}], grammar:[{t:"Count",r:"Num + Noun",b:[{t:"Three",c:"gb-adj"},{t:"Cats",c:"gb-obj"}]}], quiz:[{q:"1+1?",o:["2","3"],c:0},{q:"Ten is...",o:["10","1"],c:0}] },
-  { title: "4. Family 👨‍👩‍👧", slides:[{v:"👩",t:"Mom",s:"Super Mom"},{v:"👨",t:"Dad",s:"Super Dad"},{v:"👶",t:"Baby",s:"Cute baby"}], chat:[{q:"Who is dad?",k:["father"],s:"Yes",f:"Father"},{q:"Mom?",k:["mother"],s:"Yes",f:"Mother"}], grammar:[{t:"Poss",r:"My + Person",b:[{t:"My",c:"gb-adj"},{t:"Mom",c:"gb-obj"}]}], quiz:[{q:"Dad is...",o:["Father","Sister"],c:0},{q:"Baby...",o:["Sleeps","Drives"],c:0}] },
-  { title: "5. Animals 🦁", slides:[{v:"🦁",t:"Lion",s:"Roar!"},{v:"🐘",t:"Elephant",s:"Big nose"},{v:"🐵",t:"Monkey",s:"Ooh ooh"}], chat:[{q:"Says Roar?",k:["lion"],s:"Scary!",f:"Lion"}], grammar:[{t:"Desc",r:"It is + Adj",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Big",c:"gb-adj"}]}], quiz:[{q:"Big animal?",o:["Ant","Elephant"],c:1}] },
-  { title: "6. Body 👃", slides:[{v:"👃",t:"Nose",s:"Smell"},{v:"👀",t:"Eyes",s:"See"},{v:"👂",t:"Ears",s:"Hear"}], chat:[{q:"Smell with?",k:["nose"],s:"Good",f:"Nose"}], grammar:[{t:"Func",r:"I + Verb + with",b:[{t:"I",c:"gb-sub"},{t:"See",c:"gb-verb"},{t:"with Eyes",c:"gb-obj"}]}], quiz:[{q:"See with...",o:["Ears","Eyes"],c:1}] },
-  { title: "7. Clothes 👕", slides:[{v:"👕",t:"Shirt",s:"Cool shirt"},{v:"🧢",t:"Hat",s:"Sun hat"}], chat:[{q:"On head?",k:["hat"],s:"Yes",f:"Hat"}], grammar:[{t:"Wear",r:"I + wear",b:[{t:"I",c:"gb-sub"},{t:"wear",c:"gb-verb"},{t:"Hat",c:"gb-obj"}]}], quiz:[{q:"On feet?",o:["Hat","Shoes"],c:1}] },
-  { title: "8. Fruit 🍎", slides:[{v:"🍎",t:"Apple",s:"Red"},{v:"🍌",t:"Banana",s:"Yellow"}], chat:[{q:"Red fruit?",k:["apple"],s:"Yum",f:"Apple"}], grammar:[{t:"Like",r:"I + Like",b:[{t:"I",c:"gb-sub"},{t:"Like",c:"gb-verb"},{t:"Fruit",c:"gb-obj"}]}], quiz:[{q:"Yellow?",o:["Banana","Grape"],c:0}] },
-  { title: "9. Food 🍕", slides:[{v:"🍕",t:"Pizza",s:"Yum"},{v:"🍔",t:"Burger",s:"Big"}], chat:[{q:"Hungry?",k:["yes"],s:"Eat!",f:"Yes"}], grammar:[{t:"Want",r:"I + Want",b:[{t:"I",c:"gb-sub"},{t:"Want",c:"gb-verb"},{t:"Pizza",c:"gb-obj"}]}], quiz:[{q:"Drink?",o:["Water","Pizza"],c:0}] },
-  { title: "10. House 🏠", slides:[{v:"🏠",t:"Home",s:"My house"},{v:"🛏️",t:"Bed",s:"Sleep"}], chat:[{q:"Sleep where?",k:["bed"],s:"Zzz",f:"Bed"}], grammar:[{t:"Loc",r:"In + Room",b:[{t:"In",c:"gb-prep"},{t:"Room",c:"gb-obj"}]}], quiz:[{q:"Cook in...",o:["Kitchen","Bath"],c:0}] },
-  // ... (Imagine full 40 list here) ...
+  // UNIT 1: BASICS
+  { title: "1. Hello! 👋", slides:[{v:"👋",t:"Hello",s:"Hello! Wave your hand!"},{v:"🌞",t:"Good Morning",s:"Sun is up!"},{v:"🌛",t:"Good Night",s:"Moon is up."},{v:"😊",t:"I am Happy",s:"Big smile!"}], chat:[{q:"What is your name?",k:["name","is"],s:"Nice name!",f:"My name is..."},{q:"How are you?",k:["fine","good","happy"],s:"Great!",f:"I am happy."}], grammar:[{t:"Intro",r:"My Name + is",b:[{t:"My Name",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Robo",c:"gb-obj"}]}], quiz:[{q:"Sun up?",o:["Morning","Night"],c:0}] },
+  { title: "2. Colors 🎨", slides:[{v:"🍎",t:"Red",s:"Red Apple"},{v:"🚙",t:"Blue",s:"Blue Car"},{v:"🐸",t:"Green",s:"Green Frog"},{v:"🍌",t:"Yellow",s:"Yellow Banana"}], chat:[{q:"Color of sun?",k:["yellow"],s:"Yes!",f:"Yellow"},{q:"Color of grass?",k:["green"],s:"Correct",f:"Green"}], grammar:[{t:"Desc",r:"It + is + Color",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Red",c:"gb-adj"}]}], quiz:[{q:"Yellow fruit?",o:["Banana","Apple"],c:0}] },
+  { title: "3. Numbers 🔢", slides:[{v:"1️⃣",t:"One",s:"One Lion"},{v:"2️⃣",t:"Two",s:"Two Eyes"},{v:"3️⃣",t:"Three",s:"Three Balls"},{v:"5️⃣",t:"Five",s:"High Five"}], chat:[{q:"1, 2...?",k:["3","three"],s:"Yes 3",f:"Three"},{q:"Fingers?",k:["5","five"],s:"Five!",f:"Five"}], grammar:[{t:"Count",r:"Num + Noun",b:[{t:"Three",c:"gb-adj"},{t:"Cats",c:"gb-obj"}]}], quiz:[{q:"1+1?",o:["2","3"],c:0}] },
+  { title: "4. Family 👨‍👩‍👧", slides:[{v:"👩",t:"Mom",s:"Super Mom"},{v:"👨",t:"Dad",s:"Super Dad"},{v:"👶",t:"Baby",s:"Cute baby"},{v:"👵",t:"Grandma",s:"Grandma"}], chat:[{q:"Who is dad?",k:["father"],s:"Yes",f:"Father"},{q:"Mom?",k:["mother"],s:"Yes",f:"Mother"}], grammar:[{t:"Poss",r:"My + Person",b:[{t:"My",c:"gb-adj"},{t:"Mom",c:"gb-obj"}]}], quiz:[{q:"Dad is...",o:["Father","Sister"],c:0}] },
+  { title: "5. Animals 🦁", slides:[{v:"🦁",t:"Lion",s:"Roar!"},{v:"🐘",t:"Elephant",s:"Big nose"},{v:"🐵",t:"Monkey",s:"Ooh ooh"},{v:"🦒",t:"Giraffe",s:"Very tall"}], chat:[{q:"Says Roar?",k:["lion"],s:"Scary!",f:"Lion"}], grammar:[{t:"Desc",r:"It is + Adj",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Big",c:"gb-adj"}]}], quiz:[{q:"Big animal?",o:["Ant","Elephant"],c:1}] },
+  { title: "6. Body 👃", slides:[{v:"👃",t:"Nose",s:"Smell"},{v:"👀",t:"Eyes",s:"See"},{v:"👂",t:"Ears",s:"Hear"},{v:"👄",t:"Mouth",s:"Taste"}], chat:[{q:"Smell with?",k:["nose"],s:"Good",f:"Nose"}], grammar:[{t:"Func",r:"I + Verb + with",b:[{t:"I",c:"gb-sub"},{t:"See",c:"gb-verb"},{t:"with Eyes",c:"gb-obj"}]}], quiz:[{q:"See with...",o:["Ears","Eyes"],c:1}] },
+  { title: "7. Clothes 👕", slides:[{v:"👕",t:"Shirt",s:"Cool shirt"},{v:"🧢",t:"Hat",s:"Sun hat"},{v:"👖",t:"Jeans",s:"Blue pants"},{v:"👗",t:"Dress",s:"Pretty dress"}], chat:[{q:"On head?",k:["hat"],s:"Yes",f:"Hat"}], grammar:[{t:"Wear",r:"I + wear",b:[{t:"I",c:"gb-sub"},{t:"wear",c:"gb-verb"},{t:"Hat",c:"gb-obj"}]}], quiz:[{q:"On feet?",o:["Hat","Shoes"],c:1}] },
+  { title: "8. Fruit 🍎", slides:[{v:"🍎",t:"Apple",s:"Red"},{v:"🍌",t:"Banana",s:"Yellow"},{v:"🍇",t:"Grape",s:"Purple"},{v:"🍋",t:"Lemon",s:"Sour!"}], chat:[{q:"Red fruit?",k:["apple"],s:"Yum",f:"Apple"}], grammar:[{t:"Like",r:"I + Like",b:[{t:"I",c:"gb-sub"},{t:"Like",c:"gb-verb"},{t:"Fruit",c:"gb-obj"}]}], quiz:[{q:"Yellow?",o:["Banana","Grape"],c:0}] },
+  { title: "9. Food 🍕", slides:[{v:"🍕",t:"Pizza",s:"Yum"},{v:"🍔",t:"Burger",s:"Big"},{v:"🍦",t:"Ice Cream",s:"Cold"},{v:"🥗",t:"Salad",s:"Healthy"}], chat:[{q:"Hungry?",k:["yes"],s:"Eat!",f:"Yes"}], grammar:[{t:"Want",r:"I + Want",b:[{t:"I",c:"gb-sub"},{t:"Want",c:"gb-verb"},{t:"Pizza",c:"gb-obj"}]}], quiz:[{q:"Drink?",o:["Water","Pizza"],c:0}] },
+  { title: "10. House 🏠", slides:[{v:"🏠",t:"Home",s:"My house"},{v:"🛏️",t:"Bed",s:"Sleep"},{v:"🛁",t:"Bath",s:"Wash"},{v:"🍳",t:"Kitchen",s:"Cook"}], chat:[{q:"Sleep where?",k:["bed"],s:"Zzz",f:"Bed"}], grammar:[{t:"Loc",r:"In + Room",b:[{t:"In",c:"gb-prep"},{t:"Room",c:"gb-obj"}]}], quiz:[{q:"Cook in...",o:["Kitchen","Bath"],c:0}] },
+  
+  // UNIT 2: SCHOOL & ACTIONS
+  { title: "11. School Objects 🎒", slides:[{v:"🎒",t:"Bag",s:"Put books in bag."}, {v:"✏️",t:"Pencil",s:"Write with pencil."}, {v:"📚",t:"Book",s:"Read a book."}, {v:"✂️",t:"Scissors",s:"Cut paper."}, {v:"🏫",t:"School",s:"We learn here."}, {v:"📏",t:"Ruler",s:"Measure lines."}], chat:[{q:"Write with?",k:["pencil","pen"],s:"Good job!",f:"Pencil"},{q:"Read a...?",k:["book"],s:"Smart!",f:"Book"}], grammar:[{t:"Obj",r:"This is + a + Noun",b:[{t:"This",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"a Pen",c:"gb-obj"}]}], quiz:[{q:"Cut with...",o:["Scissors","Ruler"],c:0}] },
+  { title: "12. Actions I 🏃", slides:[{v:"🏃",t:"Run",s:"Run fast!"}, {v:"🚶",t:"Walk",s:"Walk slow."}, {v:"🤸",t:"Jump",s:"Jump high!"}, {v:"🏊",t:"Swim",s:"Swim in water."}, {v:"🧘",t:"Sit",s:"Sit down."}, {v:"🧍",t:"Stand",s:"Stand up."}], chat:[{q:"Can you jump?",k:["yes"],s:"Boing!",f:"Yes"},{q:"Fish can...?",k:["swim"],s:"Splash",f:"Swim"}], grammar:[{t:"Ability",r:"I + Can + Verb",b:[{t:"I",c:"gb-sub"},{t:"Can",c:"gb-verb"},{t:"Run",c:"gb-obj"}]}], quiz:[{q:"Opposite of Run?",o:["Walk","Fly"],c:0}] },
+  { title: "13. Daily Routine ☀️", slides:[{v:"🥱",t:"Wake up",s:"Open eyes."}, {v:"🦷",t:"Brush",s:"Clean teeth."}, {v:"🚿",t:"Shower",s:"Wash body."}, {v:"👗",t:"Dress",s:"Put on clothes."}, {v:"🍳",t:"Eat",s:"Breakfast time."}, {v:"🚌",t:"Go",s:"Go to school."}], chat:[{q:"First thing?",k:["wake"],s:"Good morning",f:"Wake up"},{q:"Clean teeth with?",k:["brush"],s:"Sparkle",f:"Brush"}], grammar:[{t:"Routine",r:"I + Verb",b:[{t:"I",c:"gb-sub"},{t:"Wake up",c:"gb-verb"}]}], quiz:[{q:"Morning meal?",o:["Breakfast","Dinner"],c:0}] },
+  { title: "14. Plurals 🐈🐈", slides:[{v:"🐈",t:"Cat",s:"One cat."}, {v:"🐈🐈",t:"Cats",s:"Two cats (s)."}, {v:"🚌",t:"Bus",s:"One bus."}, {v:"🚌🚌",t:"Buses",s:"Two buses (es)."}, {v:"📦",t:"Box",s:"One box."}, {v:"📦📦",t:"Boxes",s:"Many boxes (es)."}], chat:[{q:"One dog, two...?",k:["dogs"],s:"Yes S",f:"Dogs"},{q:"One bus, two...?",k:["buses"],s:"Yes ES",f:"Buses"}], grammar:[{t:"Plural",r:"Noun + s/es",b:[{t:"One",c:"gb-adj"},{t:"Cat",c:"gb-sub"},{t:"Two",c:"gb-adj"},{t:"Cats",c:"gb-sub"}]}], quiz:[{q:"3...",o:["Bird","Birds"],c:1}] },
+  { title: "15. This / That 👉", slides:[{v:"👇",t:"This",s:"This apple (near)."}, {v:"👉",t:"That",s:"That star (far)."}, {v:"👇🐶",t:"This Dog",s:"My dog here."}, {v:"👉🐱",t:"That Cat",s:"Your cat there."}, {v:"👇✏️",t:"This Pen",s:"In my hand."}, {v:"👉✈️",t:"That Plane",s:"In the sky."}], chat:[{q:"Is the sun This or That?",k:["that"],s:"Far away",f:"That"},{q:"My nose is...",k:["this"],s:"Near",f:"This"}], grammar:[{t:"Pointer",r:"This (Near) / That (Far)",b:[{t:"This",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"my Pen",c:"gb-obj"}]}], quiz:[{q:"Far away is...",o:["That","This"],c:0}] },
+  { title: "16. Adjectives 🐘", slides:[{v:"🐘",t:"Big",s:"Elephant is big."}, {v:"🐜",t:"Small",s:"Ant is small."}, {v:"🔥",t:"Hot",s:"Fire is hot."}, {v:"❄️",t:"Cold",s:"Ice is cold."}, {v:"🚀",t:"Fast",s:"Rocket is fast."}, {v:"🐢",t:"Slow",s:"Turtle is slow."}], chat:[{q:"Mouse is?",k:["small"],s:"Tiny",f:"Small"},{q:"Ice cream is?",k:["cold"],s:"Brr",f:"Cold"}], grammar:[{t:"Desc",r:"It + is + Adj",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Big",c:"gb-adj"}]}], quiz:[{q:"Whale?",o:["Big","Small"],c:0}] },
+  { title: "17. Feelings 😊", slides:[{v:"😊",t:"Happy",s:"I smile."}, {v:"😢",t:"Sad",s:"I cry."}, {v:"😡",t:"Angry",s:"I am mad."}, {v:"😴",t:"Tired",s:"I want sleep."}, {v:"😨",t:"Scared",s:"I am afraid."}, {v:"🤣",t:"Funny",s:"I laugh."}], chat:[{q:"Are you happy?",k:["yes"],s:"Smile!",f:"Yes"},{q:"Ghost is...",k:["scary"],s:"Boo!",f:"Scary"}], grammar:[{t:"Feel",r:"I + am + Adj",b:[{t:"I",c:"gb-sub"},{t:"am",c:"gb-verb"},{t:"Happy",c:"gb-adj"}]}], quiz:[{q:"Crying means...",o:["Sad","Happy"],c:0}] },
+  { title: "18. Jobs 👮", slides:[{v:"👮",t:"Police",s:"Helps people."}, {v:"👨‍⚕️",t:"Doctor",s:"Cures sick."}, {v:"👨‍🏫",t:"Teacher",s:"Teaches school."}, {v:"👨‍🍳",t:"Cook",s:"Makes food."}, {v:"👨‍🚒",t:"Fireman",s:"Fights fire."}, {v:"🧑‍🌾",t:"Farmer",s:"Grows food."}], chat:[{q:"Help sick?",k:["doctor"],s:"Yes",f:"Doctor"},{q:"Makes food?",k:["cook","chef"],s:"Yum",f:"Cook"}], grammar:[{t:"Job",r:"He/She + is + a + Job",b:[{t:"He",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"a Cook",c:"gb-obj"}]}], quiz:[{q:"Works in kitchen?",o:["Cook","Police"],c:0}] },
+  { title: "19. Weather ☁️", slides:[{v:"☀️",t:"Sunny",s:"Wear hat."}, {v:"🌧️",t:"Rainy",s:"Take umbrella."}, {v:"☁️",t:"Cloudy",s:"No sun."}, {v:"❄️",t:"Snowy",s:"Make snowman."}, {v:"💨",t:"Windy",s:"Fly kite."}, {v:"⛈️",t:"Stormy",s:"Boom!"}], chat:[{q:"Is it raining?",k:["no","yes"],s:"Look outside",f:"Yes/No"},{q:"Hot weather?",k:["sunny"],s:"Beach time",f:"Sunny"}], grammar:[{t:"Weather",r:"It + is + Adj",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Sunny",c:"gb-adj"}]}], quiz:[{q:"Fly kite when...",o:["Windy","Rainy"],c:0}] },
+  { title: "20. Days of Week 📅", slides:[{v:"1️⃣",t:"Monday",s:"First day."}, {v:"2️⃣",t:"Tuesday",s:"Second day."}, {v:"3️⃣",t:"Wednesday",s:"Middle."}, {v:"4️⃣",t:"Thursday",s:"Almost there."}, {v:"5️⃣",t:"Friday",s:"Last school day."}, {v:"🎉",t:"Weekend",s:"Sat & Sun!"}], chat:[{q:"School starts?",k:["monday"],s:"Yes",f:"Monday"},{q:"Rest days?",k:["weekend","sunday"],s:"Play!",f:"Weekend"}], grammar:[{t:"Time",r:"Today + is + Day",b:[{t:"Today",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Friday",c:"gb-obj"}]}], quiz:[{q:"Days in week?",o:["7","5"],c:0}] },
+  
+  // --- UNIT 3: INTERMEDIATE CONCEPTS ---
+  { title: "21. Four Seasons 🍂", slides:[{v:"❄️",t:"Winter",s:"Snow and cold."}, {v:"🌸",t:"Spring",s:"Flowers bloom."}, {v:"☀️",t:"Summer",s:"Hot sun."}, {v:"🍂",t:"Autumn",s:"Leaves fall."}, {v:"☃️",t:"Snowman",s:"Build in winter."}, {v:"🏖️",t:"Beach",s:"Swim in summer."}], chat:[{q:"When is it hot?",k:["summer"],s:"Ice cream time!",f:"Summer"},{q:"When do flowers grow?",k:["spring"],s:"Lovely",f:"Spring"}], grammar:[{t:"Season",r:"In + Season",b:[{t:"In",c:"gb-prep"},{t:"Summer",c:"gb-obj"}]}], quiz:[{q:"Snow in...",o:["Winter","Summer"],c:0}] },
+  { title: "22. Time ⏰", slides:[{v:"🕘",t:"9:00",s:"Nine O'clock."}, {v:"🕛",t:"12:00",s:"Lunch time."}, {v:"🕒",t:"3:00",s:"Play time."}, {v:"🕕",t:"6:00",s:"Dinner time."}, {v:"🕤",t:"9:30",s:"Sleep time."}, {v:"⌚",t:"Watch",s:"On your arm."}], chat:[{q:"What time is lunch?",k:["12","twelve"],s:"Yum",f:"12"},{q:"Tells time?",k:["clock","watch"],s:"Tick tock",f:"Clock"}], grammar:[{t:"Time",r:"It + is + Time",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Five",c:"gb-obj"}]}], quiz:[{q:"Sleep at...",o:["Night","Morning"],c:0}] },
+  { title: "23. Actions 2 🏊", slides:[{v:"🏊",t:"Swim",s:"Pool fun."}, {v:"🚲",t:"Bike",s:"Ride bike."}, {v:"🧗",t:"Climb",s:"Go up tree."}, {v:"🎨",t:"Paint",s:"Use colors."}, {v:"🎤",t:"Sing",s:"La la la."}, {v:"🍳",t:"Cook",s:"Make food."}], chat:[{q:"Can you sing?",k:["yes","no"],s:"La la la",f:"Yes"},{q:"Ride a...?",k:["bike"],s:"Helmet on",f:"Bike"}], grammar:[{t:"Do",r:"I + Verb",b:[{t:"I",c:"gb-sub"},{t:"Swim",c:"gb-verb"}]}], quiz:[{q:"In pool we...",o:["Swim","Fly"],c:0}] },
+  { title: "24. Can / Can't 🦅", slides:[{v:"🦅",t:"Fly",s:"Birds CAN fly."}, {v:"🐧",t:"No Fly",s:"Penguins CAN'T."}, {v:"🐟",t:"Swim",s:"Fish CAN swim."}, {v:"🐈",t:"No Swim",s:"Cats CAN'T swim."}, {v:"🏃",t:"Run",s:"I CAN run."}, {v:"🚙",t:"Drive",s:"I CAN'T drive."}], chat:[{q:"Can pig fly?",k:["no"],s:"Funny!",f:"No"},{q:"Can you read?",k:["yes"],s:"Good",f:"Yes"}], grammar:[{t:"Able",r:"Can + Verb",b:[{t:"I",c:"gb-sub"},{t:"Can",c:"gb-verb"},{t:"Read",c:"gb-obj"}]}], quiz:[{q:"Fish...",o:["Swim","Walk"],c:0}] },
+  { title: "25. Yummy/Yuck 🤢", slides:[{v:"😋",t:"Yum",s:"I like it!"}, {v:"🤢",t:"Yuck",s:"I hate it!"}, {v:"🥦",t:"Veggie",s:"Good for you."}, {v:"🍬",t:"Candy",s:"Sweet treat."}, {v:"🕷️",t:"Spider",s:"Don't eat!"}, {v:"❤️",t:"Love",s:"Very much."}], chat:[{q:"Like pizza?",k:["yes","yum"],s:"Me too",f:"Yes"},{q:"Eat spider?",k:["no","yuck"],s:"Eww",f:"No"}], grammar:[{t:"Like",r:"I + Like + Obj",b:[{t:"I",c:"gb-sub"},{t:"Like",c:"gb-verb"},{t:"Pizza",c:"gb-obj"}]}], quiz:[{q:"Chocolate is...",o:["Yum","Yuck"],c:0}] },
+  { title: "26. -Ing Now 🏃", slides:[{v:"🏃",t:"Running",s:"He is running."}, {v:"🚶",t:"Walking",s:"She is walking."}, {v:"📖",t:"Reading",s:"I am reading."}, {v:"🗣️",t:"Talking",s:"We are talking."}, {v:"😴",t:"Sleeping",s:"Cat is sleeping."}, {v:"📺",t:"Watching",s:"Watching TV."}], chat:[{q:"What are you doing?",k:["sitting","learning"],s:"Good student",f:"Learning"},{q:"Is cat running?",k:["no"],s:"It is sleeping",f:"No"}], grammar:[{t:"Cont",r:"Am/Is/Are + Ing",b:[{t:"She",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Runn-ing",c:"gb-adj"}]}], quiz:[{q:"Now I am...",o:["Reading","Read"],c:0}] },
+  { title: "27. Prepositions 📦", slides:[{v:"📦",t:"In",s:"Inside box."}, {v:"⬆️",t:"On",s:"Top of box."}, {v:"⬇️",t:"Under",s:"Below box."}, {v:"↔️",t:"Between",s:"In middle."}, {v:"🔙",t:"Behind",s:"At back."}, {v:"🔜",t:"Next to",s:"Beside box."}], chat:[{q:"Where is hat? On head?",k:["yes","on"],s:"Correct",f:"On head"},{q:"Fish in water?",k:["yes","in"],s:"Yes",f:"In water"}], grammar:[{t:"Loc",r:"It + is + Prep",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"On table",c:"gb-obj"}]}], quiz:[{q:"Hat is ... head",o:["On","In"],c:0}] },
+  { title: "28. Transport 🚂", slides:[{v:"🚂",t:"Train",s:"Choo choo!"}, {v:"✈️",t:"Plane",s:"Fly high."}, {v:"🚗",t:"Car",s:"Vroom vroom."}, {v:"🚲",t:"Bike",s:"Ring ring."}, {v:"🚤",t:"Boat",s:"Float on water."}, {v:"🚀",t:"Rocket",s:"Go to space."}], chat:[{q:"Goes in water?",k:["boat","ship"],s:"Float",f:"Boat"},{q:"Has wings?",k:["plane"],s:"Fly",f:"Plane"}], grammar:[{t:"Go",r:"Go + by + Veh",b:[{t:"Go",c:"gb-verb"},{t:"by",c:"gb-prep"},{t:"Car",c:"gb-obj"}]}], quiz:[{q:"2 wheels?",o:["Bike","Car"],c:0}] },
+  { title: "29. City Places 🏙️", slides:[{v:"🏙️",t:"City",s:"Big buildings."}, {v:"🏥",t:"Hospital",s:"Doctors here."}, {v:"🚓",t:"Police",s:"Police station."}, {v:"🚒",t:"Fire",s:"Fire station."}, {v:"🛒",t:"Shop",s:"Buy food."}, {v:"🌳",t:"Park",s:"Play outside."}], chat:[{q:"Sick? Go where?",k:["hospital","doctor"],s:"Get well",f:"Hospital"},{q:"Buy food?",k:["shop","market"],s:"Yum",f:"Shop"}], grammar:[{t:"Place",r:"Go + to + Place",b:[{t:"Go",c:"gb-verb"},{t:"to",c:"gb-prep"},{t:"Park",c:"gb-obj"}]}], quiz:[{q:"Swings are in...",o:["Park","Bank"],c:0}] },
+  { title: "30. Traffic Rules 🚦", slides:[{v:"🚦",t:"Light",s:"Traffic light."}, {v:"🔴",t:"Red",s:"Stop!"}, {v:"🟡",t:"Yellow",s:"Wait."}, {v:"🟢",t:"Green",s:"Go!"}, {v:"🚶",t:"Cross",s:"Cross the road."}, {v:"🛑",t:"Sign",s:"Stop sign."}], chat:[{q:"Red light means?",k:["stop"],s:"Danger!",f:"Stop"},{q:"Green means?",k:["go"],s:"Safe",f:"Go"}], grammar:[{t:"Rule",r:"Imp + Now",b:[{t:"Stop!",c:"gb-verb"}]}], quiz:[{q:"Wait on...",o:["Yellow","Green"],c:0}] },
+  { title: "31. Some / Any 🥣", slides:[{v:"🥣",t:"Some",s:"I have some."}, {v:"🫗",t:"Any",s:"I don't have any."}, {v:"🥛",t:"Milk",s:"Some milk."}, {v:"🍪",t:"Cookie",s:"Any cookies?"}, {v:"💧",t:"Water",s:"Some water."}, {v:"🚫",t:"None",s:"Empty."}], chat:[{q:"Want some water?",k:["yes","some"],s:"Here",f:"Yes"},{q:"Have money?",k:["no","any"],s:"Empty",f:"No"}], grammar:[{t:"Quant",r:"Have + Some/Any",b:[{t:"I",c:"gb-sub"},{t:"have",c:"gb-verb"},{t:"Some",c:"gb-adj"}]}], quiz:[{q:"Do you have ...?",o:["Any","Some"],c:0}] },
+  { title: "32. Faster & Slower 🏎️", slides:[{v:"🏎️",t:"Fast",s:"Race car."}, {v:"🐌",t:"Slow",s:"Snail."}, {v:"🐘",t:"Bigger",s:"Than a mouse."}, {v:"🐜",t:"Smaller",s:"Than a dog."}, {v:"🦒",t:"Taller",s:"Than me."}, {v:"👴",t:"Older",s:"Than baby."}], chat:[{q:"Turtle is?",k:["slow"],s:"Yes",f:"Slow"},{q:"Plane is?",k:["fast"],s:"Zoom",f:"Fast"}], grammar:[{t:"Comp",r:"Adj + er + Than",b:[{t:"A",c:"gb-sub"},{t:"is Faster",c:"gb-adj"},{t:"than B",c:"gb-obj"}]}], quiz:[{q:"Elephant is ... than ant",o:["Bigger","Smaller"],c:0}] },
+  { title: "33. The Best 🥇", slides:[{v:"🥇",t:"Best",s:"Number 1."}, {v:"🥉",t:"Third",s:"Number 3."}, {v:"🐆",t:"Fastest",s:"Cheetah run."}, {v:"🐋",t:"Biggest",s:"Blue Whale."}, {v:"🐌",t:"Slowest",s:"Snail crawl."}, {v:"🏔️",t:"Highest",s:"Everest."}], chat:[{q:"Who is number 1?",k:["me","i am"],s:"Yes you!",f:"Me"},{q:"Biggest animal?",k:["whale"],s:"Huge",f:"Whale"}], grammar:[{t:"Super",r:"The + Adj + est",b:[{t:"The",c:"gb-sub"},{t:"Fastest",c:"gb-adj"}]}], quiz:[{q:"Gold medal is...",o:["Best","Worst"],c:0}] },
+  { title: "34. Past Tense: Was 🔙", slides:[{v:"👶",t:"Was",s:"I was a baby."}, {v:"👴",t:"Am",s:"I am old now."}, {v:"🏫",t:"Were",s:"We were at school."}, {v:"🏠",t:"Home",s:"Was at home."}, {v:"📅",t:"Yesterday",s:"Past day."}, {v:"🔙",t:"Past",s:"Before now."}], chat:[{q:"Were you a baby?",k:["yes","was"],s:"Cute",f:"Yes"},{q:"Yesterday hot?",k:["was","no"],s:"Ok",f:"It was..."}], grammar:[{t:"Past",r:"Was/Were",b:[{t:"I",c:"gb-sub"},{t:"Was",c:"gb-verb"},{t:"Small",c:"gb-adj"}]}], quiz:[{q:"I ... hungry",o:["Was","Were"],c:0}] },
+  { title: "35. Played Yesterday 🎮", slides:[{v:"🎮",t:"Played",s:"Game over."}, {v:"⚽",t:"Kicked",s:"Goal!"}, {v:"📺",t:"Watched",s:"TV show."}, {v:"🍳",t:"Cooked",s:"Made dinner."}, {v:"🧹",t:"Cleaned",s:"Clean room."}, {v:"📞",t:"Called",s:"Phone friend."}], chat:[{q:"Played games?",k:["yes","played"],s:"Fun",f:"Yes"},{q:"Watched TV?",k:["yes","watched"],s:"Show?",f:"Yes"}], grammar:[{t:"Reg",r:"Verb + ed",b:[{t:"I",c:"gb-sub"},{t:"Play-ed",c:"gb-verb"}]}], quiz:[{q:"Yesterday I...",o:["Played","Play"],c:0}] },
+  { title: "36. Ate Pizza 🍕", slides:[{v:"🍕",t:"Ate",s:"Yum yum."}, {v:"🥤",t:"Drank",s:"Slurp."}, {v:"🏃",t:"Went",s:"Go -> Went."}, {v:"🏊",t:"Swam",s:"Swim -> Swam."}, {v:"😴",t:"Slept",s:"Sleep -> Slept."}, {v:"👀",t:"Saw",s:"See -> Saw."}], chat:[{q:"Ate breakfast?",k:["ate","yes"],s:"Full",f:"Ate"},{q:"Went to school?",k:["went","yes"],s:"Good",f:"Went"}], grammar:[{t:"Irreg",r:"Special Word",b:[{t:"I",c:"gb-sub"},{t:"Ate",c:"gb-verb"},{t:"Food",c:"gb-obj"}]}], quiz:[{q:"Past of Eat",o:["Ate","Eated"],c:0}] },
+  { title: "37. Future: Will 🔮", slides:[{v:"🔮",t:"Will",s:"In future."}, {v:"📅",t:"Tomorrow",s:"Next day."}, {v:"🌧️",t:"Rain",s:"Will rain."}, {v:"🎂",t:"Age",s:"Will be 10."}, {v:"🚀",t:"Go",s:"Will go."}, {v:"🤖",t:"Robot",s:"Will help."}], chat:[{q:"Tomorrow school?",k:["yes","will"],s:"Study",f:"Yes"},{q:"Will you play?",k:["yes","will"],s:"Fun",f:"Yes"}], grammar:[{t:"Fut",r:"Will + Verb",b:[{t:"I",c:"gb-sub"},{t:"Will",c:"gb-verb"},{t:"Go",c:"gb-obj"}]}], quiz:[{q:"Tomorrow I...",o:["Will","Did"],c:0}] },
+  { title: "38. Plans 🗓️", slides:[{v:"🗓️",t:"Plan",s:"Going to."}, {v:"🎒",t:"School",s:"Going to school."}, {v:"🛌",t:"Sleep",s:"Going to sleep."}, {v:"🍽️",t:"Eat",s:"Going to eat."}, {v:"✈️",t:"Travel",s:"Going to fly."}, {v:"👵",t:"Visit",s:"Going to grandma."}], chat:[{q:"Going to sleep?",k:["yes","going"],s:"Night",f:"Yes"},{q:"Going to eat?",k:["yes"],s:"Hungry",f:"Yes"}], grammar:[{t:"Plan",r:"Going to + Verb",b:[{t:"I am",c:"gb-sub"},{t:"Going to",c:"gb-verb"},{t:"Eat",c:"gb-obj"}]}], quiz:[{q:"I am ... to run",o:["Going","Will"],c:0}] },
+  { title: "39. Sick 🤒", slides:[{v:"🤒",t:"Fever",s:"Hot head."}, {v:"🤧",t:"Cold",s:"Achoo!"}, {v:"🤕",t:"Ouch",s:"Pain."}, {v:"💊",t:"Pill",s:"Take medicine."}, {v:"🛌",t:"Rest",s:"Stay in bed."}, {v:"🩺",t:"Doctor",s:"Help me."}], chat:[{q:"Feel sick?",k:["no","yes"],s:"Good/Oh no",f:"Yes/No"},{q:"Need doctor?",k:["yes"],s:"Call 911",f:"Yes"}], grammar:[{t:"Feel",r:"I + have + Sick",b:[{t:"I",c:"gb-sub"},{t:"Have",c:"gb-verb"},{t:"a Cold",c:"gb-obj"}]}], quiz:[{q:"Hot head?",o:["Fever","Cold"],c:0}] },
+  { title: "40. Graduation 🎓🎉", slides:[{v:"🎓",t:"Graduation",s:"You finished!"}, {v:"🏆",t:"Winner",s:"You won!"}, {v:"🧠",t:"Smart",s:"Big brain!"}, {v:"🗣️",t:"English",s:"You speak it!"}, {v:"🥳",t:"Party",s:"Let's celebrate!"}, {v:"👋",t:"The End",s:"Good luck!"}], chat:[{q:"Are you happy?",k:["yes"],s:"I am proud!",f:"Yes"}], grammar:[{t:"Success",r:"You + Are + Adj",b:[{t:"You",c:"gb-sub"},{t:"Are",c:"gb-verb"},{t:"Smart 🧠",c:"gb-adj"}]}], quiz:[{q:"You are a...",o:["Master","Baby"],c:0}] }
 ];
-
-// Fill placeholders to reach 40 for demo
-for(let i=10; i<40; i++) {
-  LESSONS.push({
-    title: `${i+1}. Lesson ${i+1} 📚`,
-    slides: [{v:"📚",t:"Learn",s:"Learning is fun!",a:"anim-float",c:"#fff"},{v:"✅",t:"Practice",s:"Practice makes perfect.",a:"anim-pulse",c:"#f0fdf4"}],
-    chat: [{q:"Are you ready?",k:["yes"],s:"Let's go!",f:"Yes"}],
-    grammar: [{t:"Grammar",r:"Subject + Verb",b:[{t:"You",c:"gb-sub"},{t:"Learn",c:"gb-verb"}]}],
-    quiz: [{q:"Keep going?",o:["Yes","No"],c:0}]
-  });
-}
 
 const app = {
   state: { l: 0, s: 0, q: 0, c: 0, mode: 'intro', score: 0, listening: false, lastMsg: "", done: [] },
@@ -514,7 +366,6 @@ const app = {
   checkLogin() {
     const input = document.getElementById('passwordInput').value;
     const err = document.getElementById('loginError');
-    // "2244TAYLAN" hashed
     if(btoa(input) === "MjI0NFRBWUxBTg==") {
       this.startApp();
     } else {
@@ -538,7 +389,6 @@ const app = {
   startLesson(idx) {
     this.state.l = idx; this.state.s = 0; this.state.q = 0; this.state.c = 0; this.state.mode = 'slide';
     
-    // Auto-close sidebar on mobile when lesson starts
     document.getElementById('sidebar').classList.remove('show');
     document.getElementById('backdrop').classList.remove('show');
     
@@ -712,7 +562,6 @@ const app = {
       this.renderRobot('surprised');
       this.speak("Oops! Try again.");
       setTimeout(() => {
-        // Retry logic could be here, or just move on. Let's move on for flow.
         if (this.state.q < LESSONS[this.state.l].quiz.length - 1) {
           this.state.q++;
           this.updateProgressBar();
@@ -745,25 +594,18 @@ const app = {
     this.addChat('ai', txt);
     window.speechSynthesis.cancel();
     
-    // Remove emojis for speech engine so it doesn't say "Smiling Face with Heart Eyes"
     const cleanTxt = txt.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
     
     const u = new SpeechSynthesisUtterance(cleanTxt);
     u.lang = 'en-US'; 
-    // 0.9 is clearer but not too slow (robotic). 1.0 is normal speed.
     u.rate = 0.9; 
-    // 1.2 makes it sound young/friendly without being robotic
     u.pitch = 1.2; 
     
     const voices = window.speechSynthesis.getVoices();
-    
-    // Advanced Voice Selection Strategy for "Natural Young Female"
     let v = voices.find(voice => voice.name.includes("Google US English")); 
     if(!v) v = voices.find(voice => voice.name.includes("Microsoft Zira"));
     if(!v) v = voices.find(voice => voice.name.includes("Samantha"));
-    if(!v) v = voices.find(voice => voice.name.includes("Natural") && voice.lang.includes("en"));
-    if(!v) v = voices.find(voice => voice.lang === 'en-US'); // Fallback to any US English
-    
+    if(!v) v = voices.find(voice => voice.lang === 'en-US');
     if(v) u.voice = v;
 
     u.onstart = () => this.renderRobot('talking');
