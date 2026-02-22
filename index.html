@@ -370,9 +370,6 @@
       const cleanSubjEn = clean(s.subject).toLowerCase();
       let trSubj = TR_DICT[cleanSubjEn] || clean(s.subject);
       
-      // İsme özel algılama
-      if (clean(s.subject) === state.userName) trSubj = state.userName;
-
       let trObj = TR_DICT[clean(s.object).toLowerCase()] || clean(s.object);
       let trAdj = TR_DICT[clean(s.adjective).toLowerCase()] || clean(s.adjective);
       let baseVerbEn = getPureBaseVerb(s.verb || s.ingVerb);
@@ -850,7 +847,7 @@
                 <div class="flex-1 overflow-y-auto p-2 custom-scrollbar">
                   <!-- Çift Sıra Grid -->
                   <div class="grid grid-cols-2 gap-2 justify-items-center w-full">
-                    ${[state.userName, ...cData.subjects].map(s => renderPuzzlePiece({ type: 'subject', color: '#3b82f6', content: s, isSelected: state.sentence.subject === s, isSelectedPiece: sp?.type === 'subject' && sp?.value === s, shape: state.mode === 'question' ? 'SUBJ_MID' : 'SUBJ_START' })).join('')}
+                    ${cData.subjects.map(s => renderPuzzlePiece({ type: 'subject', color: '#3b82f6', content: s, isSelected: state.sentence.subject === s, isSelectedPiece: sp?.type === 'subject' && sp?.value === s, shape: state.mode === 'question' ? 'SUBJ_MID' : 'SUBJ_START' })).join('')}
                   </div>
                 </div>
               </aside>
