@@ -1,693 +1,918 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Robo-Kanka Ultimate Emoji Academy (Secure & Full)</title>
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İngilizce A1 Cümle Kurma Programı</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
-    :root {
-      --primary-color: #0ea5e9;
-      --secondary-color: #e0f2fe;
-      --accent-color: #f43f5e;
-      --success-color: #22c55e;
-      --bg-color: #f0f9ff;
+    @keyframes highlight { 0% { transform: scale(1); } 20% { transform: scale(1.15) rotate(2deg); filter: brightness(1.8); } 100% { transform: scale(1); } }
+    @keyframes bounce-error { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+    @keyframes emojiFly {
+      0% { transform: scale(1.1) translateY(0); opacity: 1; }
+      40% { transform: scale(2.5) translateY(-40px); opacity: 1; }
+      100% { transform: scale(3) translateY(-100px); opacity: 0; }
+    }
+    @keyframes fall {
+      0% { transform: translateY(-10vh) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
     }
 
-    body {
-      background-color: var(--bg-color);
-      font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
-      height: 100vh;
-      /* Mobil tarayıcı adres çubuğu sorununu çözer */
-      height: 100dvh; 
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      margin: 0;
-    }
-
-    /* === COMMON COMPONENTS === */
-    .custom-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: #93c5fd transparent; }
-    .custom-scroll::-webkit-scrollbar { width: 6px; }
-    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-    .custom-scroll::-webkit-scrollbar-thumb { background-color: #93c5fd; border-radius: 10px; }
-
-    .app-card {
-      background: white;
-      border-radius: 15px; /* Mobilde daha az yuvarlak köşe yer kazandırır */
-      border: none;
-      box-shadow: 0 4px 10px rgba(14, 165, 233, 0.1);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
-      height: 100%;
-      width: 100%;
-    }
-
-    .lesson-item {
-      padding: 12px 15px;
-      border-radius: 12px;
-      margin-bottom: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid transparent;
-      background: #f8fafc;
-      display: flex; align-items: center;
-    }
-    .lesson-item:hover { background-color: #e0f2fe; }
-    .lesson-item.active { background-color: #fff; border-color: #0ea5e9; color: #0284c7; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15); }
+    .animate-highlight { animation: highlight 1.2s ease-in-out; z-index: 50; }
+    .animate-bounce-error { animation: bounce-error 0.4s ease-in-out; }
+    .animate-emoji-fly { animation: emojiFly 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
     
-    .chat-box { flex-grow: 1; overflow-y: auto; padding: 10px; background-image: radial-gradient(#e0f2fe 1px, transparent 1px); background-size: 20px 20px; }
-    .chat-bubble {
-      max-width: 85%;
-      border-radius: 15px;
-      padding: 8px 12px;
-      margin-bottom: 8px;
-      font-size: 0.95rem;
-      line-height: 1.3;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      animation: popIn 0.3s;
-    }
-    .chat-ai { background: white; border: 1px solid #e0f2fe; color: #334155; align-self: flex-start; margin-right: auto; border-bottom-left-radius: 4px; }
-    .chat-user { background: #0ea5e9; color: white; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 4px; }
-
-    .slide-story { color: #64748b; font-weight: 600; display: block; margin-top:5px; font-size: 0.9em; }
-
-    .grammar-box { background: #fff; border-radius: 15px; border: 1px solid #e2e8f0; text-align: center; padding: 10px; margin-top: 5px; }
-    .g-block { display: inline-block; border-radius: 8px; color: white; font-weight: bold; margin: 2px; padding: 4px 8px; font-size: 0.9rem; }
-    .gb-sub { background: #3b82f6; } .gb-verb { background: #ef4444; } .gb-obj { background: #22c55e; } .gb-adj { background: #f59e0b; } .gb-prep { background: #8b5cf6; }
-
-    #robotFace { transition: transform 0.3s; }
-    .mic-btn-lg {
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
-      border: 3px solid white;
-      transition: all 0.2s;
-      background: linear-gradient(135deg, #0ea5e9, #0284c7);
-      color: white;
-    }
-    .mic-btn-lg:active { transform: scale(0.9); }
-    .mic-active { background: #f43f5e !important; animation: pulse-big 1s infinite; }
-
-    #startOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f9ff; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
-    .login-box { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 350px; }
-
-    .progress-container { width: 100%; height: 6px; background-color: #f1f5f9; position: absolute; top: 0; left: 0; z-index: 10; }
-    .progress-bar { height: 100%; background-color: var(--success-color); transition: width 0.3s ease; }
-
-    /* === LAYOUT FIXES FOR DESKTOP === */
-    @media (min-width: 992px) {
-      .app-container {
-        flex-grow: 1;
-        padding: 20px !important;
-        overflow: hidden;
-        height: 100%;
-      }
-      .row { height: 100%; }
-      .col-lg-3, .col-lg-5, .col-lg-4 {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-      .sidebar-col { display: flex !important; flex-direction: column; height: 100%; }
-      .mobile-nav { display: none !important; }
-      
-      /* Desktop Sizes */
-      #robotFace { width: 160px; height: 160px; }
-      .mic-btn-lg { width: 70px; height: 70px; font-size: 2rem; }
-      .slide-visual { font-size: 6rem; margin-bottom: 20px; text-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-      .slide-text { font-size: 1.6rem; padding: 20px 30px; font-weight: 800; color: #1e293b; background: rgba(255,255,255,0.9); border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 2px solid #f1f5f9; display: inline-block; max-width: 95%; }
+    .confetti-particle {
+      position: absolute;
+      top: -20px;
+      animation-name: fall;
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      animation-fill-mode: forwards;
     }
 
-    /* === MOBILE LAYOUT (Compact Fit) === */
-    @media (max-width: 991.98px) {
-      .mobile-nav {
-        flex-shrink: 0;
-        height: 50px;
-        padding: 5px 15px;
-        z-index: 1030;
-      }
-      
-      .app-container {
-        padding: 5px !important;
-        height: calc(100dvh - 50px);
-        overflow: hidden; /* No scroll on container */
-        display: flex;
-        flex-direction: column;
-      }
-
-      .row {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        gap: 8px; /* Small gap */
-        margin: 0;
-        height: 100%;
-      }
-
-      /* Top Panel: Robot + Chat (55% height) */
-      .col-lg-5 {
-        flex: 55; 
-        height: 55%;
-        min-height: 0;
-        padding: 0;
-        width: 100%;
-      }
-      
-      /* Bottom Panel: Board (45% height) */
-      .col-lg-4 {
-        flex: 45;
-        height: 45%;
-        min-height: 0;
-        padding: 0;
-        width: 100%;
-      }
-
-      /* Compact Robot UI */
-      .col-lg-5 .text-center {
-        padding-top: 5px !important;
-        padding-bottom: 2px !important;
-      }
-      #robotFace { width: 80px; height: 80px; }
-      #statusBadge { font-size: 0.7rem; padding: 2px 8px !important; }
-      
-      /* Compact Controls */
-      .col-lg-5 .p-3.border-top { padding: 5px !important; }
-      .mic-btn-lg { width: 50px; height: 50px; font-size: 1.5rem; }
-      .btn-info, .btn-warning { width: 40px !important; height: 40px !important; padding: 0 !important; }
-      .btn-info i, .btn-warning i { font-size: 1.2rem !important; }
-      #micStatusText { display: none; } /* Save space */
-
-      /* Compact Board UI */
-      .slide-visual { font-size: 3.5rem; margin-bottom: 5px; text-shadow: 0 3px 10px rgba(0,0,0,0.1); }
-      .slide-text { font-size: 1.1rem; padding: 8px 15px; margin-bottom: 5px; font-weight: 800; color: #1e293b; background: rgba(255,255,255,0.9); border-radius: 15px; border: 1px solid #f1f5f9; display: inline-block; max-width: 98%; }
-      #boardPanel .p-4 { padding: 10px !important; }
-      #boardPanel .mt-4 { margin-top: 5px !important; }
-      
-      /* Sidebar Offcanvas */
-      .sidebar-col {
-        position: fixed;
-        width: 280px;
-        top: 0; bottom: 0; left: -320px;
-        z-index: 1050;
-        background: white;
-        transition: left 0.3s;
-        padding: 0;
-        box-shadow: 5px 0 20px rgba(0,0,0,0.2);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-      .sidebar-col.show { left: 0; }
-      .backdrop {
-        position: fixed;
-        top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(0,0,0,0.5);
-        z-index: 1040;
-        display: none;
-      }
-      .backdrop.show { display: block; }
-    }
-
-    /* Animations */
-    @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
-    @keyframes pulse-big { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-    @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    @keyframes slide-in-right { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes error-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
-
-    .anim-float { animation: float 3s infinite ease-in-out; }
-    .anim-shake { animation: shake 1.5s infinite; }
-    .anim-pulse { animation: pulse-big 1.2s infinite; }
-    .anim-spin { animation: spin-slow 10s infinite linear; }
-    .anim-error { animation: error-shake 0.3s; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; } 
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; } 
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; } 
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; } 
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; } 
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
   </style>
 </head>
-<body>
+<body class="bg-slate-100 font-sans text-slate-800">
+  <div id="root" class="h-screen w-full flex flex-col overflow-hidden relative"></div>
 
-<!-- Login -->
-<div id="startOverlay">
-  <div class="login-box">
-    <div class="display-1 mb-3 anim-float">🤖</div>
-    <h1 class="h3 fw-bold text-primary mb-1">Robo-Kanka</h1>
-    <p class="text-secondary small mb-4">Ultimate Emoji Academy 🎓</p>
-    <div class="mb-3"><input type="password" id="passwordInput" class="form-control form-control-lg text-center rounded-pill bg-light border-0" placeholder="Password"></div>
-    <div id="loginError" class="text-danger fw-bold small mb-3" style="display:none;">🚫 Incorrect!</div>
-    <button class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm" onclick="app.checkLogin()">LOGIN 🚀</button>
-  </div>
-  <div class="mt-4 text-muted small"><i class="bi bi-lock-fill"></i> 2244TAYLAN</div>
-</div>
+  <script>
+    // --- VERİ TABANLARI ---
+    const SEMANTIC_GROUPS = {
+      food: ["pizza 🍕", "an apple 🍎", "bread 🍞", "cake 🍰", "a sandwich 🥪", "dinner 🥘", "soup 🍲", "eggs 🍳", "meat 🥩", "banana 🍌", "pasta 🍝", "a burger 🍔", "a cookie 🍪", "salad 🥗", "chicken 🍗", "cheese 🧀", "fish 🐟", "rice 🍚"],
+      liquid: ["water 💧", "milk 🥛", "tea ☕", "coffee ☕", "juice 🍹", "coke 🥤", "lemonade 🍋", "hot chocolate ☕", "orange juice 🍊", "milkshake 🥤"],
+      media: ["TV 📺", "a movie 🎬", "a story 📖", "a book 📚", "the board 📋", "photos 🖼️", "a video 📹", "the lesson 🎓", "music 🎶", "a song 🎵", "news 📰", "cartoons 📺", "a poem 📜", "homework 📖"],
+      activity: ["video games 🕹️", "the ball ⚽", "a gift 🎁", "a kite 🪁", "a puzzle 🧩", "chess ♟️", "football ⚽", "tennis 🎾", "the piano 🎹", "the guitar 🎸", "a toy 🧸", "a bike 🚲", "cards 🃏", "basketball 🏀", "drawing 🎨"],
+      place: ["to school 🏫", "to the park 🌳", "home 🏠", "to bed 🛏️", "the house 🏠", "the room 🧹", "the garden 🏡", "to the beach 🏖️", "the kitchen 🍳", "the city 🌆", "in the forest 🌲", "at the zoo 🐾", "in the jungle 🌴"],
+      sleep_place: ["in bed 🛌", "on the sofa 🛋️", "in the room 🧹", "at home 🏠", "in the garden 🏡", "under the tree 🌳"],
+      tool: ["a pen 🖊️", "a pencil ✏️", "a laptop 💻", "scissors ✂️", "a map 🗺️", "the table 🪑", "the desk 🪑", "the car 🚗", "the window 🪟", "the plate 🍽️", "a phone 📱", "a bag 🎒", "a computer 💻", "a cup 🥛"]
+    };
 
-<!-- Mobile Header -->
-<nav class="mobile-nav d-lg-none d-flex justify-content-between align-items-center bg-white p-2 shadow-sm sticky-top">
-  <button class="btn btn-light rounded-circle shadow-sm text-primary" onclick="app.toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
-  <span class="fw-bold text-primary fs-5">Robo-Kanka</span>
-  <span class="badge bg-warning text-dark rounded-pill" id="mobileScore">⭐ 0</span>
-</nav>
-<div class="backdrop" id="backdrop" onclick="app.toggleSidebar()"></div>
+    const VERB_COMPATIBILITY = {
+      "eat": ["food"], "drink": ["liquid"], "watch": ["media"], "read": ["media"], "play": ["activity"], "cook": ["food"],
+      "clean": ["place", "tool", "sleep_place"], "wash": ["tool", "food"], "like": ["food", "liquid", "media", "activity", "tool", "place", "sleep_place"],
+      "want": ["food", "liquid", "media", "activity", "tool", "place", "sleep_place"], "have": ["food", "liquid", "activity", "tool"],
+      "buy": ["food", "liquid", "tool", "activity"], "see": ["food", "media", "activity", "place", "tool", "sleep_place"],
+      "go": ["place"], "write": ["media", "tool"], "use": ["tool"], "open": ["media", "tool"], "need": ["food", "liquid", "tool", "activity"],
+      "sleep": ["sleep_place", "place"], "run": ["place"], "jump": ["place"] 
+    };
 
-<!-- Main App -->
-<div class="app-container container-fluid" id="mainContent" style="filter: blur(5px);">
-  <div class="row g-3">
-    
-    <!-- LEFT: Menu -->
-    <div class="col-lg-3 sidebar-col" id="sidebar">
-      <div class="app-card">
-        <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-white">
-          <h5 class="fw-bold text-primary m-0"><i class="bi bi-map me-2"></i>Map</h5>
-          <button class="btn btn-sm btn-close d-lg-none" onclick="app.toggleSidebar()"></button>
-        </div>
-        <div class="p-2 custom-scroll flex-grow-1 bg-white">
-          <div id="lessonList"></div>
-        </div>
-        <div class="p-3 border-top text-center bg-light">
-          <button class="btn btn-outline-danger btn-sm rounded-pill w-100" onclick="app.resetProgress()">Reset Progress</button>
-        </div>
-      </div>
-    </div>
+    const PAST_VERBS_MAP = {
+      "eat 🍽️": "ate 🍽️", "drink 🥤": "drank 🥤", "like 😋": "liked 😋", "want 🥣": "wanted 🥣",
+      "cook 🍳": "cooked 🍳", "sleep 😴": "slept 😴", "clean 🧹": "cleaned 🧹", "wash 🧼": "washed 🧼",
+      "play 🎮": "played 🎮", "win 🏆": "won 🏆", "find 🔎": "found 🔎", "have 🧸": "had 🧸",
+      "start 🏁": "started 🏁", "read 📖": "read 📖", "write 📝": "wrote 📝", "use 💻": "used 💻",
+      "open 📖": "opened 📖", "need ✏️": "needed ✏️", "learn 🧠": "learned 🧠", "run 🏃": "ran 🏃",
+      "jump 🦘": "jumped 🦘"
+    };
 
-    <!-- MIDDLE: Robot -->
-    <div class="col-lg-5">
-      <div class="app-card h-100-responsive">
-        <div class="card-body p-0 d-flex flex-column h-100">
-          <div class="text-center pt-3 pb-2 bg-gradient-to-b from-blue-50 to-white flex-shrink-0">
-            <div id="robotFace" class="mx-auto"></div>
-            <div class="mt-2"><span class="badge bg-success bg-opacity-25 text-success border border-success rounded-pill px-3 py-1" id="statusBadge">Ready!</span></div>
-          </div>
-          <div id="chatBox" class="chat-box custom-scroll"></div>
-          <div class="p-3 bg-white border-top flex-shrink-0">
-            <div class="d-flex align-items-center justify-content-center gap-4">
-              <button class="btn btn-info rounded-circle p-3 text-white shadow" style="width:55px;height:55px;" onclick="app.repeat()" title="Repeat"><i class="bi bi-arrow-repeat fs-4"></i></button>
-              <button id="micBtn" class="mic-btn-lg" onclick="app.toggleMic()"><i class="bi bi-mic-fill"></i></button>
-              <button class="btn btn-warning rounded-circle p-3 text-dark shadow" style="width:55px;height:55px;" onclick="app.hint()" title="Hint"><i class="bi bi-lightbulb-fill fs-4"></i></button>
-            </div>
-            <div class="text-center mt-2 text-muted fw-bold small" id="micStatusText">Tap to Speak</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    const GRAMMAR_GROUPS = {
+      firstPerson: ["I 🙋‍♂️"],
+      thirdSingular: ["he 👨", "she 👩", "it 🐶", "my mother 👩", "my father 👨", "the cat 🐱", "the teacher 👩‍🏫", "the dog 🐶", "the bird 🐦", "the lion 🦁", "the monkey 🐵", "the elephant 🐘"],
+      pluralOrSecond: ["you 🫵", "we 👨‍👩‍👧‍👦", "they 👥", "students 🧑‍🎓", "the boys 👦", "the girls 👧", "your friend 👦"]
+    };
 
-    <!-- RIGHT: Board -->
-    <div class="col-lg-4">
-      <div class="app-card border-top border-5 border-info h-100-responsive position-relative">
-        <div class="progress-container"><div id="lessonProgressBar" class="progress-bar" style="width: 0%"></div></div>
-        <div id="boardPanel" class="card-body p-0 h-100 position-relative d-flex flex-column">
-          <div class="d-flex h-100 justify-content-center align-items-center text-muted opacity-25">
-            <div class="text-center"><i class="bi bi-easel display-1"></i><p class="fs-5 fw-bold">Smart Board</p></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    const CATEGORIES = {
+      home: {
+        id: 'home', label: 'Ev', icon: 'home', color: '#f97316', requiredStars: 0,
+        modals: ["can", "will", "must", "should"], auxiliaries: ["Do", "Does", "Can", "Is", "Are", "Am"], statusAux: ["am", "is", "are"],
+        subjects: GRAMMAR_GROUPS.firstPerson.concat(GRAMMAR_GROUPS.thirdSingular).concat(["you 🫵", "we 👨‍👩‍👧‍👦", "they 👥"]),
+        verbs: ["eat 🍽️", "drink 🥤", "like 😋", "want 🥣", "cook 🍳", "sleep 😴", "clean 🧹", "wash 🧼"],
+        objects: [...SEMANTIC_GROUPS.food, ...SEMANTIC_GROUPS.liquid, ...SEMANTIC_GROUPS.sleep_place, ...SEMANTIC_GROUPS.tool],
+        adjectives: ["hungry 😋", "thirsty 🥤", "full 🤰", "happy 😊", "tired 😫", "ready 🏁", "late ⏰", "sad 😢", "brave 🦁", "strong 💪", "kind ❤️", "angry 😡", "sleepy 🥱", "excited 🤩", "silly 🤪", "cool 😎", "quiet 🤫", "loud 📢", "lucky 🍀", "scared 😨"]
+      },
+      games: {
+        id: 'games', label: 'Oyun', icon: 'gamepad-2', color: '#a855f7', requiredStars: 0,
+        modals: ["can", "will", "must", "could"], auxiliaries: ["Do", "Can", "Is", "Are"], statusAux: ["am", "is", "are"],
+        subjects: ["you 🫵", "we 👨‍👩‍👧‍👦", "they 👥", "your friend 👦", "it 🤖", "the boys 👦", "the girls 👧"],
+        verbs: ["play 🎮", "win 🏆", "find 🔎", "want 🏗️", "have 🧸", "start 🏁", "sleep 😴"],
+        objects: [...SEMANTIC_GROUPS.activity, ...SEMANTIC_GROUPS.sleep_place],
+        adjectives: ["fast ⚡", "slow 🐢", "exciting 🤩", "easy ✅", "hard ❌", "fun 🎈", "boring 😴", "lucky 🍀", "surprised 😲"]
+      },
+      school: {
+        id: 'school', label: 'Okul', icon: 'school', color: '#3b82f6', requiredStars: 0,
+        auxiliaries: ["Do", "Does", "Can", "Is"], statusAux: ["am", "is", "are"],
+        subjects: ["the teacher 👩‍🏫", "students 🧑‍🎓", "I 🙋‍♂️", "my friend 👦", "she 👩", "he 👨"],
+        verbs: ["read 📖", "write 📝", "use 💻", "open 📖", "need ✏️", "learn 🧠", "sleep 😴"],
+        objects: [...SEMANTIC_GROUPS.tool, ...SEMANTIC_GROUPS.media, ...SEMANTIC_GROUPS.sleep_place],
+        adjectives: ["smart 🧠", "busy ✍️", "difficult 🧩", "ready 🏁", "late ⏰", "correct ✅", "silent 🤫", "perfect 💯", "careful 🧐", "polite 🤝"]
+      },
+      animals: {
+        id: 'animals', label: 'Hayvanlar', icon: 'cat', color: '#10b981', requiredStars: 10,
+        modals: ["can", "will", "must"], auxiliaries: ["Do", "Does", "Can", "Is", "Are"], statusAux: ["is", "are"],
+        subjects: ["the cat 🐱", "the dog 🐶", "the bird 🐦", "the lion 🦁", "the monkey 🐵", "the elephant 🐘", "they 👥", "it 🐶"],
+        verbs: ["run 🏃", "jump 🦘", "eat 🍽️", "drink 🥤", "sleep 😴", "play 🎮"],
+        objects: [...SEMANTIC_GROUPS.food, ...SEMANTIC_GROUPS.liquid, "in the forest 🌲", "at the zoo 🐾", "in the jungle 🌴", "to the park 🌳"],
+        adjectives: ["fast ⚡", "slow 🐢", "cute 🥺", "scary 😨", "hungry 😋", "thirsty 🥤", "sleepy 🥱", "wild 🐾", "funny 😂", "big 🐘", "small 🐭"]
+      }
+    };
 
-  </div>
-</div>
+    const MODE_LABELS = {
+      simple: 'Her zaman', negative: 'Olumsuz 🚫', continuous: 'Şimdiki',
+      status: 'Durum', modal: 'Yetenek', question: 'Soru'
+    };
 
-<script>
-// FULL 40 LESSONS CONTENT
-const LESSONS = [
-  // UNIT 1: BASICS
-  { title: "1. Hello! 👋", slides:[{v:"👋",t:"Hello",s:"Hello! Wave your hand!"},{v:"🌞",t:"Good Morning",s:"Sun is up!"},{v:"🌛",t:"Good Night",s:"Moon is up."},{v:"😊",t:"I am Happy",s:"Big smile!"}], chat:[{q:"What is your name?",k:["name","is"],s:"Nice name!",f:"My name is..."},{q:"How are you?",k:["fine","good","happy"],s:"Great!",f:"I am happy."}], grammar:[{t:"Intro",r:"My Name + is",b:[{t:"My Name",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Robo",c:"gb-obj"}]}], quiz:[{q:"Sun up?",o:["Morning","Night"],c:0}] },
-  { title: "2. Colors 🎨", slides:[{v:"🍎",t:"Red",s:"Red Apple"},{v:"🚙",t:"Blue",s:"Blue Car"},{v:"🐸",t:"Green",s:"Green Frog"},{v:"🍌",t:"Yellow",s:"Yellow Banana"}], chat:[{q:"Color of sun?",k:["yellow"],s:"Yes!",f:"Yellow"},{q:"Color of grass?",k:["green"],s:"Correct",f:"Green"}], grammar:[{t:"Desc",r:"It + is + Color",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Red",c:"gb-adj"}]}], quiz:[{q:"Yellow fruit?",o:["Banana","Apple"],c:0}] },
-  { title: "3. Numbers 🔢", slides:[{v:"1️⃣",t:"One",s:"One Lion"},{v:"2️⃣",t:"Two",s:"Two Eyes"},{v:"3️⃣",t:"Three",s:"Three Balls"},{v:"5️⃣",t:"Five",s:"High Five"}], chat:[{q:"1, 2...?",k:["3","three"],s:"Yes 3",f:"Three"},{q:"Fingers?",k:["5","five"],s:"Five!",f:"Five"}], grammar:[{t:"Count",r:"Num + Noun",b:[{t:"Three",c:"gb-adj"},{t:"Cats",c:"gb-obj"}]}], quiz:[{q:"1+1?",o:["2","3"],c:0}] },
-  { title: "4. Family 👨‍👩‍👧", slides:[{v:"👩",t:"Mom",s:"Super Mom"},{v:"👨",t:"Dad",s:"Super Dad"},{v:"👶",t:"Baby",s:"Cute baby"},{v:"👵",t:"Grandma",s:"Grandma"}], chat:[{q:"Who is dad?",k:["father"],s:"Yes",f:"Father"},{q:"Mom?",k:["mother"],s:"Yes",f:"Mother"}], grammar:[{t:"Poss",r:"My + Person",b:[{t:"My",c:"gb-adj"},{t:"Mom",c:"gb-obj"}]}], quiz:[{q:"Dad is...",o:["Father","Sister"],c:0}] },
-  { title: "5. Animals 🦁", slides:[{v:"🦁",t:"Lion",s:"Roar!"},{v:"🐘",t:"Elephant",s:"Big nose"},{v:"🐵",t:"Monkey",s:"Ooh ooh"},{v:"🦒",t:"Giraffe",s:"Very tall"}], chat:[{q:"Says Roar?",k:["lion"],s:"Scary!",f:"Lion"}], grammar:[{t:"Desc",r:"It is + Adj",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Big",c:"gb-adj"}]}], quiz:[{q:"Big animal?",o:["Ant","Elephant"],c:1}] },
-  { title: "6. Body 👃", slides:[{v:"👃",t:"Nose",s:"Smell"},{v:"👀",t:"Eyes",s:"See"},{v:"👂",t:"Ears",s:"Hear"},{v:"👄",t:"Mouth",s:"Taste"}], chat:[{q:"Smell with?",k:["nose"],s:"Good",f:"Nose"}], grammar:[{t:"Func",r:"I + Verb + with",b:[{t:"I",c:"gb-sub"},{t:"See",c:"gb-verb"},{t:"with Eyes",c:"gb-obj"}]}], quiz:[{q:"See with...",o:["Ears","Eyes"],c:1}] },
-  { title: "7. Clothes 👕", slides:[{v:"👕",t:"Shirt",s:"Cool shirt"},{v:"🧢",t:"Hat",s:"Sun hat"},{v:"👖",t:"Jeans",s:"Blue pants"},{v:"👗",t:"Dress",s:"Pretty dress"}], chat:[{q:"On head?",k:["hat"],s:"Yes",f:"Hat"}], grammar:[{t:"Wear",r:"I + wear",b:[{t:"I",c:"gb-sub"},{t:"wear",c:"gb-verb"},{t:"Hat",c:"gb-obj"}]}], quiz:[{q:"On feet?",o:["Hat","Shoes"],c:1}] },
-  { title: "8. Fruit 🍎", slides:[{v:"🍎",t:"Apple",s:"Red"},{v:"🍌",t:"Banana",s:"Yellow"},{v:"🍇",t:"Grape",s:"Purple"},{v:"🍋",t:"Lemon",s:"Sour!"}], chat:[{q:"Red fruit?",k:["apple"],s:"Yum",f:"Apple"}], grammar:[{t:"Like",r:"I + Like",b:[{t:"I",c:"gb-sub"},{t:"Like",c:"gb-verb"},{t:"Fruit",c:"gb-obj"}]}], quiz:[{q:"Yellow?",o:["Banana","Grape"],c:0}] },
-  { title: "9. Food 🍕", slides:[{v:"🍕",t:"Pizza",s:"Yum"},{v:"🍔",t:"Burger",s:"Big"},{v:"🍦",t:"Ice Cream",s:"Cold"},{v:"🥗",t:"Salad",s:"Healthy"}], chat:[{q:"Hungry?",k:["yes"],s:"Eat!",f:"Yes"}], grammar:[{t:"Want",r:"I + Want",b:[{t:"I",c:"gb-sub"},{t:"Want",c:"gb-verb"},{t:"Pizza",c:"gb-obj"}]}], quiz:[{q:"Drink?",o:["Water","Pizza"],c:0}] },
-  { title: "10. House 🏠", slides:[{v:"🏠",t:"Home",s:"My house"},{v:"🛏️",t:"Bed",s:"Sleep"},{v:"🛁",t:"Bath",s:"Wash"},{v:"🍳",t:"Kitchen",s:"Cook"}], chat:[{q:"Sleep where?",k:["bed"],s:"Zzz",f:"Bed"}], grammar:[{t:"Loc",r:"In + Room",b:[{t:"In",c:"gb-prep"},{t:"Room",c:"gb-obj"}]}], quiz:[{q:"Cook in...",o:["Kitchen","Bath"],c:0}] },
-  
-  // UNIT 2: SCHOOL & ACTIONS
-  { title: "11. School Objects 🎒", slides:[{v:"🎒",t:"Bag",s:"Put books in bag."}, {v:"✏️",t:"Pencil",s:"Write with pencil."}, {v:"📚",t:"Book",s:"Read a book."}, {v:"✂️",t:"Scissors",s:"Cut paper."}, {v:"🏫",t:"School",s:"We learn here."}, {v:"📏",t:"Ruler",s:"Measure lines."}], chat:[{q:"Write with?",k:["pencil","pen"],s:"Good job!",f:"Pencil"},{q:"Read a...?",k:["book"],s:"Smart!",f:"Book"}], grammar:[{t:"Obj",r:"This is + a + Noun",b:[{t:"This",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"a Pen",c:"gb-obj"}]}], quiz:[{q:"Cut with...",o:["Scissors","Ruler"],c:0}] },
-  { title: "12. Actions I 🏃", slides:[{v:"🏃",t:"Run",s:"Run fast!"}, {v:"🚶",t:"Walk",s:"Walk slow."}, {v:"🤸",t:"Jump",s:"Jump high!"}, {v:"🏊",t:"Swim",s:"Swim in water."}, {v:"🧘",t:"Sit",s:"Sit down."}, {v:"🧍",t:"Stand",s:"Stand up."}], chat:[{q:"Can you jump?",k:["yes"],s:"Boing!",f:"Yes"},{q:"Fish can...?",k:["swim"],s:"Splash",f:"Swim"}], grammar:[{t:"Ability",r:"I + Can + Verb",b:[{t:"I",c:"gb-sub"},{t:"Can",c:"gb-verb"},{t:"Run",c:"gb-obj"}]}], quiz:[{q:"Opposite of Run?",o:["Walk","Fly"],c:0}] },
-  { title: "13. Daily Routine ☀️", slides:[{v:"🥱",t:"Wake up",s:"Open eyes."}, {v:"🦷",t:"Brush",s:"Clean teeth."}, {v:"🚿",t:"Shower",s:"Wash body."}, {v:"👗",t:"Dress",s:"Put on clothes."}, {v:"🍳",t:"Eat",s:"Breakfast time."}, {v:"🚌",t:"Go",s:"Go to school."}], chat:[{q:"First thing?",k:["wake"],s:"Good morning",f:"Wake up"},{q:"Clean teeth with?",k:["brush"],s:"Sparkle",f:"Brush"}], grammar:[{t:"Routine",r:"I + Verb",b:[{t:"I",c:"gb-sub"},{t:"Wake up",c:"gb-verb"}]}], quiz:[{q:"Morning meal?",o:["Breakfast","Dinner"],c:0}] },
-  { title: "14. Plurals 🐈🐈", slides:[{v:"🐈",t:"Cat",s:"One cat."}, {v:"🐈🐈",t:"Cats",s:"Two cats (s)."}, {v:"🚌",t:"Bus",s:"One bus."}, {v:"🚌🚌",t:"Buses",s:"Two buses (es)."}, {v:"📦",t:"Box",s:"One box."}, {v:"📦📦",t:"Boxes",s:"Many boxes (es)."}], chat:[{q:"One dog, two...?",k:["dogs"],s:"Yes S",f:"Dogs"},{q:"One bus, two...?",k:["buses"],s:"Yes ES",f:"Buses"}], grammar:[{t:"Plural",r:"Noun + s/es",b:[{t:"One",c:"gb-adj"},{t:"Cat",c:"gb-sub"},{t:"Two",c:"gb-adj"},{t:"Cats",c:"gb-sub"}]}], quiz:[{q:"3...",o:["Bird","Birds"],c:1}] },
-  { title: "15. This / That 👉", slides:[{v:"👇",t:"This",s:"This apple (near)."}, {v:"👉",t:"That",s:"That star (far)."}, {v:"👇🐶",t:"This Dog",s:"My dog here."}, {v:"👉🐱",t:"That Cat",s:"Your cat there."}, {v:"👇✏️",t:"This Pen",s:"In my hand."}, {v:"👉✈️",t:"That Plane",s:"In the sky."}], chat:[{q:"Is the sun This or That?",k:["that"],s:"Far away",f:"That"},{q:"My nose is...",k:["this"],s:"Near",f:"This"}], grammar:[{t:"Pointer",r:"This (Near) / That (Far)",b:[{t:"This",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"my Pen",c:"gb-obj"}]}], quiz:[{q:"Far away is...",o:["That","This"],c:0}] },
-  { title: "16. Adjectives 🐘", slides:[{v:"🐘",t:"Big",s:"Elephant is big."}, {v:"🐜",t:"Small",s:"Ant is small."}, {v:"🔥",t:"Hot",s:"Fire is hot."}, {v:"❄️",t:"Cold",s:"Ice is cold."}, {v:"🚀",t:"Fast",s:"Rocket is fast."}, {v:"🐢",t:"Slow",s:"Turtle is slow."}], chat:[{q:"Mouse is?",k:["small"],s:"Tiny",f:"Small"},{q:"Ice cream is?",k:["cold"],s:"Brr",f:"Cold"}], grammar:[{t:"Desc",r:"It + is + Adj",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Big",c:"gb-adj"}]}], quiz:[{q:"Whale?",o:["Big","Small"],c:0}] },
-  { title: "17. Feelings 😊", slides:[{v:"😊",t:"Happy",s:"I smile."}, {v:"😢",t:"Sad",s:"I cry."}, {v:"😡",t:"Angry",s:"I am mad."}, {v:"😴",t:"Tired",s:"I want sleep."}, {v:"😨",t:"Scared",s:"I am afraid."}, {v:"🤣",t:"Funny",s:"I laugh."}], chat:[{q:"Are you happy?",k:["yes"],s:"Smile!",f:"Yes"},{q:"Ghost is...",k:["scary"],s:"Boo!",f:"Scary"}], grammar:[{t:"Feel",r:"I + am + Adj",b:[{t:"I",c:"gb-sub"},{t:"am",c:"gb-verb"},{t:"Happy",c:"gb-adj"}]}], quiz:[{q:"Crying means...",o:["Sad","Happy"],c:0}] },
-  { title: "18. Jobs 👮", slides:[{v:"👮",t:"Police",s:"Helps people."}, {v:"👨‍⚕️",t:"Doctor",s:"Cures sick."}, {v:"👨‍🏫",t:"Teacher",s:"Teaches school."}, {v:"👨‍🍳",t:"Cook",s:"Makes food."}, {v:"👨‍🚒",t:"Fireman",s:"Fights fire."}, {v:"🧑‍🌾",t:"Farmer",s:"Grows food."}], chat:[{q:"Help sick?",k:["doctor"],s:"Yes",f:"Doctor"},{q:"Makes food?",k:["cook","chef"],s:"Yum",f:"Cook"}], grammar:[{t:"Job",r:"He/She + is + a + Job",b:[{t:"He",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"a Cook",c:"gb-obj"}]}], quiz:[{q:"Works in kitchen?",o:["Cook","Police"],c:0}] },
-  { title: "19. Weather ☁️", slides:[{v:"☀️",t:"Sunny",s:"Wear hat."}, {v:"🌧️",t:"Rainy",s:"Take umbrella."}, {v:"☁️",t:"Cloudy",s:"No sun."}, {v:"❄️",t:"Snowy",s:"Make snowman."}, {v:"💨",t:"Windy",s:"Fly kite."}, {v:"⛈️",t:"Stormy",s:"Boom!"}], chat:[{q:"Is it raining?",k:["no","yes"],s:"Look outside",f:"Yes/No"},{q:"Hot weather?",k:["sunny"],s:"Beach time",f:"Sunny"}], grammar:[{t:"Weather",r:"It + is + Adj",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Sunny",c:"gb-adj"}]}], quiz:[{q:"Fly kite when...",o:["Windy","Rainy"],c:0}] },
-  { title: "20. Days of Week 📅", slides:[{v:"1️⃣",t:"Monday",s:"First day."}, {v:"2️⃣",t:"Tuesday",s:"Second day."}, {v:"3️⃣",t:"Wednesday",s:"Middle."}, {v:"4️⃣",t:"Thursday",s:"Almost there."}, {v:"5️⃣",t:"Friday",s:"Last school day."}, {v:"🎉",t:"Weekend",s:"Sat & Sun!"}], chat:[{q:"School starts?",k:["monday"],s:"Yes",f:"Monday"},{q:"Rest days?",k:["weekend","sunday"],s:"Play!",f:"Weekend"}], grammar:[{t:"Time",r:"Today + is + Day",b:[{t:"Today",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Friday",c:"gb-obj"}]}], quiz:[{q:"Days in week?",o:["7","5"],c:0}] },
-  
-  // --- UNIT 3: INTERMEDIATE CONCEPTS ---
-  { title: "21. Four Seasons 🍂", slides:[{v:"❄️",t:"Winter",s:"Snow and cold."}, {v:"🌸",t:"Spring",s:"Flowers bloom."}, {v:"☀️",t:"Summer",s:"Hot sun."}, {v:"🍂",t:"Autumn",s:"Leaves fall."}, {v:"☃️",t:"Snowman",s:"Build in winter."}, {v:"🏖️",t:"Beach",s:"Swim in summer."}], chat:[{q:"When is it hot?",k:["summer"],s:"Ice cream time!",f:"Summer"},{q:"When do flowers grow?",k:["spring"],s:"Lovely",f:"Spring"}], grammar:[{t:"Season",r:"In + Season",b:[{t:"In",c:"gb-prep"},{t:"Summer",c:"gb-obj"}]}], quiz:[{q:"Snow in...",o:["Winter","Summer"],c:0}] },
-  { title: "22. Time ⏰", slides:[{v:"🕘",t:"9:00",s:"Nine O'clock."}, {v:"🕛",t:"12:00",s:"Lunch time."}, {v:"🕒",t:"3:00",s:"Play time."}, {v:"🕕",t:"6:00",s:"Dinner time."}, {v:"🕤",t:"9:30",s:"Sleep time."}, {v:"⌚",t:"Watch",s:"On your arm."}], chat:[{q:"What time is lunch?",k:["12","twelve"],s:"Yum",f:"12"},{q:"Tells time?",k:["clock","watch"],s:"Tick tock",f:"Clock"}], grammar:[{t:"Time",r:"It + is + Time",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Five",c:"gb-obj"}]}], quiz:[{q:"Sleep at...",o:["Night","Morning"],c:0}] },
-  { title: "23. Actions 2 🏊", slides:[{v:"🏊",t:"Swim",s:"Pool fun."}, {v:"🚲",t:"Bike",s:"Ride bike."}, {v:"🧗",t:"Climb",s:"Go up tree."}, {v:"🎨",t:"Paint",s:"Use colors."}, {v:"🎤",t:"Sing",s:"La la la."}, {v:"🍳",t:"Cook",s:"Make food."}], chat:[{q:"Can you sing?",k:["yes","no"],s:"La la la",f:"Yes"},{q:"Ride a...?",k:["bike"],s:"Helmet on",f:"Bike"}], grammar:[{t:"Do",r:"I + Verb",b:[{t:"I",c:"gb-sub"},{t:"Swim",c:"gb-verb"}]}], quiz:[{q:"In pool we...",o:["Swim","Fly"],c:0}] },
-  { title: "24. Can / Can't 🦅", slides:[{v:"🦅",t:"Fly",s:"Birds CAN fly."}, {v:"🐧",t:"No Fly",s:"Penguins CAN'T."}, {v:"🐟",t:"Swim",s:"Fish CAN swim."}, {v:"🐈",t:"No Swim",s:"Cats CAN'T swim."}, {v:"🏃",t:"Run",s:"I CAN run."}, {v:"🚙",t:"Drive",s:"I CAN'T drive."}], chat:[{q:"Can pig fly?",k:["no"],s:"Funny!",f:"No"},{q:"Can you read?",k:["yes"],s:"Good",f:"Yes"}], grammar:[{t:"Able",r:"Can + Verb",b:[{t:"I",c:"gb-sub"},{t:"Can",c:"gb-verb"},{t:"Read",c:"gb-obj"}]}], quiz:[{q:"Fish...",o:["Swim","Walk"],c:0}] },
-  { title: "25. Yummy/Yuck 🤢", slides:[{v:"😋",t:"Yum",s:"I like it!"}, {v:"🤢",t:"Yuck",s:"I hate it!"}, {v:"🥦",t:"Veggie",s:"Good for you."}, {v:"🍬",t:"Candy",s:"Sweet treat."}, {v:"🕷️",t:"Spider",s:"Don't eat!"}, {v:"❤️",t:"Love",s:"Very much."}], chat:[{q:"Like pizza?",k:["yes","yum"],s:"Me too",f:"Yes"},{q:"Eat spider?",k:["no","yuck"],s:"Eww",f:"No"}], grammar:[{t:"Like",r:"I + Like + Obj",b:[{t:"I",c:"gb-sub"},{t:"Like",c:"gb-verb"},{t:"Pizza",c:"gb-obj"}]}], quiz:[{q:"Chocolate is...",o:["Yum","Yuck"],c:0}] },
-  { title: "26. -Ing Now 🏃", slides:[{v:"🏃",t:"Running",s:"He is running."}, {v:"🚶",t:"Walking",s:"She is walking."}, {v:"📖",t:"Reading",s:"I am reading."}, {v:"🗣️",t:"Talking",s:"We are talking."}, {v:"😴",t:"Sleeping",s:"Cat is sleeping."}, {v:"📺",t:"Watching",s:"Watching TV."}], chat:[{q:"What are you doing?",k:["sitting","learning"],s:"Good student",f:"Learning"},{q:"Is cat running?",k:["no"],s:"It is sleeping",f:"No"}], grammar:[{t:"Cont",r:"Am/Is/Are + Ing",b:[{t:"She",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"Runn-ing",c:"gb-adj"}]}], quiz:[{q:"Now I am...",o:["Reading","Read"],c:0}] },
-  { title: "27. Prepositions 📦", slides:[{v:"📦",t:"In",s:"Inside box."}, {v:"⬆️",t:"On",s:"Top of box."}, {v:"⬇️",t:"Under",s:"Below box."}, {v:"↔️",t:"Between",s:"In middle."}, {v:"🔙",t:"Behind",s:"At back."}, {v:"🔜",t:"Next to",s:"Beside box."}], chat:[{q:"Where is hat? On head?",k:["yes","on"],s:"Correct",f:"On head"},{q:"Fish in water?",k:["yes","in"],s:"Yes",f:"In water"}], grammar:[{t:"Loc",r:"It + is + Prep",b:[{t:"It",c:"gb-sub"},{t:"is",c:"gb-verb"},{t:"On table",c:"gb-obj"}]}], quiz:[{q:"Hat is ... head",o:["On","In"],c:0}] },
-  { title: "28. Transport 🚂", slides:[{v:"🚂",t:"Train",s:"Choo choo!"}, {v:"✈️",t:"Plane",s:"Fly high."}, {v:"🚗",t:"Car",s:"Vroom vroom."}, {v:"🚲",t:"Bike",s:"Ring ring."}, {v:"🚤",t:"Boat",s:"Float on water."}, {v:"🚀",t:"Rocket",s:"Go to space."}], chat:[{q:"Goes in water?",k:["boat","ship"],s:"Float",f:"Boat"},{q:"Has wings?",k:["plane"],s:"Fly",f:"Plane"}], grammar:[{t:"Go",r:"Go + by + Veh",b:[{t:"Go",c:"gb-verb"},{t:"by",c:"gb-prep"},{t:"Car",c:"gb-obj"}]}], quiz:[{q:"2 wheels?",o:["Bike","Car"],c:0}] },
-  { title: "29. City Places 🏙️", slides:[{v:"🏙️",t:"City",s:"Big buildings."}, {v:"🏥",t:"Hospital",s:"Doctors here."}, {v:"🚓",t:"Police",s:"Police station."}, {v:"🚒",t:"Fire",s:"Fire station."}, {v:"🛒",t:"Shop",s:"Buy food."}, {v:"🌳",t:"Park",s:"Play outside."}], chat:[{q:"Sick? Go where?",k:["hospital","doctor"],s:"Get well",f:"Hospital"},{q:"Buy food?",k:["shop","market"],s:"Yum",f:"Shop"}], grammar:[{t:"Place",r:"Go + to + Place",b:[{t:"Go",c:"gb-verb"},{t:"to",c:"gb-prep"},{t:"Park",c:"gb-obj"}]}], quiz:[{q:"Swings are in...",o:["Park","Bank"],c:0}] },
-  { title: "30. Traffic Rules 🚦", slides:[{v:"🚦",t:"Light",s:"Traffic light."}, {v:"🔴",t:"Red",s:"Stop!"}, {v:"🟡",t:"Yellow",s:"Wait."}, {v:"🟢",t:"Green",s:"Go!"}, {v:"🚶",t:"Cross",s:"Cross the road."}, {v:"🛑",t:"Sign",s:"Stop sign."}], chat:[{q:"Red light means?",k:["stop"],s:"Danger!",f:"Stop"},{q:"Green means?",k:["go"],s:"Safe",f:"Go"}], grammar:[{t:"Rule",r:"Imp + Now",b:[{t:"Stop!",c:"gb-verb"}]}], quiz:[{q:"Wait on...",o:["Yellow","Green"],c:0}] },
-  { title: "31. Some / Any 🥣", slides:[{v:"🥣",t:"Some",s:"I have some."}, {v:"🫗",t:"Any",s:"I don't have any."}, {v:"🥛",t:"Milk",s:"Some milk."}, {v:"🍪",t:"Cookie",s:"Any cookies?"}, {v:"💧",t:"Water",s:"Some water."}, {v:"🚫",t:"None",s:"Empty."}], chat:[{q:"Want some water?",k:["yes","some"],s:"Here",f:"Yes"},{q:"Have money?",k:["no","any"],s:"Empty",f:"No"}], grammar:[{t:"Quant",r:"Have + Some/Any",b:[{t:"I",c:"gb-sub"},{t:"have",c:"gb-verb"},{t:"Some",c:"gb-adj"}]}], quiz:[{q:"Do you have ...?",o:["Any","Some"],c:0}] },
-  { title: "32. Faster & Slower 🏎️", slides:[{v:"🏎️",t:"Fast",s:"Race car."}, {v:"🐌",t:"Slow",s:"Snail."}, {v:"🐘",t:"Bigger",s:"Than a mouse."}, {v:"🐜",t:"Smaller",s:"Than a dog."}, {v:"🦒",t:"Taller",s:"Than me."}, {v:"👴",t:"Older",s:"Than baby."}], chat:[{q:"Turtle is?",k:["slow"],s:"Yes",f:"Slow"},{q:"Plane is?",k:["fast"],s:"Zoom",f:"Fast"}], grammar:[{t:"Comp",r:"Adj + er + Than",b:[{t:"A",c:"gb-sub"},{t:"is Faster",c:"gb-adj"},{t:"than B",c:"gb-obj"}]}], quiz:[{q:"Elephant is ... than ant",o:["Bigger","Smaller"],c:0}] },
-  { title: "33. The Best 🥇", slides:[{v:"🥇",t:"Best",s:"Number 1."}, {v:"🥉",t:"Third",s:"Number 3."}, {v:"🐆",t:"Fastest",s:"Cheetah run."}, {v:"🐋",t:"Biggest",s:"Blue Whale."}, {v:"🐌",t:"Slowest",s:"Snail crawl."}, {v:"🏔️",t:"Highest",s:"Everest."}], chat:[{q:"Who is number 1?",k:["me","i am"],s:"Yes you!",f:"Me"},{q:"Biggest animal?",k:["whale"],s:"Huge",f:"Whale"}], grammar:[{t:"Super",r:"The + Adj + est",b:[{t:"The",c:"gb-sub"},{t:"Fastest",c:"gb-adj"}]}], quiz:[{q:"Gold medal is...",o:["Best","Worst"],c:0}] },
-  { title: "34. Past Tense: Was 🔙", slides:[{v:"👶",t:"Was",s:"I was a baby."}, {v:"👴",t:"Am",s:"I am old now."}, {v:"🏫",t:"Were",s:"We were at school."}, {v:"🏠",t:"Home",s:"Was at home."}, {v:"📅",t:"Yesterday",s:"Past day."}, {v:"🔙",t:"Past",s:"Before now."}], chat:[{q:"Were you a baby?",k:["yes","was"],s:"Cute",f:"Yes"},{q:"Yesterday hot?",k:["was","no"],s:"Ok",f:"It was..."}], grammar:[{t:"Past",r:"Was/Were",b:[{t:"I",c:"gb-sub"},{t:"Was",c:"gb-verb"},{t:"Small",c:"gb-adj"}]}], quiz:[{q:"I ... hungry",o:["Was","Were"],c:0}] },
-  { title: "35. Played Yesterday 🎮", slides:[{v:"🎮",t:"Played",s:"Game over."}, {v:"⚽",t:"Kicked",s:"Goal!"}, {v:"📺",t:"Watched",s:"TV show."}, {v:"🍳",t:"Cooked",s:"Made dinner."}, {v:"🧹",t:"Cleaned",s:"Clean room."}, {v:"📞",t:"Called",s:"Phone friend."}], chat:[{q:"Played games?",k:["yes","played"],s:"Fun",f:"Yes"},{q:"Watched TV?",k:["yes","watched"],s:"Show?",f:"Yes"}], grammar:[{t:"Reg",r:"Verb + ed",b:[{t:"I",c:"gb-sub"},{t:"Play-ed",c:"gb-verb"}]}], quiz:[{q:"Yesterday I...",o:["Played","Play"],c:0}] },
-  { title: "36. Ate Pizza 🍕", slides:[{v:"🍕",t:"Ate",s:"Yum yum."}, {v:"🥤",t:"Drank",s:"Slurp."}, {v:"🏃",t:"Went",s:"Go -> Went."}, {v:"🏊",t:"Swam",s:"Swim -> Swam."}, {v:"😴",t:"Slept",s:"Sleep -> Slept."}, {v:"👀",t:"Saw",s:"See -> Saw."}], chat:[{q:"Ate breakfast?",k:["ate","yes"],s:"Full",f:"Ate"},{q:"Went to school?",k:["went","yes"],s:"Good",f:"Went"}], grammar:[{t:"Irreg",r:"Special Word",b:[{t:"I",c:"gb-sub"},{t:"Ate",c:"gb-verb"},{t:"Food",c:"gb-obj"}]}], quiz:[{q:"Past of Eat",o:["Ate","Eated"],c:0}] },
-  { title: "37. Future: Will 🔮", slides:[{v:"🔮",t:"Will",s:"In future."}, {v:"📅",t:"Tomorrow",s:"Next day."}, {v:"🌧️",t:"Rain",s:"Will rain."}, {v:"🎂",t:"Age",s:"Will be 10."}, {v:"🚀",t:"Go",s:"Will go."}, {v:"🤖",t:"Robot",s:"Will help."}], chat:[{q:"Tomorrow school?",k:["yes","will"],s:"Study",f:"Yes"},{q:"Will you play?",k:["yes","will"],s:"Fun",f:"Yes"}], grammar:[{t:"Fut",r:"Will + Verb",b:[{t:"I",c:"gb-sub"},{t:"Will",c:"gb-verb"},{t:"Go",c:"gb-obj"}]}], quiz:[{q:"Tomorrow I...",o:["Will","Did"],c:0}] },
-  { title: "38. Plans 🗓️", slides:[{v:"🗓️",t:"Plan",s:"Going to."}, {v:"🎒",t:"School",s:"Going to school."}, {v:"🛌",t:"Sleep",s:"Going to sleep."}, {v:"🍽️",t:"Eat",s:"Going to eat."}, {v:"✈️",t:"Travel",s:"Going to fly."}, {v:"👵",t:"Visit",s:"Going to grandma."}], chat:[{q:"Going to sleep?",k:["yes","going"],s:"Night",f:"Yes"},{q:"Going to eat?",k:["yes"],s:"Hungry",f:"Yes"}], grammar:[{t:"Plan",r:"Going to + Verb",b:[{t:"I am",c:"gb-sub"},{t:"Going to",c:"gb-verb"},{t:"Eat",c:"gb-obj"}]}], quiz:[{q:"I am ... to run",o:["Going","Will"],c:0}] },
-  { title: "39. Sick 🤒", slides:[{v:"🤒",t:"Fever",s:"Hot head."}, {v:"🤧",t:"Cold",s:"Achoo!"}, {v:"🤕",t:"Ouch",s:"Pain."}, {v:"💊",t:"Pill",s:"Take medicine."}, {v:"🛌",t:"Rest",s:"Stay in bed."}, {v:"🩺",t:"Doctor",s:"Help me."}], chat:[{q:"Feel sick?",k:["no","yes"],s:"Good/Oh no",f:"Yes/No"},{q:"Need doctor?",k:["yes"],s:"Call 911",f:"Yes"}], grammar:[{t:"Feel",r:"I + have + Sick",b:[{t:"I",c:"gb-sub"},{t:"Have",c:"gb-verb"},{t:"a Cold",c:"gb-obj"}]}], quiz:[{q:"Hot head?",o:["Fever","Cold"],c:0}] },
-  { title: "40. Graduation 🎓🎉", slides:[{v:"🎓",t:"Graduation",s:"You finished!"}, {v:"🏆",t:"Winner",s:"You won!"}, {v:"🧠",t:"Smart",s:"Big brain!"}, {v:"🗣️",t:"English",s:"You speak it!"}, {v:"🥳",t:"Party",s:"Let's celebrate!"}, {v:"👋",t:"The End",s:"Good luck!"}], chat:[{q:"Are you happy?",k:["yes"],s:"I am proud!",f:"Yes"}], grammar:[{t:"Success",r:"You + Are + Adj",b:[{t:"You",c:"gb-sub"},{t:"Are",c:"gb-verb"},{t:"Smart 🧠",c:"gb-adj"}]}], quiz:[{q:"You are a...",o:["Master","Baby"],c:0}] }
-];
+    // --- UYGULAMA DURUMU (STATE) ---
+    const state = {
+      showLogin: true,
+      userName: '',
+      userGender: 'boy',
+      nameInput: '',
+      activeCategory: 'home',
+      mode: 'simple',
+      sentence: { aux: null, modal: null, subject: null, verb: null, object: null, adjective: null, ingVerb: null },
+      isComplete: false,
+      translation: '',
+      isTranslating: false,
+      isSpeaking: false,
+      score: 0,
+      funnyMistake: null,
+      selectedPiece: null,
+      leftDrawerOpen: false,
+      rightDrawerOpen: false,
+      isRecording: false,
+      isEvaluating: false,
+      pronunciationFeedback: ''
+    };
 
-const app = {
-  state: { l: 0, s: 0, q: 0, c: 0, mode: 'intro', score: 0, listening: false, lastMsg: "", done: [] },
-  
-  checkLogin() {
-    const input = document.getElementById('passwordInput').value;
-    const err = document.getElementById('loginError');
-    if(btoa(input) === "MjI0NFRBWUxBTg==") {
-      this.startApp();
-    } else {
-      err.style.display = 'block';
-      err.classList.remove('anim-error');
-      void err.offsetWidth; 
-      err.classList.add('anim-error');
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let currentDragSlot = null;
+
+    // --- YARDIMCI FONKSİYONLAR ---
+    const escapeHTML = str => String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+    const clean = word => (!word || typeof word !== 'string') ? '' : word.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]/gu, '').trim();
+
+    const getFullText = () => {
+      const s = state.sentence;
+      const parts = [];
+      if (state.mode === 'question') parts.push(clean(s.aux), clean(s.subject), clean(s.verb || s.ingVerb), clean(s.object));
+      else if (state.mode === 'negative') parts.push(clean(s.subject), clean(s.aux), clean(s.verb), clean(s.object));
+      else {
+        parts.push(clean(s.subject));
+        if (s.aux) parts.push(clean(s.aux));
+        if (s.modal) parts.push(clean(s.modal));
+        if (s.verb || s.ingVerb) parts.push(clean(s.verb || s.ingVerb));
+        if (s.object) parts.push(clean(s.object));
+        if (s.adjective) parts.push(clean(s.adjective));
+      }
+      return parts.filter(Boolean).join(' ') + (state.mode === 'question' ? '?' : '.');
+    };
+
+    const getDynamicSubjects = () => {
+      const userPiece = `${state.userName} ${state.userGender === 'boy' ? '👦' : '👧'}`;
+      return [userPiece, ...CATEGORIES[state.activeCategory].subjects];
+    };
+
+    const resetGame = () => {
+      state.sentence = { aux: null, modal: null, subject: null, verb: null, object: null, adjective: null, ingVerb: null };
+      state.isComplete = false;
+      state.translation = '';
+      state.isSpeaking = false;
+      state.selectedPiece = null;
+      state.funnyMistake = null;
+      state.pronunciationFeedback = '';
+      state.isEvaluating = false;
+      if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+      state.isRecording = false;
+    };
+
+    const getMagicRule = () => {
+      if (state.isComplete) return state.score % 10 === 0 && state.score > 0 ? "İNANILMAZ! YENİ SEVİYEYE GEÇTİN! 🚀🐱" : "Harika! Cümlen artık hazır! 🎉";
+      switch(state.mode) {
+        case 'simple': return "Hediye Zamanı: He/She/It fiile 's' takısı verir! 🎁";
+        case 'negative': return "Hayır Zamanı: 'Don't' ve 'Doesn't' ile 'yapmam' de! 🙅‍♀️";
+        case 'status': return "Köprü Kur: am, is, are ile birinin durumunu söyle! 🌉";
+        case 'continuous': return "Sihirli An: Fiile '-ing' ekle, şu anı anlat! 🕒";
+        case 'modal': return "Süper Güç: 'Can' ile neler yapabileceğini göster! 💪";
+        case 'question': return "Kaptanlar Öne: Do/Is/Can cümlenin başına koşar! 👨‍✈️";
+        default: return "Sürükle veya kelimeye tıklayıp boşluğa dokun! 👆";
+      }
+    };
+
+    const getPureBaseVerb = (verbRaw) => {
+      const cleaned = clean(verbRaw).toLowerCase();
+      for (const [base, past] of Object.entries(PAST_VERBS_MAP)) {
+        if (clean(past).toLowerCase() === cleaned) return clean(base).toLowerCase();
+      }
+      let baseV = cleaned.replace(/ing$/, '').replace(/s$/, '').replace(/es$/, '');
+      if (baseV === "drinki") baseV = "drink";
+      return baseV;
+    };
+
+    const checkSemanticOnly = (verbRaw, objRaw) => {
+      if (!verbRaw || !objRaw) return true;
+      const baseVerb = getPureBaseVerb(verbRaw);
+      const obj = clean(objRaw).toLowerCase();
+      const groups = VERB_COMPATIBILITY[baseVerb];
+      if (groups) return groups.some(group => (SEMANTIC_GROUPS[group] || []).some(item => clean(item).toLowerCase() === obj));
+      return true;
+    };
+
+    const validateHarmony = (type, value, current) => {
+      const subj = type === 'subject' ? value : current.subject;
+      const aux = type === 'aux' ? value : current.aux;
+
+      if (subj && aux) {
+        const cleanSubj = subj.toLowerCase();
+        const cleanAux = aux.toLowerCase();
+        const isI = cleanSubj.startsWith("i ");
+        const isThirdSing = ["he ", "she ", "it ", "mother", "father", "cat", "teacher", "dog", "bird", "lion", "monkey", "elephant"].some(x => cleanSubj.includes(x));
+        const isPlural = ["you ", "we ", "they ", "students", "boys", "girls", "friend"].some(x => cleanSubj.includes(x));
+
+        if (cleanAux === "am" && !isI) return false;
+        if (cleanAux === "is" && !isThirdSing) return false;
+        if (cleanAux === "are" && !isPlural) return false;
+        if (cleanAux === "do" && isThirdSing) return false;
+        if (cleanAux === "does" && !isThirdSing) return false;
+        if (cleanAux === "don't" && isThirdSing) return false;
+        if (cleanAux === "doesn't" && (isI || isPlural)) return false;
+      }
+      const verbRaw = (type === 'verb' || type === 'ingVerb') ? value : (current.verb || current.ingVerb);
+      const objRaw = type === 'object' ? value : current.object;
+      if (verbRaw && objRaw) return checkSemanticOnly(verbRaw, objRaw);
+      return true;
+    };
+
+    const getFunnyMistake = (verbRaw, objRaw, name) => {
+      if (!verbRaw || !objRaw) return null;
+      const baseVerb = getPureBaseVerb(verbRaw);
+      const obj = clean(objRaw).toLowerCase();
+      
+      const isFood = SEMANTIC_GROUPS.food.some(item => clean(item).toLowerCase() === obj);
+      const isLiquid = SEMANTIC_GROUPS.liquid.some(item => clean(item).toLowerCase() === obj);
+      const isTool = SEMANTIC_GROUPS.tool.some(item => clean(item).toLowerCase() === obj);
+      const isActivity = SEMANTIC_GROUPS.activity.some(item => clean(item).toLowerCase() === obj);
+
+      if (baseVerb === 'drink' && isFood) return { emoji: "🥤🍕", message: `Pizzayı pipetle içmek mi? Çok komiksin ${name}! 😂 Yiyecekleri yemeliyiz.` };
+      if (baseVerb === 'eat' && isLiquid) return { emoji: "🍽️💧", message: `Suyu çiğnemek biraz zor olabilir ${name}! 😅 Sıvıları içmeliyiz.` };
+      if (baseVerb === 'sleep' && (isFood || isLiquid)) return { emoji: "😴🍔", message: `Yemeğin üstünde uyumak mı? 🛌 Yatak daha rahat bence ${name}!` };
+      if (baseVerb === 'read' && (isFood || isLiquid)) return { emoji: "📖🍕", message: `Acaba yemeğin üzerinde ne yazıyor? Çok şakacısın ${name}! 🤡` };
+      if (baseVerb === 'play' && (isFood || isLiquid)) return { emoji: "⚽🍔", message: `Yiyeceklerle oynamak yerine onları yesek mi ${name}? 😋` };
+      if ((baseVerb === 'run' || baseVerb === 'jump') && (isFood || isLiquid)) return { emoji: "🏃🍔", message: `Yemeğin üstünde zıplamak mı? Annen kızmasın ${name}! 🙈` };
+      if (baseVerb === 'drink' && isActivity) return { emoji: "🥤⚽", message: `Oyun oynanır ama içilmez ${name}! Sadece sıvıları içebiliriz. 🧃` };
+      if (baseVerb === 'eat' && isTool) return { emoji: "🍽️💻", message: `Bilgisayarı veya kalemi yersek dişlerimiz kırılabilir ${name}! 🦷` };
+      
+      return { emoji: "🤡", message: `Burası biraz tuhaf oldu sanki ${name}! Başka bir kelime deneyelim mi? 🪄` };
+    };
+
+    const applyGrammarRules = () => {
+      if (!state.sentence.subject) return;
+      if (state.mode === 'simple' && state.sentence.verb) {
+        const cleanSubj = state.sentence.subject.toLowerCase();
+        const isThirdSing = ["he ", "she ", "it ", "mother", "father", "cat", "teacher", "dog", "bird", "lion", "monkey", "elephant"].some(x => cleanSubj.includes(x));
+        const parts = state.sentence.verb.split(' ');
+        const base = parts[0].replace(/s$/, '').replace(/es$/, '');
+        const emoji = parts.slice(1).join(' ');
+        let target = state.sentence.verb;
+        if (isThirdSing) {
+          const s = (base.endsWith('sh') || base.endsWith('ch') || base.endsWith('ss')) ? 'es' : 's';
+          target = `${base}${s} ${emoji}`;
+        } else { target = `${base} ${emoji}`; }
+        
+        if (state.sentence.verb !== target) {
+          state.sentence.verb = target;
+          const slot = document.querySelector(`.puzzle-slot[data-type="verb"]`);
+          if (slot) {
+            slot.classList.add('animate-highlight');
+            setTimeout(() => slot.classList.remove('animate-highlight'), 1200);
+          }
+        }
+      }
+    };
+
+    const processPlacement = (targetType, sourceData) => {
+      const isVerbMatch = (targetType === 'verb' && (sourceData.type === 'verb' || sourceData.type === 'ingVerb'));
+      const isAuxMatch = (targetType === 'aux' && (sourceData.type === 'aux' || sourceData.type === 'modal'));
+      
+      if (sourceData.type === targetType || isVerbMatch || isAuxMatch) {
+        const actualType = isVerbMatch ? sourceData.type : (isAuxMatch ? sourceData.type : targetType);
+        
+        if (!validateHarmony(actualType, sourceData.value, state.sentence)) {
+          if (['verb', 'ingVerb', 'object'].includes(actualType)) {
+            const tempSentence = { ...state.sentence, [actualType]: sourceData.value };
+            const vRaw = tempSentence.verb || tempSentence.ingVerb;
+            const oRaw = tempSentence.object;
+            if (vRaw && oRaw && !checkSemanticOnly(vRaw, oRaw)) {
+              const mistake = getFunnyMistake(vRaw, oRaw, state.userName);
+              if (mistake) {
+                state.funnyMistake = mistake;
+                updateUI();
+                setTimeout(() => { state.funnyMistake = null; updateUI(); }, 5000); 
+              }
+            }
+          }
+          const slotEl = document.querySelector(`.puzzle-slot[data-type="${targetType}"]`);
+          if (slotEl) {
+            slotEl.classList.add('animate-bounce-error');
+            const path = slotEl.querySelector('path');
+            if(path) { path.setAttribute('stroke', '#b91c1c'); path.setAttribute('fill', '#ef4444'); }
+            setTimeout(() => {
+              slotEl.classList.remove('animate-bounce-error');
+              updateUI();
+            }, 800);
+          }
+          return;
+        }
+
+        state.sentence[actualType] = sourceData.value;
+        applyGrammarRules();
+        
+        let isFinished = false;
+        const sen = state.sentence;
+        const m = state.mode;
+        if (m === 'question') isFinished = (sen.aux && sen.subject && (sen.verb || sen.ingVerb) && sen.object);
+        else if (m === 'modal' || m === 'negative') isFinished = (sen.subject && (sen.modal || sen.aux) && sen.verb && sen.object);
+        else if (m === 'status') isFinished = (sen.subject && sen.aux && sen.adjective);
+        else if (m === 'continuous') isFinished = (sen.subject && sen.aux && sen.ingVerb && sen.object);
+        else isFinished = (sen.subject && sen.verb && sen.object);
+        
+        if (isFinished && !state.isComplete) {
+          state.isComplete = true;
+          state.leftDrawerOpen = false;
+          state.rightDrawerOpen = false;
+          state.selectedPiece = null;
+          state.score += 1;
+          
+          if (state.score % 10 === 0 && state.score > 0) triggerConfetti(true);
+          else triggerConfetti(false);
+
+          const fullText = getFullText();
+          updateUI(); // Immediately show complete state
+          fetchTranslation(fullText);
+          fetchAndPlayTTS(fullText);
+        } else {
+          state.selectedPiece = null;
+          state.leftDrawerOpen = false;
+          state.rightDrawerOpen = false;
+          updateUI();
+        }
+      } else {
+        state.selectedPiece = null; 
+        updateUI();
+      }
+    };
+
+    // --- API FONKSİYONLARI ---
+    const playAudioFromPCM = (base64Data, sampleRate = 24000) => {
+      const binaryString = window.atob(base64Data);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
+
+      const wavHeader = new ArrayBuffer(44);
+      const view = new DataView(wavHeader);
+      view.setUint32(0, 0x46464952, true); 
+      view.setUint32(4, 36 + len, true);
+      view.setUint32(8, 0x45564157, true); 
+      view.setUint32(12, 0x20746d66, true);
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      view.setUint32(36, 0x61746164, true);
+      view.setUint32(40, len, true);
+      const blob = new Blob([wavHeader, bytes], { type: 'audio/wav' });
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.play();
+    };
+
+    const blobToBase64 = blob => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+    });
+
+    const apiKey = ""; 
+
+    const fetchTranslation = async (text) => {
+      state.isTranslating = true; updateUI();
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text }] }], systemInstruction: { parts: [{ text: "Sen bir İngilizce öğretmenisin. Verilen İngilizce cümleyi, kelime dizilişine ve anlamına mümkün olduğunca sadık kalarak (birebir) Türkçeye çevir. Çeviri 8 yaşındaki bir çocuğun anlayacağı netlikte ve sevimli olmalı. Sadece çeviriyi döndür." }] } })
+        });
+        const result = await response.json();
+        state.translation = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "Müthişsin! 🎉";
+      } catch (err) { state.translation = "Cümlen harika oldu! 😊"; }
+      state.isTranslating = false; updateUI();
+    };
+
+    const fetchAndPlayTTS = async (text) => {
+      state.isSpeaking = true; updateUI();
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `Say slowly, clearly and naturally in a sweet girl's voice. IMPORTANT: The word "${state.userName}" is a Turkish name. Please pronounce it with Turkish phonics. Sentence: ${text}` }] }],
+            generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } } }
+          })
+        });
+        const result = await response.json();
+        const audioData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (audioData) playAudioFromPCM(audioData);
+      } catch (err) { console.error(err); }
+      state.isSpeaking = false; updateUI();
+    };
+
+    const evaluatePronunciation = async (base64Audio, mimeType) => {
+      state.isEvaluating = true; updateUI();
+      try {
+        const targetSentence = getFullText();
+        const prompt = `Sen İngilizce öğrenen 8 yaşındaki Aşkım'ın sevgi dolu dijital öğretmenisin. Görevi şu cümleyi okumaktı: "${targetSentence}". Ekli ses kaydında Aşkım'ın okuyuşu var. Ses kaydını dinle ve telaffuzunu değerlendir. Eğer doğruya yakın ve çabalamışsa (ufak tefek çocuksu hataları görmezden gel), çok motive edici, coşkulu ve ismini ("${state.userName}") kullanarak Türkçe bir tebrik mesajı yaz (Örn: "Harika telaffuz ettin Aşkım! Yıldızlar senin için! 🌟"). Eğer hiç anlaşılmıyor, sadece boşluk veya alakasız bir ses varsa, onu kırmadan "Biraz daha yüksek sesle bir kez daha denemek ister misin ${state.userName}? Sana güveniyorum!" gibi bir dönüş yap. Sadece bu 1-2 cümlelik tatlı geri bildirimi ver. Asla metin dışında bir şey ekleme.`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [ { text: prompt }, { inlineData: { mimeType: mimeType || "audio/webm", data: base64Audio } } ] }] })
+        });
+        const result = await response.json();
+        state.pronunciationFeedback = result.candidates?.[0]?.content?.parts?.[0]?.text || `Harika okudun ${state.userName}! 🌟 Mükemmel telaffuz!`;
+      } catch (err) { state.pronunciationFeedback = `Sesini tam alamadım ama eminim harika okumuşsundur ${state.userName}! 🎤`; }
+      state.isEvaluating = false; updateUI();
+    };
+
+    const toggleRecording = async () => {
+      if (state.isRecording) {
+        if (mediaRecorder) mediaRecorder.stop();
+        state.isRecording = false; updateUI();
+      } else {
+        state.pronunciationFeedback = ''; updateUI();
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+          mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+          mediaRecorder.onstop = async () => {
+            const mimeType = mediaRecorder.mimeType || 'audio/webm';
+            const audioBlob = new Blob(audioChunks, { type: mimeType });
+            stream.getTracks().forEach(t => t.stop());
+            const base64 = await blobToBase64(audioBlob);
+            evaluatePronunciation(base64, mimeType);
+          };
+          mediaRecorder.start();
+          state.isRecording = true; updateUI();
+        } catch (err) {
+          state.pronunciationFeedback = `Mikrofonuna ulaşamadım ${state.userName}! Cihaz ayarlarından izin vermen gerekebilir. 🎙️`;
+          updateUI();
+        }
+      }
+    };
+
+    // --- HTML RENDER FONKSİYONLARI ---
+
+    function triggerConfetti(isLevelUp) {
+      const colors = ['#f59e0b', '#ef4444', '#3b82f6', '#10b981', '#a855f7', '#ec4899', '#f97316', '#fbbf24'];
+      const count = isLevelUp ? 200 : 60; 
+      const container = document.createElement('div');
+      container.className = 'fixed inset-0 pointer-events-none z-[100] overflow-hidden';
+      
+      for(let i=0; i<count; i++) {
+        const p = document.createElement('div');
+        const size = Math.random() * (isLevelUp ? 12 : 8) + 6 + 'px';
+        p.className = 'confetti-particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.width = size; p.style.height = size;
+        p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        p.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        p.style.animationDuration = Math.random() * 2.5 + 2 + 's';
+        p.style.animationDelay = Math.random() * 0.5 + 's';
+        container.appendChild(p);
+      }
+      document.body.appendChild(container);
+      setTimeout(() => { if (document.body.contains(container)) document.body.removeChild(container); }, 5000);
     }
-  },
 
-  startApp() {
-    document.getElementById('startOverlay').style.display = 'none';
-    document.getElementById('mainContent').style.filter = 'none';
-    this.renderSidebar();
-    this.renderRobot('happy');
-    this.load();
-    this.speak("Welcome to Robo Kanka Academy! Let's start.");
-    setTimeout(() => this.startLesson(this.state.l), 1000);
-  },
+    const renderPuzzlePiece = ({ type, color, content, isSelected, isSelectedPiece, isSlot, shape, isInvalid, isComplete }) => {
+      const isPlacedInSlot = isSlot && content;
+      const currentWidth = isPlacedInSlot ? 234 : 180;
+      const currentHeight = isPlacedInSlot ? 85 : 65;
 
-  startLesson(idx) {
-    this.state.l = idx; this.state.s = 0; this.state.q = 0; this.state.c = 0; this.state.mode = 'slide';
-    
-    document.getElementById('sidebar').classList.remove('show');
-    document.getElementById('backdrop').classList.remove('show');
-    
-    this.renderSidebar();
-    this.renderSlide();
-    document.getElementById('chatBox').innerHTML = ''; 
-    document.getElementById('statusBadge').innerText = "Topic: " + LESSONS[idx].title;
-    this.updateProgressBar();
-  },
+      const paths = {
+        SUBJ_START: `M0,10 Q0,0 10,0 L170,0 L170,20 L195,40 L170,60 L170,80 L10,80 Q0,80 0,70 Z`,
+        SUBJ_MID: `M30,0 L170,0 L170,20 L195,40 L170,60 L170,80 L30,80 L30,60 L55,40 L30,20 L30,0 Z`,
+        VERB_SIMPLE: `M30,0 L170,0 L170,25 L190,25 L190,55 L170,55 L170,80 L30,80 L30,60 L55,40 L30,20 L30,0 Z`,
+        BE_MODAL: `M30,0 L170,0 L170,20 L195,40 L170,60 L170,80 L30,80 L30,60 L55,40 L30,20 L30,0 Z`,
+        AUX_START: `M0,10 Q0,0 10,0 L170,0 L170,20 L195,40 L170,60 L170,80 L10,80 Q0,80 0,70 Z`,
+        VERB_ING: `M30,0 L170,0 L170,25 L190,25 L190,55 L170,55 L170,80 L30,80 L30,55 L50,55 L50,25 L30,25 L30,0 Z`,
+        ADJECTIVE: `M30,0 L190,0 Q200,0 200,10 L200,70 Q200,80 190,80 L30,80 L30,65 L45,65 L45,50 L30,50 L30,30 L45,30 L45,15 L30,15 L30,0 Z`,
+        VERB_BASE: `M30,0 L170,0 L170,25 L190,25 L190,55 L170,55 L170,80 L30,80 L30,65 L45,65 L45,50 L30,50 L30,30 L45,30 L45,15 L30,15 L30,0 Z`,
+        OBJ_END: `M30,0 L190,0 Q200,0 200,10 L200,70 Q200,80 190,80 L30,80 L30,55 L50,55 L50,25 L30,25 L30,0 Z`
+      };
 
-  updateProgressBar() {
-    const lesson = LESSONS[this.state.l];
-    let pct = 0;
-    const totalSlides = lesson.slides.length;
-    const totalChat = lesson.chat.length;
-    const totalQuiz = lesson.quiz.length;
-    
-    if(this.state.mode === 'slide') pct = (this.state.s / totalSlides) * 50;
-    else if(this.state.mode === 'chat') pct = 50 + (this.state.c / totalChat) * 20;
-    else if(this.state.mode === 'grammar') pct = 75;
-    else if(this.state.mode === 'quiz') pct = 80 + (this.state.q / totalQuiz) * 20;
-    
-    document.getElementById('lessonProgressBar').style.width = `${pct}%`;
-  },
+      let formattedContent = '';
+      if (content) {
+        const text = content.replace('_adj', '').replace('_v', '');
+        const parts = text.split(/(\p{Emoji})/u);
+        formattedContent = parts.map(part => {
+          if (/\p{Emoji}/u.test(part)) {
+            // Emoji Fly animation is removed as per last instruction, back to original scale
+            const classStr = isPlacedInSlot 
+               ? `inline-block text-3xl mx-1.5 transform scale-110` 
+               : `inline-block text-2xl mx-1 transform scale-150`;
+            return `<span class="${classStr}">${part}</span>`;
+          }
+          return `<span>${part}</span>`;
+        }).join('');
+      }
 
-  renderSidebar() {
-    const list = document.getElementById('lessonList');
-    list.innerHTML = LESSONS.map((les, i) => `
-      <div class="lesson-item ${i === this.state.l ? 'active' : ''}" onclick="app.startLesson(${i})">
-        <div class="lesson-badge">${this.state.done.includes(i) ? '✅' : '🔒'}</div>
-        <div class="fw-bold text-truncate">${les.title}</div>
-      </div>
-    `).join('');
-  },
+      const pieceColor = isInvalid ? '#ef4444' : (content ? color : (isSelectedPiece ? '#e2e8f0' : '#f8fafc'));
+      const strokeColor = isSelectedPiece ? '#eab308' : (isInvalid ? '#b91c1c' : (content ? 'rgba(0,0,0,0.2)' : '#cbd5e1'));
 
-  renderSlide() {
-    const slide = LESSONS[this.state.l].slides[this.state.s];
-    document.getElementById('boardPanel').innerHTML = `
-      <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center p-3" style="background:${slide.c || '#fff'}">
-        <div class="slide-visual ${slide.a || ''}">${slide.v}</div>
-        <div class="slide-text">
-          <div>${slide.t}</div>
-          <small class="slide-story">${slide.s}</small>
+      const dragAttr = (!!content && !isSlot) ? 'draggable="true"' : '';
+      const dataAttrs = `data-type="${type}" ${content ? `data-value="${escapeHTML(content)}"` : ''}`;
+      const actionAttr = isSlot ? `data-action="slot-click"` : `data-action="piece-click"`;
+
+      let classes = `puzzle-piece relative transition-all duration-500 ease-out transform flex flex-col items-center justify-center`;
+      if (isSlot) classes += ` puzzle-slot cursor-pointer`;
+      else classes += ` cursor-grab active:cursor-grabbing`;
+
+      if (isSelected && !isSlot) classes += ` opacity-40 grayscale-[0.5]`;
+      else if (!isSlot) classes += ` hover:scale-102`;
+
+      if (isSelectedPiece) classes += ` scale-105 drop-shadow-2xl z-20`;
+
+      return `
+        <div class="${classes}" style="width: ${currentWidth}px; height: ${currentHeight}px" ${dragAttr} ${dataAttrs} ${actionAttr}>
+          <svg viewBox="0 0 200 80" preserveAspectRatio="none" class="w-full h-full drop-shadow-md transition-all absolute inset-0 ${isSelectedPiece ? 'brightness-105' : ''}">
+            <path d="${paths[shape] || paths.SUBJ_START}" fill="${pieceColor}" stroke="${strokeColor}" stroke-width="${isInvalid || isSelectedPiece ? "4" : "2"}" stroke-dasharray="${!content ? "6,4" : "0"}"></path>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center p-2 pointer-events-none overflow-hidden text-center z-10">
+            <span class="font-black tracking-tight transition-all flex items-center justify-center flex-wrap ${content ? 'text-white' : 'text-slate-400 uppercase tracking-widest opacity-60'} ${isPlacedInSlot ? 'text-sm md:text-lg lg:text-xl px-5' : 'text-[10px] md:text-[11px] lg:text-xs px-3'}">
+              ${content ? formattedContent : type}
+            </span>
+          </div>
         </div>
-        <div class="mt-4 d-flex gap-3 w-100 px-3">
-          ${this.state.s > 0 ? `<button class="btn btn-light rounded-circle shadow" onclick="app.navSlide(-1)">⬅️</button>` : ''}
-          <button class="btn btn-primary flex-grow-1 rounded-pill shadow fs-4 fw-bold animate-pulse" onclick="app.navSlide(1)">
-            ${this.state.s < LESSONS[this.state.l].slides.length-1 ? 'NEXT ➡️' : 'CHAT 💬'}
+      `;
+    };
+
+    const renderLogin = () => `
+      <div class="min-h-screen bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center p-4">
+        <div class="bg-white p-8 md:p-10 rounded-[3rem] shadow-2xl max-w-md w-full text-center transform transition-all scale-100">
+          <div class="relative inline-block mb-6">
+             <div class="w-24 h-24 rounded-full flex items-center justify-center transition-all bg-indigo-100 text-indigo-500">
+                <i data-lucide="user-circle" class="w-16 h-16"></i>
+             </div>
+             <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-md text-amber-400 fill-amber-400"><i data-lucide="star" class="w-6 h-6"></i></div>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-black text-slate-800 mb-2 italic">Hoş Geldin!</h1>
+          <p class="text-slate-500 font-bold mb-6 text-base md:text-lg">İngilizce oynamaya hazır mısın?</p>
+          <input type="text" id="nameInput" placeholder="Adını buraya yaz..." value="${escapeHTML(state.nameInput)}" class="w-full bg-slate-100 border-2 border-slate-200 px-6 py-4 rounded-3xl font-black text-lg focus:outline-none focus:border-indigo-400 transition-all text-center mb-6" />
+          <button data-action="start-game" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-xl py-4 rounded-3xl shadow-lg flex items-center justify-center gap-3 transition-transform active:scale-95">
+            <i data-lucide="play-circle" class="w-7 h-7"></i> BAŞLA
           </button>
         </div>
       </div>
     `;
-    this.speak(slide.s);
-    this.updateProgressBar();
-  },
 
-  navSlide(dir) {
-    const max = LESSONS[this.state.l].slides.length - 1;
-    if (dir === 1 && this.state.s < max) { this.state.s++; this.renderSlide(); }
-    else if (dir === -1 && this.state.s > 0) { this.state.s--; this.renderSlide(); }
-    else if (dir === 1 && this.state.s === max) { this.startChat(); }
-  },
-
-  startChat() {
-    this.state.mode = 'chat';
-    this.updateProgressBar();
-    document.getElementById('boardPanel').innerHTML = `
-      <div class="d-flex flex-column justify-content-center align-items-center h-100 bg-white p-4 text-center">
-        <div class="display-1 mb-3 anim-float">💬</div>
-        <h2 class="fw-bold text-primary">Let's Talk!</h2>
-        <p class="text-muted fs-5">I will ask you a question.</p>
-        <div class="badge bg-warning text-dark fs-6 mt-3">Press Microphone 🎤</div>
-      </div>
-    `;
-    this.chatStep();
-  },
-
-  chatStep() {
-    const q = LESSONS[this.state.l].chat[this.state.c];
-    this.addChat('ai', q.q);
-    this.speak(q.q);
-  },
-
-  handleSpeech(txt) {
-    if (this.state.mode !== 'chat') return;
-    this.addChat('user', txt);
-    const step = LESSONS[this.state.l].chat[this.state.c];
-    
-    const match = step.k.some(k => txt.toLowerCase().includes(k));
-    
-    if (match || txt.length > 2) { 
-      this.renderRobot('happy');
-      this.speak(step.s);
-      setTimeout(() => {
-        this.state.c++;
-        if (this.state.c < LESSONS[this.state.l].chat.length) {
-            this.chatStep(); 
-            this.updateProgressBar();
-        }
-        else this.startGrammar();
-      }, 2500);
-    } else {
-      this.renderRobot('surprised');
-      this.speak("Try again! " + step.f);
-    }
-  },
-
-  startGrammar() {
-    this.state.mode = 'grammar';
-    this.updateProgressBar();
-    const g = LESSONS[this.state.l].grammar;
-    let html = `<div class="h-100 overflow-auto p-4 bg-white text-center"><h2 class="fw-bold text-primary mb-3">Grammar Lab 🧪</h2>`;
-    
-    if(g && g.length > 0) {
-      g.forEach(rule => {
-        let blocks = rule.b.map(x => `<span class="g-block ${x.c}">${x.t}</span>`).join('');
-        html += `<div class="grammar-box"><div class="fw-bold text-secondary mb-1">${rule.t}</div><div class="small text-muted mb-2">${rule.r}</div><div>${blocks}</div></div>`;
-      });
-    } else {
-        html += `<div class="p-4 text-muted">Just practice!</div>`;
-    }
-    
-    html += `<button class="btn btn-success btn-lg rounded-pill mt-4 shadow w-100 anim-pulse" onclick="app.startQuiz()">START QUIZ 🧠</button></div>`;
-    document.getElementById('boardPanel').innerHTML = html;
-    this.speak("Look at the magic sentence blocks! Then let's do a quiz.");
-  },
-
-  startQuiz() {
-    this.state.mode = 'quiz';
-    this.state.q = 0;
-    this.updateProgressBar();
-    this.renderQuiz();
-  },
-
-  renderQuiz() {
-    const q = LESSONS[this.state.l].quiz[this.state.q];
-    document.getElementById('boardPanel').innerHTML = `
-      <div class="d-flex flex-column justify-content-center h-100 p-4 bg-white text-center">
-        <div class="badge bg-info mb-3 fs-6">Question ${this.state.q+1}</div>
-        <h3 class="fw-bold text-dark mb-4">${q.q}</h3>
-        <div class="d-grid gap-3">
-          ${q.o.map((opt, i) => `<button class="btn btn-outline-primary p-3 fs-5 rounded-pill fw-bold text-start" onclick="app.ans(${i}, this)">${opt}</button>`).join('')}
+    const renderHeader = () => `
+      <header class="bg-white border-b border-slate-200 p-2 md:px-4 md:py-2 flex flex-col md:flex-row items-center justify-between shadow-sm z-20 shrink-0 gap-2 md:gap-0">
+        <div class="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-between md:justify-start">
+          <div class="flex items-center gap-2">
+            <div class="px-2 py-1.5 md:px-3 rounded-xl border flex items-center gap-2 bg-indigo-50 border-indigo-100">
+              <i data-lucide="user-circle" class="text-indigo-500 w-4 h-4 md:w-5 md:h-5"></i>
+              <span class="font-black text-slate-700 text-xs md:text-sm whitespace-nowrap">${escapeHTML(state.userName)}</span>
+            </div>
+            <div class="flex items-center gap-1 px-2 py-1.5 md:px-3 rounded-xl border shadow-sm transition-all duration-300 ${state.score >= 10 ? 'bg-indigo-50 border-indigo-300 scale-105' : 'bg-amber-50 border-amber-200'}" title="Kazanılan Yıldızlar">
+              <i data-lucide="star" class="${state.score >= 10 ? 'text-indigo-500 fill-indigo-400' : 'text-amber-500 fill-amber-400'} w-4 h-4"></i>
+              <span class="font-black text-xs md:text-sm ${state.score >= 10 ? 'text-indigo-700' : 'text-amber-700'}">${state.score}</span>
+            </div>
+          </div>
+          
+          <div class="flex gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200 overflow-x-auto hide-scrollbar">
+            ${Object.values(CATEGORIES).map(cat => {
+              const isLocked = cat.requiredStars > 0 && state.score < cat.requiredStars;
+              const btnClass = isLocked ? 'opacity-40 cursor-not-allowed bg-slate-200 text-slate-500' : (state.activeCategory === cat.id ? 'text-white shadow-sm' : 'text-slate-500 hover:bg-white');
+              const btnStyle = state.activeCategory === cat.id ? `background-color: ${cat.color}` : 'background-color: transparent';
+              return `
+                <button data-action="${isLocked ? '' : 'set-category'}" data-payload="${cat.id}" style="${btnStyle}" class="flex items-center gap-1 px-2 md:px-3 py-1 rounded-lg font-bold text-[10px] md:text-xs transition-all whitespace-nowrap ${btnClass}">
+                  <i data-lucide="${isLocked ? 'lock' : cat.icon}" class="w-3.5 h-3.5"></i> ${cat.label}
+                </button>`;
+            }).join('')}
+          </div>
         </div>
-      </div>
+        <div class="flex gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200 w-full md:w-auto overflow-x-auto hide-scrollbar justify-center">
+          ${Object.keys(MODE_LABELS).map(m => `
+            <button data-action="set-mode" data-payload="${m}" class="px-2 py-1 md:px-3 rounded-lg font-black text-[9px] md:text-[10px] uppercase transition-all whitespace-nowrap ${state.mode === m ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:bg-white'}">
+              ${MODE_LABELS[m]}
+            </button>
+          `).join('')}
+        </div>
+      </header>
     `;
-    this.speak(q.q);
-  },
 
-  ans(i, btn) {
-    const q = LESSONS[this.state.l].quiz[this.state.q];
-    const btns = document.querySelectorAll('#boardPanel button');
-    btns.forEach(b => b.disabled = true);
-    
-    if (i === q.c) {
-      btn.className = "btn btn-success p-3 fs-5 rounded-pill fw-bold text-start text-white shadow";
-      this.state.score += 10;
-      this.updateScore();
-      this.renderRobot('happy');
-      this.speak("Correct! You are a star! 🌟");
-      setTimeout(() => {
-        if (this.state.q < LESSONS[this.state.l].quiz.length - 1) {
-          this.state.q++;
-          this.updateProgressBar();
-          this.renderQuiz();
-        } else {
-          this.finish();
+    const renderAssemblyArea = () => {
+      let html = '';
+      const s = state.sentence;
+      const m = state.mode;
+      const sp = state.selectedPiece;
+      
+      const renderPz = (type, color, content, shape) => renderPuzzlePiece({
+        type, color, content, shape, isSlot: true, isComplete: state.isComplete,
+        isSelectedPiece: sp?.type === type && sp?.value === content
+      });
+
+      if (m === 'question') {
+        html += renderPz('aux', '#6366f1', s.aux, 'AUX_START');
+        html += renderPz('subject', '#3b82f6', s.subject, 'SUBJ_MID');
+        html += renderPz('verb', '#ef4444', s.verb || s.ingVerb, 'VERB_SIMPLE');
+        html += renderPz('object', '#22c55e', s.object, 'OBJ_END');
+        html += `<span class="text-6xl font-black text-indigo-600 ml-10">?</span>`;
+      } else if (m === 'negative') {
+        html += renderPz('subject', '#3b82f6', s.subject, 'SUBJ_START');
+        html += renderPz('aux', '#ec4899', s.aux, 'BE_MODAL');
+        html += renderPz('verb', '#f97316', s.verb, 'VERB_BASE');
+        html += renderPz('object', '#22c55e', s.object, 'OBJ_END');
+      } else if (m === 'modal') {
+        html += renderPz('subject', '#3b82f6', s.subject, 'SUBJ_START');
+        html += renderPz('modal', '#f59e0b', s.modal, 'BE_MODAL');
+        html += renderPz('verb', '#ef4444', s.verb, 'VERB_BASE');
+        html += renderPz('object', '#22c55e', s.object, 'OBJ_END');
+      } else {
+        html += renderPz('subject', '#3b82f6', s.subject, 'SUBJ_START');
+        if (m === 'status' || m === 'continuous') html += renderPz('aux', '#0d9488', s.aux, 'BE_MODAL');
+        if (m === 'status') html += renderPz('adjective', '#8b5cf6', s.adjective, 'ADJECTIVE');
+        else {
+          html += renderPz('verb', '#ef4444', s.verb || s.ingVerb, m === 'continuous' ? 'VERB_ING' : 'VERB_SIMPLE');
+          html += renderPz('object', '#22c55e', s.object, 'OBJ_END');
         }
-      }, 2000);
-    } else {
-      btn.className = "btn btn-danger p-3 fs-5 rounded-pill fw-bold text-start text-white";
-      this.renderRobot('surprised');
-      this.speak("Oops! Try again.");
-      setTimeout(() => {
-        if (this.state.q < LESSONS[this.state.l].quiz.length - 1) {
-          this.state.q++;
-          this.updateProgressBar();
-          this.renderQuiz();
-        } else {
-          this.finish();
+      }
+      return html;
+    };
+
+    const renderApp = () => {
+      const cData = CATEGORIES[state.activeCategory];
+      const sp = state.selectedPiece;
+
+      return `
+        ${state.funnyMistake ? `
+          <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all" data-action="close-funny-mistake">
+            <div class="bg-white rounded-[3rem] p-6 md:p-8 max-w-sm w-full shadow-2xl flex flex-col items-center text-center border-8 border-amber-300 transform transition-all animate-bounce" onclick="event.stopPropagation()">
+              <div class="text-6xl md:text-7xl mb-4">${state.funnyMistake.emoji}</div>
+              <h3 class="text-2xl md:text-3xl font-black text-amber-500 mb-2">Hoppala! 🤡</h3>
+              <p class="text-slate-700 font-bold text-base md:text-lg leading-snug">${state.funnyMistake.message}</p>
+              <button data-action="close-funny-mistake" class="mt-6 bg-amber-400 hover:bg-amber-500 text-white font-black px-6 py-3 rounded-2xl active:scale-95 transition-transform">Tekrar Dene!</button>
+            </div>
+          </div>
+        ` : ''}
+
+        ${(state.leftDrawerOpen || state.rightDrawerOpen) ? `<div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 md:hidden" data-action="close-drawers"></div>` : ''}
+
+        <div class="absolute left-0 top-[40%] -translate-y-1/2 z-20 md:hidden">
+          <button data-action="toggle-left-drawer" class="bg-blue-600/90 text-white p-2 py-6 rounded-r-2xl shadow-lg flex flex-col items-center gap-2 backdrop-blur-sm active:scale-95 transition-transform">
+             <i data-lucide="arrow-right-circle" class="w-5 h-5"></i>
+             <span class="font-black text-xs" style="writing-mode: vertical-rl;">KİM?</span>
+          </button>
+        </div>
+        <div class="absolute right-0 top-[40%] -translate-y-1/2 z-20 md:hidden">
+          <button data-action="toggle-right-drawer" class="bg-green-600/90 text-white p-2 py-6 rounded-l-2xl shadow-lg flex flex-col items-center gap-2 backdrop-blur-sm active:scale-95 transition-transform">
+             <i data-lucide="arrow-left-circle" class="w-5 h-5"></i>
+             <span class="font-black text-xs" style="writing-mode: vertical-rl;">NEYİ?</span>
+          </button>
+        </div>
+
+        ${renderHeader()}
+
+        <div class="flex-1 flex overflow-hidden">
+          <!-- SOL MENÜ -->
+          <aside class="fixed md:relative inset-y-0 left-0 w-64 md:w-72 bg-white border-r border-slate-200 flex flex-col shadow-2xl md:shadow-inner z-40 transform transition-transform duration-300 md:translate-x-0 shrink-0 ${state.leftDrawerOpen ? 'translate-x-0' : '-translate-x-full'}">
+            <div class="bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest text-center py-3 italic shadow-sm flex items-center justify-center relative">
+              KİM? (SUBJECT)
+              <button class="md:hidden absolute right-3 text-blue-200 hover:text-white" data-action="close-drawers"><i data-lucide="x-circle" class="w-4 h-4"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 flex flex-wrap content-start gap-2 custom-scrollbar">
+              ${getDynamicSubjects().map(s => renderPuzzlePiece({ type: 'subject', color: '#3b82f6', content: s, isSelected: state.sentence.subject === s, isSelectedPiece: sp?.type === 'subject' && sp?.value === s, shape: state.mode === 'question' ? 'SUBJ_MID' : 'SUBJ_START' })).join('')}
+            </div>
+          </aside>
+
+          <!-- ORTA ALAN -->
+          <main class="flex-1 flex flex-col bg-slate-50 relative min-w-0">
+            <div class="flex-1 flex flex-col items-center justify-start pt-2 md:pt-4 p-2 md:p-4 overflow-y-auto w-full">
+              
+              <!-- SİHİRLİ KURAL -->
+              <div class="mb-2 md:mb-4 w-full max-w-xl transition-all duration-500 px-4">
+                  <div class="p-2 md:p-3 rounded-2xl border-2 flex items-center justify-center gap-2 md:gap-3 shadow-md transition-all ${state.isComplete ? 'bg-amber-100 border-amber-300 scale-105' : 'bg-indigo-50 border-indigo-100'}">
+                    ${state.score % 10 === 0 && state.score > 0 && state.isComplete ? '<i data-lucide="party-popper" class="w-5 h-5 text-indigo-500 animate-bounce"></i>' : `<i data-lucide="sparkles" class="w-4 h-4 md:w-5 md:h-5 ${state.isComplete ? 'text-amber-500 animate-pulse' : 'text-indigo-400'}"></i>`}
+                    <p class="text-[10px] md:text-[12px] font-black uppercase tracking-wide text-center ${state.score % 10 === 0 && state.score > 0 && state.isComplete ? 'text-indigo-700' : (state.isComplete ? 'text-amber-800' : 'text-indigo-700')}">
+                      ${getMagicRule()}
+                    </p>
+                  </div>
+              </div>
+
+              <!-- MONTAJ ALANI -->
+              <div class="bg-white rounded-[2rem] md:rounded-[3rem] w-full max-w-5xl p-2 md:p-6 shadow-xl border-2 border-slate-200 flex flex-col items-center justify-center min-h-[140px] md:min-h-[220px] relative overflow-hidden transition-all z-10">
+                <div class="flex flex-row items-center justify-center transition-all duration-300 transform scale-[0.55] sm:scale-[0.8] md:scale-90 lg:scale-100 origin-center -space-x-[55px] w-full">
+                  ${renderAssemblyArea()}
+                </div>
+              </div>
+
+              <div class="mt-4 md:mt-4 w-full flex flex-col items-center justify-center gap-2 text-center z-10 px-2 max-w-2xl mx-auto">
+                ${state.isComplete ? `
+                  <div class="p-3 md:p-4 rounded-3xl border-2 w-full animate-in slide-in-from-bottom duration-500 shadow-sm flex items-center justify-between gap-2 ${state.score % 10 === 0 && state.score > 0 ? 'bg-indigo-100 border-indigo-300' : 'bg-green-100 border-green-200'}">
+                    <div class="flex-1">
+                      <div class="bg-white/60 p-2 rounded-xl border border-green-200 flex items-start gap-2 shadow-inner">
+                        <i data-lucide="languages" class="w-4 h-4 md:w-5 md:h-5 text-indigo-600 shrink-0 mt-0.5"></i>
+                        <p class="text-xs md:text-sm font-black text-slate-800 italic leading-tight text-left">
+                           ${state.isTranslating ? '<span class="flex items-center gap-2 text-slate-400"><i data-lucide="loader-2" class="w-3 h-3 md:w-4 md:h-4 animate-spin"></i> Bakıyorum...</span>' : state.translation}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="p-3 rounded-full transition-all shrink-0 ${state.isSpeaking ? 'bg-amber-100 animate-pulse scale-110' : 'bg-white/50'}">
+                      <i data-lucide="volume-2" class="${state.isSpeaking ? 'text-amber-600' : 'text-slate-400'} w-5 h-5"></i>
+                    </div>
+                  </div>
+                  
+                  <div class="w-full bg-blue-50 border-2 border-blue-200 rounded-3xl p-3 shadow-sm flex flex-col items-center gap-2 animate-in slide-in-from-bottom duration-700 delay-300 fill-mode-both">
+                    <div class="flex items-center justify-center gap-3 w-full">
+                      <div class="flex flex-col items-end text-right">
+                        <span class="font-black text-blue-700 text-sm md:text-base">Konuşma Sırası Sende! 🎤</span>
+                        <span class="text-[10px] md:text-xs text-blue-500 font-bold">
+                          ${state.isRecording ? "Dinliyorum, bitirince tekrar dokun..." : "Mikrofona dokun ve cümleyi oku"}
+                        </span>
+                      </div>
+                      <button data-action="toggle-recording" class="p-3 md:p-4 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${state.isRecording ? 'bg-red-500 text-white animate-pulse scale-110 shadow-red-200' : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105'}">
+                        <i data-lucide="mic" class="w-6 h-6"></i>
+                      </button>
+                    </div>
+                    ${state.isEvaluating ? `
+                      <div class="flex items-center justify-center gap-2 text-indigo-600 font-bold text-xs md:text-sm animate-pulse w-full bg-white/60 p-2 rounded-xl">
+                        <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Yapay Zeka Sesini İnceliyor...
+                      </div>
+                    ` : ''}
+                    ${state.pronunciationFeedback && !state.isEvaluating ? `
+                      <div class="bg-white px-3 py-2 md:py-3 rounded-2xl border-2 border-indigo-200 text-indigo-800 font-black text-xs md:text-sm text-center shadow-inner animate-in fade-in zoom-in w-full">
+                        ${state.pronunciationFeedback}
+                      </div>
+                    ` : ''}
+                  </div>
+                ` : `
+                  <div class="text-slate-400 font-bold uppercase text-[9px] md:text-[10px] tracking-[0.2em] flex flex-col items-center gap-2 animate-pulse bg-slate-100 p-2 rounded-xl w-full">
+                    <div class="flex items-center gap-2"><i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5"></i> Dokunarak veya sürükleyerek oyna!</div>
+                  </div>
+                `}
+              </div>
+            </div>
+
+            <!-- ALT MENÜ -->
+            <footer class="h-40 md:h-56 bg-white border-t border-slate-200 flex flex-row shadow-inner shrink-0 relative z-20">
+              <div class="w-1/3 border-r border-slate-100 flex flex-col">
+                <h3 class="bg-indigo-600 text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest text-center py-1 md:py-2 flex items-center justify-center gap-1">
+                   <i data-lucide="zap" class="w-2.5 h-2.5"></i> BEKÇİLER
+                </h3>
+                <div class="flex-1 overflow-y-auto p-1 md:p-2 flex flex-wrap gap-1 md:gap-2 content-start justify-center custom-scrollbar">
+                  ${(() => {
+                    if (state.mode === 'question') return (cData.auxiliaries || []).map(a => renderPuzzlePiece({ type: 'aux', color: '#6366f1', content: a, isSelectedPiece: sp?.type === 'aux' && sp?.value === a, shape: 'AUX_START' })).join('');
+                    if (state.mode === 'negative') return ["don't", "doesn't"].map(a => renderPuzzlePiece({ type: 'aux', color: '#ec4899', content: a, isSelectedPiece: sp?.type === 'aux' && sp?.value === a, shape: 'BE_MODAL' })).join('');
+                    if (state.mode === 'modal') return (cData.modals || []).map(a => renderPuzzlePiece({ type: 'modal', color: '#f59e0b', content: a, isSelected: state.sentence.modal === a, isSelectedPiece: sp?.type === 'modal' && sp?.value === a, shape: 'BE_MODAL' })).join('');
+                    if (state.mode === 'status' || state.mode === 'continuous') return (cData.statusAux || []).map(a => renderPuzzlePiece({ type: 'aux', color: '#0d9488', content: a, isSelected: state.sentence.aux === a, isSelectedPiece: sp?.type === 'aux' && sp?.value === a, shape: 'BE_MODAL' })).join('');
+                    return `<div class="text-[9px] md:text-[10px] text-slate-300 italic text-center mt-6">Bekçi yok! ✨</div>`;
+                  })()}
+                </div>
+              </div>
+
+              <div class="w-2/3 flex flex-col">
+                <h3 class="bg-red-600 text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest text-center py-1 md:py-2 flex items-center justify-center gap-1">
+                   <i data-lucide="puzzle" class="w-2.5 h-2.5"></i> EYLEMLER
+                </h3>
+                <div class="flex-1 overflow-y-auto p-1 md:p-2 flex flex-wrap gap-1 md:gap-2 content-start justify-center custom-scrollbar">
+                  ${state.mode !== 'status' ? (cData.verbs || []).map(v => {
+                    if (state.mode === 'continuous') {
+                      const ingVal = v.split(' ')[0] + 'ing ' + (v.split(' ')[1] || '');
+                      return renderPuzzlePiece({ type: 'ingVerb', color: '#f97316', content: ingVal, isSelected: state.sentence.ingVerb === ingVal, isSelectedPiece: sp?.type === 'ingVerb' && sp?.value === ingVal, shape: 'VERB_ING' });
+                    }
+                    return renderPuzzlePiece({ type: 'verb', color: state.mode === 'negative' ? '#f97316' : '#ef4444', content: v, isSelected: state.sentence.verb === v, isSelectedPiece: sp?.type === 'verb' && sp?.value === v, shape: (state.mode === 'modal' || state.mode === 'negative') ? 'VERB_BASE' : 'VERB_SIMPLE' });
+                  }).join('') : `<div class="text-[9px] md:text-[10px] text-slate-300 italic text-center mt-6">Durumda hareket olmaz! 🌉</div>`}
+                </div>
+              </div>
+              <button data-action="reset" class="absolute bottom-2 right-2 md:bottom-4 md:right-4 bg-slate-900 text-white p-2 md:p-3 rounded-full hover:bg-orange-600 shadow-lg active:scale-95 group z-30"><i data-lucide="refresh-cw" class="w-5 h-5 md:w-6 md:h-6 group-hover:rotate-180 transition-transform duration-500"></i></button>
+            </footer>
+          </main>
+
+          <!-- SAĞ MENÜ -->
+          <aside class="fixed md:relative inset-y-0 right-0 w-64 md:w-72 bg-white border-l border-slate-200 flex flex-col shadow-2xl md:shadow-inner z-40 transform transition-transform duration-300 md:translate-x-0 shrink-0 ${state.rightDrawerOpen ? 'translate-x-0' : 'translate-x-full'}">
+            <div class="bg-green-600 text-white text-[10px] font-black uppercase tracking-widest text-center py-3 italic shadow-sm flex items-center justify-center relative">
+              <button class="md:hidden absolute left-3 text-green-200 hover:text-white" data-action="close-drawers"><i data-lucide="x-circle" class="w-4 h-4"></i></button>
+              ${state.mode === 'status' ? "NASIL? (ADJECTIVE)" : "NEYİ? (OBJECT)"}
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 flex flex-wrap content-start gap-2 custom-scrollbar">
+              ${state.mode === 'status' ? (cData.adjectives || []).map(adj => renderPuzzlePiece({ type: 'adjective', color: '#8b5cf6', content: adj, isSelected: state.sentence.adjective === adj, isSelectedPiece: sp?.type === 'adjective' && sp?.value === adj, shape: 'ADJECTIVE' })).join('') :
+                (cData.objects || []).map(o => renderPuzzlePiece({ type: 'object', color: '#22c55e', content: o, isSelected: state.sentence.object === o, isSelectedPiece: sp?.type === 'object' && sp?.value === o, shape: 'OBJ_END' })).join('')}
+            </div>
+          </aside>
+        </div>
+      `;
+    };
+
+    // --- MAIN RENDER AND EVENT DELEGATION ---
+    const updateUI = () => {
+      document.getElementById('root').innerHTML = state.showLogin ? renderLogin() : renderApp();
+      lucide.createIcons();
+    };
+
+    document.addEventListener('input', (e) => {
+      if (e.target.id === 'nameInput') state.nameInput = e.target.value;
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.id === 'nameInput') {
+        if(state.nameInput.trim()) { state.userName = state.nameInput.trim(); state.showLogin = false; updateUI(); }
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const actionEl = e.target.closest('[data-action]');
+      if (!actionEl) return;
+      const action = actionEl.dataset.action;
+      const payload = actionEl.dataset.payload;
+
+      if (action === 'start-game') {
+        if(state.nameInput.trim()) { state.userName = state.nameInput.trim(); state.showLogin = false; updateUI(); }
+      } else if (action === 'set-category') {
+        state.activeCategory = payload; resetGame(); updateUI();
+      } else if (action === 'set-mode') {
+        state.mode = payload; resetGame(); updateUI();
+      } else if (action === 'reset') {
+        resetGame(); updateUI();
+      } else if (action === 'toggle-left-drawer') {
+        state.leftDrawerOpen = true; updateUI();
+      } else if (action === 'toggle-right-drawer') {
+        state.rightDrawerOpen = true; updateUI();
+      } else if (action === 'close-drawers') {
+        state.leftDrawerOpen = false; state.rightDrawerOpen = false; updateUI();
+      } else if (action === 'close-funny-mistake') {
+        state.funnyMistake = null; updateUI();
+      } else if (action === 'piece-click') {
+        state.selectedPiece = { type: actionEl.dataset.type, value: actionEl.dataset.value };
+        updateUI();
+      } else if (action === 'slot-click') {
+        if (!state.selectedPiece) return;
+        processPlacement(actionEl.dataset.type, state.selectedPiece);
+      } else if (action === 'toggle-recording') {
+        toggleRecording();
+      }
+    });
+
+    // DRAG AND DROP
+    document.addEventListener('dragstart', (e) => {
+      const piece = e.target.closest('.puzzle-piece');
+      if (piece && piece.hasAttribute('draggable')) {
+        e.dataTransfer.setData("text/plain", JSON.stringify({ type: piece.dataset.type, value: piece.dataset.value }));
+      }
+    });
+
+    document.addEventListener('dragover', (e) => {
+      const slot = e.target.closest('.puzzle-slot');
+      if (slot) {
+        e.preventDefault();
+        if (currentDragSlot !== slot) {
+          if (currentDragSlot) currentDragSlot.classList.remove('scale-105', 'drop-shadow-2xl', 'z-20', 'brightness-105');
+          slot.classList.add('scale-105', 'drop-shadow-2xl', 'z-20', 'brightness-105');
+          currentDragSlot = slot;
         }
-      }, 2000);
-    }
-  },
+      }
+    });
 
-  finish() {
-    document.getElementById('lessonProgressBar').style.width = "100%";
-    if(!this.state.done.includes(this.state.l)) this.state.done.push(this.state.l);
-    this.save();
-    this.renderSidebar();
-    document.getElementById('boardPanel').innerHTML = `
-      <div class="d-flex flex-column justify-content-center align-items-center h-100 bg-success bg-opacity-10 text-center">
-        <div class="display-1 anim-pop">🏆</div>
-        <h2 class="fw-bold text-success mt-3">Lesson Complete!</h2>
-        <p class="fs-4">You earned points! ⭐</p>
-        <button class="btn btn-success btn-lg rounded-pill mt-4 shadow anim-pulse" onclick="app.startLesson(${Math.min(this.state.l+1, LESSONS.length-1)})">Next Adventure ➡️</button>
-      </div>
-    `;
-    this.speak("Congratulations! Lesson Complete!");
-  },
+    document.addEventListener('dragleave', (e) => {
+      const slot = e.target.closest('.puzzle-slot');
+      if (slot && currentDragSlot === slot) {
+        slot.classList.remove('scale-105', 'drop-shadow-2xl', 'z-20', 'brightness-105');
+        currentDragSlot = null;
+      }
+    });
 
-  speak(txt) {
-    this.state.lastMsg = txt;
-    this.addChat('ai', txt);
-    window.speechSynthesis.cancel();
-    
-    const cleanTxt = txt.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-    
-    const u = new SpeechSynthesisUtterance(cleanTxt);
-    u.lang = 'en-US'; 
-    u.rate = 0.9; 
-    u.pitch = 1.2; 
-    
-    const voices = window.speechSynthesis.getVoices();
-    let v = voices.find(voice => voice.name.includes("Google US English")); 
-    if(!v) v = voices.find(voice => voice.name.includes("Microsoft Zira"));
-    if(!v) v = voices.find(voice => voice.name.includes("Samantha"));
-    if(!v) v = voices.find(voice => voice.lang === 'en-US');
-    if(v) u.voice = v;
+    document.addEventListener('drop', (e) => {
+      const slot = e.target.closest('.puzzle-slot');
+      if (currentDragSlot) {
+        currentDragSlot.classList.remove('scale-105', 'drop-shadow-2xl', 'z-20', 'brightness-105');
+        currentDragSlot = null;
+      }
+      if (slot) {
+        e.preventDefault();
+        const dataStr = e.dataTransfer.getData("text/plain");
+        if (!dataStr) return;
+        try {
+          processPlacement(slot.dataset.type, JSON.parse(dataStr));
+        } catch(err) {}
+      }
+    });
 
-    u.onstart = () => this.renderRobot('talking');
-    u.onend = () => this.renderRobot('happy');
-    window.speechSynthesis.speak(u);
-  },
-
-  toggleMic() {
-    if (!this.state.listening) {
-      try {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        this.recognition = new SpeechRecognition();
-        this.recognition.lang = 'en-US';
-        this.recognition.onstart = () => {
-          this.state.listening = true;
-          document.getElementById('micBtn').classList.add('mic-active');
-          this.renderRobot('listening');
-        };
-        this.recognition.onend = () => {
-          this.state.listening = false;
-          document.getElementById('micBtn').classList.remove('mic-active');
-          this.renderRobot('happy');
-        };
-        this.recognition.onresult = (e) => this.handleSpeech(e.results[0][0].transcript);
-        this.recognition.start();
-      } catch(e) { alert("Mic error or not supported."); }
-    } else {
-      this.recognition.stop();
-    }
-  },
-
-  addChat(sender, txt) {
-    const d = document.createElement('div');
-    d.className = `chat-bubble ${sender === 'user' ? 'chat-user' : 'chat-ai'}`;
-    d.innerHTML = txt;
-    const box = document.getElementById('chatBox');
-    box.appendChild(d);
-    box.scrollTop = box.scrollHeight;
-  },
-
-  renderRobot(state) {
-    let eyes, mouth;
-    const color = "#334155";
-    if(state === 'happy') { eyes=`<path d="M35 45 Q40 35 45 45" stroke="${color}" stroke-width="4" fill="none"/><path d="M55 45 Q60 35 65 45" stroke="${color}" stroke-width="4" fill="none"/>`; mouth=`<path d="M35 65 Q50 80 65 65" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round"/>`; }
-    else if(state === 'talking') { eyes=`<circle cx="40" cy="45" r="5" fill="${color}"/><circle cx="60" cy="45" r="5" fill="${color}"/>`; mouth=`<rect x="40" y="65" width="20" height="10" rx="5" fill="${color}" class="anim-pulse"/>`; }
-    else if(state === 'listening') { eyes=`<circle cx="40" cy="45" r="5" fill="${color}"/><circle cx="60" cy="45" r="5" fill="${color}"/>`; mouth=`<circle cx="50" cy="70" r="5" fill="#0ea5e9" class="anim-pulse"/>`; }
-    else { eyes=`<circle cx="40" cy="40" r="6" fill="${color}"/><circle cx="60" cy="40" r="6" fill="${color}"/>`; mouth=`<circle cx="50" cy="70" r="8" fill="none" stroke="${color}" stroke-width="3"/>`; }
-    
-    document.getElementById('robotFace').innerHTML = `
-      <svg viewBox="0 0 100 100" class="w-100 h-100 drop-shadow">
-        <line x1="50" y1="15" x2="50" y2="0" stroke="#bae6fd" stroke-width="4"/><circle cx="50" cy="0" r="6" fill="#f43f5e" class="anim-pulse"/>
-        <rect x="15" y="15" width="70" height="75" rx="20" fill="#fff" stroke="#bae6fd" stroke-width="4"/>
-        <rect x="25" y="30" width="50" height="50" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
-        <circle cx="20" cy="60" r="4" fill="#fda4af" opacity="0.6"/><circle cx="80" cy="60" r="4" fill="#fda4af" opacity="0.6"/>
-        ${eyes}${mouth}
-      </svg>`;
-  },
-
-  hint() { 
-    if(this.state.mode === 'chat') this.speak("Hint: " + LESSONS[this.state.l].chat[this.state.c].f); 
-    else this.speak("Listen and look at the screen! 👀");
-  },
-  
-  repeat() { this.speak(this.state.lastMsg); },
-  toggleSidebar() { 
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('backdrop');
-    sidebar.classList.toggle('show');
-    backdrop.classList.toggle('show');
-  },
-  
-  save() { localStorage.setItem('roboEmoji', JSON.stringify({s:this.state.score, d:this.state.done})); },
-  load() { 
-    const d = JSON.parse(localStorage.getItem('roboEmoji')); 
-    if(d) { this.state.score=d.s; this.state.done=d.d; this.updateScore(); }
-  },
-  updateScore() { document.getElementById('mobileScore').innerText = `⭐ ${this.state.score}`; },
-  resetProgress() { 
-    if(confirm("Reset?")) { localStorage.removeItem('roboEmoji'); location.reload(); } 
-  }
-};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    // Initialize
+    updateUI();
+  </script>
 </body>
 </html>
