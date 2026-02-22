@@ -14,11 +14,6 @@
   <style>
     @keyframes highlight { 0% { transform: scale(1); } 20% { transform: scale(1.15) rotate(2deg); filter: brightness(1.8); } 100% { transform: scale(1); } }
     @keyframes bounce-error { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
-    @keyframes emojiFly {
-      0% { transform: scale(1.1) translateY(0); opacity: 1; }
-      40% { transform: scale(2.5) translateY(-40px); opacity: 1; }
-      100% { transform: scale(3) translateY(-100px); opacity: 0; }
-    }
     @keyframes fall {
       0% { transform: translateY(-10vh) rotate(0deg) scale(1); opacity: 1; }
       100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
@@ -26,7 +21,6 @@
 
     .animate-highlight { animation: highlight 1.2s ease-in-out; z-index: 50; }
     .animate-bounce-error { animation: bounce-error 0.4s ease-in-out; }
-    .animate-emoji-fly { animation: emojiFly 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
     
     .confetti-particle {
       position: absolute;
@@ -66,15 +60,6 @@
       "buy": ["food", "liquid", "tool", "activity"], "see": ["food", "media", "activity", "place", "tool", "sleep_place"],
       "go": ["place"], "write": ["media", "tool"], "use": ["tool"], "open": ["media", "tool"], "need": ["food", "liquid", "tool", "activity"],
       "sleep": ["sleep_place", "place"], "run": ["place"], "jump": ["place"] 
-    };
-
-    const PAST_VERBS_MAP = {
-      "eat 🍽️": "ate 🍽️", "drink 🥤": "drank 🥤", "like 😋": "liked 😋", "want 🥣": "wanted 🥣",
-      "cook 🍳": "cooked 🍳", "sleep 😴": "slept 😴", "clean 🧹": "cleaned 🧹", "wash 🧼": "washed 🧼",
-      "play 🎮": "played 🎮", "win 🏆": "won 🏆", "find 🔎": "found 🔎", "have 🧸": "had 🧸",
-      "start 🏁": "started 🏁", "read 📖": "read 📖", "write 📝": "wrote 📝", "use 💻": "used 💻",
-      "open 📖": "opened 📖", "need ✏️": "needed ✏️", "learn 🧠": "learned 🧠", "run 🏃": "ran 🏃",
-      "jump 🦘": "jumped 🦘"
     };
 
     const GRAMMAR_GROUPS = {
@@ -123,51 +108,78 @@
       status: 'Durum', modal: 'Yetenek', question: 'Soru'
     };
 
-    // --- YEREL ÇEVİRİ SÖZLÜĞÜ (API YERİNE) ---
+    // --- YEREL ÇEVİRİ SÖZLÜĞÜ (API OLMADAN ÇEVİRİ İÇİN) ---
     const TR_DICT = {
-      "do": "mı/yapar", "does": "mı/yapar", "can": "yapabilir", "is": "dur/dir", "are": "dır/lar", "am": "yım/yim", "don't": "yapmaz", "doesn't": "yapmaz", "will": "yapacak", "must": "zorunda", "should": "yapmalı", "could": "yapabilirdi",
-      "i": "Ben", "he": "O", "she": "O", "it": "O", "my mother": "Annem", "my father": "Babam", "the cat": "Kedi", "the teacher": "Öğretmen", "the dog": "Köpek", "the bird": "Kuş", "the lion": "Aslan", "the monkey": "Maymun", "the elephant": "Fil", "you": "Sen", "we": "Biz", "they": "Onlar", "students": "Öğrenciler", "the boys": "Çocuklar", "the girls": "Kızlar", "your friend": "Arkadaşın",
-      "eat": "yemek yer", "drink": "içer", "watch": "izler", "read": "okur", "play": "oynar", "cook": "yemek pişirir", "clean": "temizler", "wash": "yıkar", "like": "sever", "want": "ister", "have": "sahiptir", "buy": "alır", "see": "görür", "go": "gider", "write": "yazar", "use": "kullanır", "open": "açar", "need": "ihtiyaç duyar", "sleep": "uyur", "run": "koşar", "jump": "zıplar",
-      "pizza": "pizza", "an apple": "bir elma", "bread": "ekmek", "cake": "pasta", "a sandwich": "bir sandviç", "dinner": "akşam yemeği", "soup": "çorba", "eggs": "yumurta", "meat": "et", "banana": "muz", "pasta": "makarna", "a burger": "bir hamburger", "a cookie": "bir kurabiye", "salad": "salata", "chicken": "tavuk", "cheese": "peynir", "fish": "balık", "rice": "pilav",
-      "water": "su", "milk": "süt", "tea": "çay", "coffee": "kahve", "juice": "meyve suyu", "coke": "kola", "lemonade": "limonata", "hot chocolate": "sıcak çikolata", "orange juice": "portakal suyu", "milkshake": "milkshake",
-      "tv": "televizyon", "a movie": "bir film", "a story": "bir hikaye", "a book": "bir kitap", "the board": "tahta", "photos": "fotoğraflar", "a video": "bir video", "the lesson": "ders", "music": "müzik", "a song": "bir şarkı", "news": "haberler", "cartoons": "çizgi filmler", "a poem": "bir şiir", "homework": "ödev",
-      "video games": "video oyunları", "the ball": "top", "a gift": "bir hediye", "a kite": "bir uçurtma", "a puzzle": "bir yapboz", "chess": "satranç", "football": "futbol", "tennis": "tenis", "the piano": "piyano", "the guitar": "gitar", "a toy": "bir oyuncak", "a bike": "bir bisiklet", "cards": "kartlar", "basketball": "basketbol", "drawing": "resim",
-      "to school": "okula", "to the park": "parka", "home": "eve", "to bed": "yatağa", "the house": "eve", "the room": "odaya", "the garden": "bahçeye", "to the beach": "plaja", "the kitchen": "mutfağa", "the city": "şehre", "in the forest": "ormanda", "at the zoo": "hayvanat bahçesinde", "in the jungle": "ormanda",
+      "i": "ben", "he": "o", "she": "o", "it": "o", "you": "sen", "we": "biz", "they": "onlar",
+      "the cat": "kedi", "the dog": "köpek", "the bird": "kuş", "the lion": "aslan", "the monkey": "maymun", "the elephant": "fil",
+      "the teacher": "öğretmen", "students": "öğrenciler", "my mother": "annem", "my father": "babam", "your friend": "arkadaşın",
+      "the boys": "çocuklar", "the girls": "kızlar",
+      "pizza": "pizza", "an apple": "elma", "bread": "ekmek", "cake": "pasta", "a sandwich": "sandviç", "dinner": "akşam yemeği",
+      "soup": "çorba", "eggs": "yumurta", "meat": "et", "banana": "muz", "pasta": "makarna", "a burger": "hamburger",
+      "a cookie": "kurabiye", "salad": "salata", "chicken": "tavuk", "cheese": "peynir", "fish": "balık", "rice": "pilav",
+      "water": "su", "milk": "süt", "tea": "çay", "coffee": "kahve", "juice": "meyve suyu", "coke": "kola", "lemonade": "limonata",
+      "hot chocolate": "sıcak çikolata", "orange juice": "portakal suyu", "milkshake": "milkshake",
+      "tv": "televizyon", "a movie": "film", "a story": "hikaye", "a book": "kitap", "the board": "tahta", "photos": "fotoğraflar",
+      "a video": "video", "the lesson": "ders", "music": "müzik", "a song": "şarkı", "news": "haberler", "cartoons": "çizgi film",
+      "a poem": "şiir", "homework": "ödev", "video games": "video oyunları", "the ball": "top", "a gift": "hediye",
+      "a kite": "uçurtma", "a puzzle": "yapboz", "chess": "satranç", "football": "futbol", "tennis": "tenis",
+      "the piano": "piyano", "the guitar": "gitar", "a toy": "oyuncak", "a bike": "bisiklet", "cards": "kartlar",
+      "basketball": "basketbol", "drawing": "resim",
+      "to school": "okula", "to the park": "parka", "home": "eve", "to bed": "yatağa", "the house": "evi",
+      "the room": "odayı", "the garden": "bahçeyi", "to the beach": "plaja", "the kitchen": "mutfağı", "the city": "şehri",
+      "in the forest": "ormanda", "at the zoo": "hayvanat bahçesinde", "in the jungle": "ormanda",
       "in bed": "yatakta", "on the sofa": "koltukta", "in the room": "odada", "at home": "evde", "in the garden": "bahçede", "under the tree": "ağacın altında",
-      "a pen": "bir kalem", "a pencil": "bir kurşun kalem", "a laptop": "bir dizüstü bilgisayar", "scissors": "makas", "a map": "bir harita", "the table": "masa", "the desk": "sıra", "the car": "araba", "the window": "pencere", "the plate": "tabak", "a phone": "bir telefon", "a bag": "bir çanta", "a computer": "bir bilgisayar", "a cup": "bir kupa",
-      "hungry": "aç", "thirsty": "susamış", "full": "tok", "happy": "mutlu", "tired": "yorgun", "ready": "hazır", "late": "geç kalmış", "sad": "üzgün", "brave": "cesur", "strong": "güçlü", "kind": "kibar", "angry": "kızgın", "sleepy": "uykulu", "excited": "heyecanlı", "silly": "komik", "cool": "havalı", "quiet": "sessiz", "loud": "gürültülü", "lucky": "şanslı", "scared": "korkmuş", "smart": "zeki", "busy": "meşgul", "difficult": "zor", "correct": "doğru", "silent": "sessiz", "perfect": "mükemmel", "careful": "dikkatli", "polite": "kibar", "fast": "hızlı", "slow": "yavaş", "cute": "sevimli", "scary": "korkunç", "wild": "vahşi", "funny": "komik", "big": "büyük", "small": "küçük"
+      "a pen": "kalem", "a pencil": "kurşun kalem", "a laptop": "bilgisayar", "scissors": "makas", "a map": "harita",
+      "the table": "masa", "the desk": "sıra", "the car": "araba", "the window": "pencere", "the plate": "tabak",
+      "a phone": "telefon", "a bag": "çanta", "a computer": "bilgisayar", "a cup": "bardak",
+      "hungry": "aç", "thirsty": "susamış", "full": "tok", "happy": "mutlu", "tired": "yorgun", "ready": "hazır",
+      "late": "geç kalmış", "sad": "üzgün", "brave": "cesur", "strong": "güçlü", "kind": "kibar", "angry": "kızgın",
+      "sleepy": "uykulu", "excited": "heyecanlı", "silly": "komik", "cool": "havalı", "quiet": "sessiz", "loud": "gürültülü",
+      "lucky": "şanslı", "scared": "korkmuş", "fast": "hızlı", "slow": "yavaş", "exciting": "heyecan verici", "easy": "kolay",
+      "hard": "zor", "fun": "eğlenceli", "boring": "sıkıcı", "surprised": "şaşırmış", "smart": "zeki", "busy": "meşgul",
+      "difficult": "zor", "correct": "doğru", "silent": "sessiz", "perfect": "mükemmel", "careful": "dikkatli", "polite": "kibar",
+      "cute": "sevimli", "scary": "korkutucu", "wild": "vahşi", "funny": "komik", "big": "büyük", "small": "küçük",
+      "eat": "yemek", "drink": "içmek", "watch": "izlemek", "read": "okumak", "play": "oynamak", "cook": "pişirmek", "clean": "temizlemek",
+      "wash": "yıkamak", "like": "sevmek", "want": "istemek", "have": "sahip olmak", "buy": "almak", "see": "görmek", "go": "gitmek",
+      "write": "yazmak", "use": "kullanmak", "open": "açmak", "need": "ihtiyaç duymak", "sleep": "uyumak", "run": "koşmak", "jump": "zıplamak",
+      "win": "kazanmak", "find": "bulmak", "start": "başlamak", "learn": "öğrenmek"
     };
 
     // --- UYGULAMA DURUMU (STATE) ---
     const state = {
       showLogin: true,
       userName: '',
-      userGender: 'boy',
       nameInput: '',
       activeCategory: 'home',
       mode: 'simple',
       sentence: { aux: null, modal: null, subject: null, verb: null, object: null, adjective: null, ingVerb: null },
       isComplete: false,
       translation: '',
-      isTranslating: false,
       isSpeaking: false,
       score: 0,
-      funnyMistake: null,
       selectedPiece: null,
       leftDrawerOpen: false,
       rightDrawerOpen: false,
       isRecording: false,
       isEvaluating: false,
-      pronunciationFeedback: ''
+      pronunciationFeedback: '',
+      micAttempts: 0,
+      micSuccess: false
     };
 
-    let mediaRecorder = null;
-    let audioChunks = [];
+    let localSpeechRecognition = null;
     let currentDragSlot = null;
 
     // --- YARDIMCI FONKSİYONLAR ---
     const escapeHTML = str => String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
-    const clean = word => (!word || typeof word !== 'string') ? '' : word.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]/gu, '').trim();
+    
+    // GÜÇLENDİRİLMİŞ TEMİZLEYİCİ (U+FE0F ve tüm emojileri yok eder, sadece harf kalır)
+    const clean = word => {
+        if (!word || typeof word !== 'string') return '';
+        return word.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE0F}\u{200D}]/gu, '')
+                   .replace(/\s+/g, ' ')
+                   .trim();
+    };
 
     const getFullText = () => {
       const s = state.sentence;
@@ -185,21 +197,20 @@
       return parts.filter(Boolean).join(' ') + (state.mode === 'question' ? '?' : '.');
     };
 
-    const getDynamicSubjects = () => {
-      const userPiece = `${state.userName} ${state.userGender === 'boy' ? '👦' : '👧'}`;
-      return [userPiece, ...CATEGORIES[state.activeCategory].subjects];
-    };
-
     const resetGame = () => {
       state.sentence = { aux: null, modal: null, subject: null, verb: null, object: null, adjective: null, ingVerb: null };
       state.isComplete = false;
       state.translation = '';
       state.isSpeaking = false;
       state.selectedPiece = null;
-      state.funnyMistake = null;
       state.pronunciationFeedback = '';
       state.isEvaluating = false;
-      if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+      state.micAttempts = 0;
+      state.micSuccess = false;
+      
+      if (localSpeechRecognition && state.isRecording) {
+        localSpeechRecognition.stop();
+      }
       state.isRecording = false;
     };
 
@@ -217,12 +228,21 @@
     };
 
     const getPureBaseVerb = (verbRaw) => {
-      const cleaned = clean(verbRaw).toLowerCase();
-      for (const [base, past] of Object.entries(PAST_VERBS_MAP)) {
-        if (clean(past).toLowerCase() === cleaned) return clean(base).toLowerCase();
-      }
-      let baseV = cleaned.replace(/ing$/, '').replace(/s$/, '').replace(/es$/, '');
-      if (baseV === "drinki") baseV = "drink";
+      let cleaned = clean(verbRaw).toLowerCase();
+      if (cleaned === 'has') return 'have';
+      if (cleaned === 'does') return 'do';
+      if (cleaned === 'goes') return 'go';
+      if (cleaned === 'washes') return 'wash';
+      if (cleaned === 'watches') return 'watch';
+      
+      let baseV = cleaned.replace(/ing$/, '').replace(/s$/, '');
+      if (baseV === 'us' || cleaned === 'using') return 'use';
+      if (baseV === 'writ' || cleaned === 'writing') return 'write';
+      if (baseV === 'lik' || cleaned === 'liking') return 'like';
+      if (baseV === 'mak' || cleaned === 'making') return 'make';
+      if (baseV === 'runn' || cleaned === 'running') return 'run';
+      if (baseV === 'winn' || cleaned === 'winning') return 'win';
+      if (baseV === 'drinki') return 'drink'; 
       return baseV;
     };
 
@@ -240,11 +260,11 @@
       const aux = type === 'aux' ? value : current.aux;
 
       if (subj && aux) {
-        const cleanSubj = subj.toLowerCase();
-        const cleanAux = aux.toLowerCase();
-        const isI = cleanSubj.startsWith("i ");
-        const isThirdSing = ["he ", "she ", "it ", "mother", "father", "cat", "teacher", "dog", "bird", "lion", "monkey", "elephant"].some(x => cleanSubj.includes(x));
-        const isPlural = ["you ", "we ", "they ", "students", "boys", "girls", "friend"].some(x => cleanSubj.includes(x));
+        const cleanSubj = clean(subj).toLowerCase();
+        const cleanAux = clean(aux).toLowerCase();
+        const isI = cleanSubj.startsWith("i");
+        const isThirdSing = ["he", "she", "it", "my mother", "my father", "the cat", "the teacher", "the dog", "the bird", "the lion", "the monkey", "the elephant"].includes(cleanSubj);
+        const isPlural = ["you", "we", "they", "students", "the boys", "the girls", "your friend"].includes(cleanSubj);
 
         if (cleanAux === "am" && !isI) return false;
         if (cleanAux === "is" && !isThirdSing) return false;
@@ -263,16 +283,16 @@
     const applyGrammarRules = () => {
       if (!state.sentence.subject) return;
       if (state.mode === 'simple' && state.sentence.verb) {
-        const cleanSubj = state.sentence.subject.toLowerCase();
-        const isThirdSing = ["he ", "she ", "it ", "mother", "father", "cat", "teacher", "dog", "bird", "lion", "monkey", "elephant"].some(x => cleanSubj.includes(x));
+        const cleanSubj = clean(state.sentence.subject).toLowerCase();
+        const isThirdSing = ["he", "she", "it", "my mother", "my father", "the cat", "the teacher", "the dog", "the bird", "the lion", "the monkey", "the elephant"].includes(cleanSubj);
         const parts = state.sentence.verb.split(' ');
         const base = parts[0].replace(/s$/, '').replace(/es$/, '');
         const emoji = parts.slice(1).join(' ');
         let target = state.sentence.verb;
         if (isThirdSing) {
           const s = (base.endsWith('sh') || base.endsWith('ch') || base.endsWith('ss')) ? 'es' : 's';
-          target = `${base}${s} ${emoji}`;
-        } else { target = `${base} ${emoji}`; }
+          target = `${base}${s} ${emoji}`.trim();
+        } else { target = `${base} ${emoji}`.trim(); }
         
         if (state.sentence.verb !== target) {
           state.sentence.verb = target;
@@ -328,10 +348,9 @@
           if (state.score % 10 === 0 && state.score > 0) triggerConfetti(true);
           else triggerConfetti(false);
 
-          const fullText = getFullText();
-          updateUI(); // Immediately show complete state
-          fetchTranslation(fullText);
-          fetchAndPlayTTS(fullText);
+          updateUI(); 
+          generateLocalTranslation();
+          playLocalTTS(getFullText());
         } else {
           state.selectedPiece = null;
           state.leftDrawerOpen = false;
@@ -344,143 +363,202 @@
       }
     };
 
-    // --- TARAYICI (BROWSER) API FONKSİYONLARI ---
-    
-    const fetchTranslation = (text) => {
-      state.isTranslating = true; updateUI();
+    // --- YEREL ÇEVİRİ VE SES (API OLMADAN) ---
+
+    const generateLocalTranslation = () => {
+      const s = state.sentence;
+      const cleanSubjEn = clean(s.subject).toLowerCase();
+      let trSubj = TR_DICT[cleanSubjEn] || clean(s.subject);
       
-      setTimeout(() => {
-        const s = state.sentence;
-        const parts = [];
+      // İsme özel algılama
+      if (clean(s.subject) === state.userName) trSubj = state.userName;
 
-        // Her parçayı birebir, kelime kelime çeviren fonksiyon
-        const translatePart = (rawPart) => {
-            if (!rawPart) return null;
-            const cleaned = clean(rawPart).toLowerCase();
-            const baseV = getPureBaseVerb(rawPart);
-            return TR_DICT[cleaned] || TR_DICT[baseV] || cleaned;
-        };
+      let trObj = TR_DICT[clean(s.object).toLowerCase()] || clean(s.object);
+      let trAdj = TR_DICT[clean(s.adjective).toLowerCase()] || clean(s.adjective);
+      let baseVerbEn = getPureBaseVerb(s.verb || s.ingVerb);
 
-        // İngilizce diziliş sırasına göre birebir çeviri (Word-for-Word)
-        if (state.mode === 'question') {
-          parts.push(translatePart(s.aux), translatePart(s.subject), translatePart(s.verb || s.ingVerb), translatePart(s.object));
-        } else if (state.mode === 'negative') {
-          parts.push(translatePart(s.subject), translatePart(s.aux), translatePart(s.verb), translatePart(s.object));
-        } else {
-          parts.push(translatePart(s.subject));
-          if (s.aux) parts.push(translatePart(s.aux));
-          if (s.modal) parts.push(translatePart(s.modal));
-          if (s.verb || s.ingVerb) parts.push(translatePart(s.verb || s.ingVerb));
-          if (s.object) parts.push(translatePart(s.object));
-          if (s.adjective) parts.push(translatePart(s.adjective));
-        }
+      let finalSentence = "";
 
-        const translated = parts.filter(Boolean).join(' ') + (state.mode === 'question' ? '?' : '.');
-        
-        state.translation = translated + " ✨";
-        state.isTranslating = false; updateUI();
-      }, 500); // 0.5s yapay zeka düşünüyor hissi (Eğlence için)
+      if (state.mode === 'status') {
+         finalSentence = `${trSubj} ${trAdj}.`;
+      } else {
+         const isI = cleanSubjEn === 'i';
+         const isWe = cleanSubjEn === 'we';
+         const isYou = cleanSubjEn === 'you';
+         const isThey = ['they', 'students', 'the boys', 'the girls'].includes(cleanSubjEn);
+
+         const verbs = {
+            "eat": { aorist: "yer", prog: "yiyor", abil: "yiyebilir", neg: "yeme" },
+            "drink": { aorist: "içer", prog: "içiyor", abil: "içebilir", neg: "içme" },
+            "watch": { aorist: "izler", prog: "izliyor", abil: "izleyebilir", neg: "izleme" },
+            "read": { aorist: "okur", prog: "okuyor", abil: "okuyabilir", neg: "okuma" },
+            "play": { aorist: "oynar", prog: "oynuyor", abil: "oynayabilir", neg: "oynama" },
+            "cook": { aorist: "pişirir", prog: "pişiriyor", abil: "pişirebilir", neg: "pişirme" },
+            "clean": { aorist: "temizler", prog: "temizliyor", abil: "temizleyebilir", neg: "temizleme" },
+            "wash": { aorist: "yıkar", prog: "yıkıyor", abil: "yıkayabilir", neg: "yıkama" },
+            "like": { aorist: "sever", prog: "seviyor", abil: "sevebilir", neg: "sevme" },
+            "want": { aorist: "ister", prog: "istiyor", abil: "isteyebilir", neg: "isteme" },
+            "have": { aorist: "sahip olur", prog: "sahip oluyor", abil: "sahip olabilir", neg: "sahip olma" },
+            "buy": { aorist: "alır", prog: "alıyor", abil: "alabilir", neg: "alma" },
+            "see": { aorist: "görür", prog: "görüyor", abil: "görebilir", neg: "görme" },
+            "go": { aorist: "gider", prog: "gidiyor", abil: "gidebilir", neg: "gitme" },
+            "write": { aorist: "yazar", prog: "yazıyor", abil: "yazabilir", neg: "yazma" },
+            "use": { aorist: "kullanır", prog: "kullanıyor", abil: "kullanabilir", neg: "kullanma" },
+            "open": { aorist: "açar", prog: "açıyor", abil: "açabilir", neg: "açma" },
+            "need": { aorist: "ihtiyaç duyar", prog: "ihtiyaç duyuyor", abil: "ihtiyaç duyabilir", neg: "ihtiyaç duyma" },
+            "sleep": { aorist: "uyur", prog: "uyuyor", abil: "uyuyabilir", neg: "uyuma" },
+            "run": { aorist: "koşar", prog: "koşuyor", abil: "koşabilir", neg: "koşma" },
+            "jump": { aorist: "zıplar", prog: "zıplıyor", abil: "zıplayabilir", neg: "zıplama" },
+            "win": { aorist: "kazanır", prog: "kazanıyor", abil: "kazanabilir", neg: "kazanma" },
+            "find": { aorist: "bulur", prog: "buluyor", abil: "bulabilir", neg: "bulma" },
+            "start": { aorist: "başlar", prog: "başlıyor", abil: "başlayabilir", neg: "başlama" },
+            "learn": { aorist: "öğrenir", prog: "öğreniyor", abil: "öğrenebilir", neg: "öğrenme" }
+         };
+
+         const v = verbs[baseVerbEn] || { aorist: TR_DICT[baseVerbEn] || baseVerbEn, prog: baseVerbEn, abil: baseVerbEn, neg: baseVerbEn };
+
+         const getLastVowel = (word) => {
+             const vowels = word.match(/[aıeiouöü]/gi);
+             return vowels ? vowels[vowels.length - 1] : 'e';
+         };
+
+         const getPersonSuffix = (word, tense) => {
+             const lw = getLastVowel(word);
+             if (tense === 'prog') {
+                 if (isI) return 'um'; if (isWe) return 'uz'; if (isYou) return 'sun'; if (isThey) return 'lar'; return '';
+             }
+             if (tense === 'aorist' || tense === 'abil') {
+                 if (isI) return ['e','i'].includes(lw)?'im':['a','ı'].includes(lw)?'ım':['o','u'].includes(lw)?'um':'üm';
+                 if (isWe) return ['e','i'].includes(lw)?'iz':['a','ı'].includes(lw)?'ız':['o','u'].includes(lw)?'uz':'üz';
+                 if (isYou) return ['e','i'].includes(lw)?'sin':['a','ı'].includes(lw)?'sın':['o','u'].includes(lw)?'sun':'sün';
+                 if (isThey) return ['e','i','ö','ü'].includes(lw)?'ler':'lar';
+                 return '';
+             }
+             return '';
+         };
+
+         let trVerbRoot = "";
+
+         if (state.mode === 'continuous') {
+             trVerbRoot = v.prog + getPersonSuffix(v.prog, 'prog');
+             finalSentence = `${trSubj} şu an ${trObj} ${trVerbRoot}.`;
+         } else if (state.mode === 'modal') {
+             trVerbRoot = v.abil + getPersonSuffix(v.abil, 'abil');
+             finalSentence = `${trSubj} ${trObj} ${trVerbRoot}.`;
+         } else if (state.mode === 'negative') {
+             let negVerb = "";
+             if (isI) negVerb = v.neg + "m";
+             else if (isWe) negVerb = v.neg + (getLastVowel(v.neg) === 'e' ? 'yiz' : 'yız');
+             else if (isYou) negVerb = v.neg + (getLastVowel(v.neg) === 'e' ? 'zsin' : 'zsın');
+             else if (isThey) negVerb = v.neg + (getLastVowel(v.neg) === 'e' ? 'zler' : 'zlar');
+             else negVerb = v.neg + "z";
+             finalSentence = `${trSubj} ${trObj} ${negVerb}.`;
+         } else if (state.mode === 'question') {
+             trVerbRoot = v.aorist;
+             if (isThey) {
+                let lwBase = getLastVowel(trVerbRoot);
+                let pluralSuffix = ['e','i','ö','ü'].includes(lwBase) ? 'ler' : 'lar';
+                trVerbRoot += pluralSuffix;
+             }
+             
+             let lw = getLastVowel(trVerbRoot);
+             let qPart = ['e','i'].includes(lw)?'mi':['a','ı'].includes(lw)?'mı':['o','u'].includes(lw)?'mu':'mü';
+             let qSuffix = '';
+             if (isI) qSuffix = qPart === 'mi'?'yim':qPart === 'mı'?'yım':qPart === 'mu'?'yum':'yüm';
+             else if (isWe) qSuffix = qPart === 'mi'?'yiz':qPart === 'mı'?'yız':qPart === 'mu'?'yuz':'yüz';
+             else if (isYou) qSuffix = qPart === 'mi'?'sin':qPart === 'mı'?'sın':qPart === 'mu'?'sun':'sün';
+             
+             finalSentence = `${trSubj} ${trObj} ${trVerbRoot} ${qPart}${qSuffix}?`;
+         } else {
+             trVerbRoot = v.aorist + getPersonSuffix(v.aorist, 'aorist');
+             finalSentence = `${trSubj} ${trObj} ${trVerbRoot}.`;
+         }
+      }
+
+      finalSentence = finalSentence.replace(/\s+/g, ' ').replace(' .', '.').replace(' ?', '?').trim();
+      finalSentence = finalSentence.charAt(0).toUpperCase() + finalSentence.slice(1);
+      
+      state.translation = finalSentence;
+      updateUI();
     };
 
-    const fetchAndPlayTTS = (text) => {
+    const playLocalTTS = (text) => {
+      if (!('speechSynthesis' in window)) return;
+      
       state.isSpeaking = true; updateUI();
       
+      window.speechSynthesis.cancel();
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
       utterance.rate = 0.85; 
-      utterance.pitch = 1.3; // Tatlı, ince bir ton
+      utterance.pitch = 1.2; 
       
-      utterance.onend = () => {
-        state.isSpeaking = false; 
-        updateUI();
-      };
-      
-      utterance.onerror = () => {
-        state.isSpeaking = false; 
-        updateUI();
-      };
+      utterance.onend = () => { state.isSpeaking = false; updateUI(); };
+      utterance.onerror = () => { state.isSpeaking = false; updateUI(); };
       
       window.speechSynthesis.speak(utterance);
     };
 
     const toggleRecording = () => {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
       
-      if (!SpeechRecognition) {
-        state.pronunciationFeedback = "Tarayıcın mikrofon özelliğini desteklemiyor Aşkım! (Chrome veya Edge kullanmalısın) 🎙️";
+      if (!SpeechRecognitionAPI) {
+        state.pronunciationFeedback = `Mikrofonu kullanamıyorum ${state.userName}! Tarayıcın bunu desteklemiyor (Chrome önerilir) 🎙️`;
         updateUI();
         return;
       }
 
+      if (state.micSuccess || state.micAttempts >= 3) return;
+
       if (state.isRecording) {
-        if (mediaRecorder) mediaRecorder.stop(); // Recognition'ı durdurur
-        state.isRecording = false; updateUI();
+        if (localSpeechRecognition) localSpeechRecognition.stop();
+        state.isRecording = false; 
+        updateUI();
       } else {
-        state.pronunciationFeedback = ''; updateUI();
-        
-        try {
-          const recognition = new SpeechRecognition();
-          recognition.lang = 'en-US';
-          recognition.interimResults = false;
-          recognition.maxAlternatives = 1;
+        state.pronunciationFeedback = ''; 
+        state.isRecording = true; 
+        updateUI();
 
-          mediaRecorder = recognition;
+        localSpeechRecognition = new SpeechRecognitionAPI();
+        localSpeechRecognition.lang = 'en-US';
+        localSpeechRecognition.interimResults = false;
+        localSpeechRecognition.maxAlternatives = 1;
 
-          recognition.onstart = () => {
-            state.isRecording = true; updateUI();
-          };
-
-          recognition.onresult = (event) => {
-            state.isEvaluating = true; updateUI();
-            const transcript = event.results[0][0].transcript.toLowerCase();
-            const target = getFullText().toLowerCase().replace(/[^\w\s]/gi, '');
-            const cleanedTranscript = transcript.replace(/[^\w\s]/gi, '');
-            
-            const targetWords = target.split(' ');
-            const spokenWords = cleanedTranscript.split(' ');
-            let matchCount = 0;
-            targetWords.forEach(w => {
-               if (spokenWords.includes(w)) matchCount++;
-            });
-            
-            const matchRatio = matchCount / targetWords.length;
-            
-            setTimeout(() => { // Ufak bir işleme efekti için gecikme
-              if (matchRatio >= 0.5 || transcript.includes(targetWords[0])) {
-                 state.score += 1; // Doğru telaffuzda ekstra 1 yıldız!
-                 state.pronunciationFeedback = `Harika okudun ${state.userName}! Duyduğum: "${transcript}" 🌟 Mükemmel telaffuz! (+1 ⭐)`;
-                 
-                 // Eğer ekstra yıldızla 10'un katına ulaştıysa büyük konfeti, değilse küçük konfeti
-                 if (state.score % 10 === 0 && state.score > 0) triggerConfetti(true);
-                 else triggerConfetti(false);
+        localSpeechRecognition.onresult = (event) => {
+           const transcriptRaw = event.results[0][0].transcript;
+           const transcript = transcriptRaw.toLowerCase().replace(/[.,?!]/g, '').trim();
+           const target = getFullText().toLowerCase().replace(/[.,?!]/g, '').trim();
+           
+           if (target.includes(transcript) || transcript.includes(target) || transcript === target) {
+              state.micSuccess = true;
+              state.score += 1;
+              if (state.score % 10 === 0 && state.score > 0) triggerConfetti(true);
+              state.pronunciationFeedback = `<span class="text-slate-500 font-bold text-[10px] block mb-1">Duyduğum: "${transcriptRaw}"</span><span class="text-green-600">Harika okudun ${state.userName}! 🌟 +1 ⭐ Kazandın!</span>`;
+           } else {
+              state.micAttempts += 1;
+              if (state.micAttempts < 3) {
+                 state.pronunciationFeedback = `<span class="text-slate-500 font-bold text-[10px] block mb-1">Duyduğum: "${transcriptRaw}"</span><span class="text-indigo-600">Biraz hatalı oldu sanki. ${3 - state.micAttempts} hakkın kaldı, tekrar dene! 💪</span>`;
               } else {
-                 state.pronunciationFeedback = `Duyduğum: "${transcript}". Bir kez daha denemek ister misin ${state.userName}? Sana güveniyorum! 🎤`;
+                 state.pronunciationFeedback = `<span class="text-slate-500 font-bold text-[10px] block mb-1">Duyduğum: "${transcriptRaw}"</span><span class="text-slate-600">Sağlık olsun ${state.userName}! Sonraki cümleye geçelim! 😊</span>`;
               }
-              state.isEvaluating = false; 
-              state.isRecording = false;
-              updateUI();
-            }, 800);
-          };
+           }
+           state.isRecording = false;
+           updateUI();
+        };
 
-          recognition.onerror = (event) => {
-            state.pronunciationFeedback = `Seni duyamadım ${state.userName}! Mikrofonuna izin verdiğinden emin ol. 🎙️`;
-            state.isEvaluating = false;
-            state.isRecording = false;
-            updateUI();
-          };
+        localSpeechRecognition.onerror = (event) => {
+           state.isRecording = false;
+           state.pronunciationFeedback = `<span class="text-red-500 font-bold">Seni duyamadım ${state.userName}! (Hata: ${event.error}) 🎤</span>`;
+           updateUI();
+        };
 
-          recognition.onend = () => {
-            if (state.isRecording) {
-               state.isRecording = false;
-               updateUI();
-            }
-          };
+        localSpeechRecognition.onend = () => {
+           state.isRecording = false;
+           updateUI();
+        };
 
-          recognition.start();
-        } catch (err) {
-          state.pronunciationFeedback = `Mikrofon başlatılamadı Aşkım! 🎙️`;
-          updateUI();
-        }
+        localSpeechRecognition.start();
       }
     };
 
@@ -510,8 +588,8 @@
 
     const renderPuzzlePiece = ({ type, color, content, isSelected, isSelectedPiece, isSlot, shape, isInvalid, isComplete }) => {
       const isPlacedInSlot = isSlot && content;
-      const currentWidth = isPlacedInSlot ? 234 : 180;
-      const currentHeight = isPlacedInSlot ? 85 : 65;
+      const currentWidth = isPlacedInSlot ? 220 : 170;
+      const currentHeight = isPlacedInSlot ? 68 : 52; 
 
       const paths = {
         SUBJ_START: `M0,10 Q0,0 10,0 L170,0 L170,20 L195,40 L170,60 L170,80 L10,80 Q0,80 0,70 Z`,
@@ -531,10 +609,9 @@
         const parts = text.split(/(\p{Emoji})/u);
         formattedContent = parts.map(part => {
           if (/\p{Emoji}/u.test(part)) {
-            // Emoji Fly animation is removed as per last instruction, back to original scale
             const classStr = isPlacedInSlot 
-               ? `inline-block text-3xl mx-1.5 transform scale-110` 
-               : `inline-block text-2xl mx-1 transform scale-150`;
+               ? `inline-block text-[1.6rem] mx-1.5 transform scale-110` 
+               : `inline-block text-xl mx-1 transform scale-125`;
             return `<span class="${classStr}">${part}</span>`;
           }
           return `<span>${part}</span>`;
@@ -558,12 +635,12 @@
       if (isSelectedPiece) classes += ` scale-105 drop-shadow-2xl z-20`;
 
       return `
-        <div class="${classes}" style="width: ${currentWidth}px; height: ${currentHeight}px" ${dragAttr} ${dataAttrs} ${actionAttr}>
+        <div class="${classes}" style="width: 100%; max-width: ${currentWidth}px; height: ${currentHeight}px;" ${dragAttr} ${dataAttrs} ${actionAttr}>
           <svg viewBox="0 0 200 80" preserveAspectRatio="none" class="w-full h-full drop-shadow-md transition-all absolute inset-0 ${isSelectedPiece ? 'brightness-105' : ''}">
             <path d="${paths[shape] || paths.SUBJ_START}" fill="${pieceColor}" stroke="${strokeColor}" stroke-width="${isInvalid || isSelectedPiece ? "4" : "2"}" stroke-dasharray="${!content ? "6,4" : "0"}"></path>
           </svg>
           <div class="absolute inset-0 flex flex-col items-center justify-center p-2 pointer-events-none overflow-hidden text-center z-10">
-            <span class="font-black tracking-tight transition-all flex items-center justify-center flex-wrap ${content ? 'text-white' : 'text-slate-400 uppercase tracking-widest opacity-60'} ${isPlacedInSlot ? 'text-sm md:text-lg lg:text-xl px-5' : 'text-[10px] md:text-[11px] lg:text-xs px-3'}">
+            <span class="font-black tracking-tight transition-all flex items-center justify-center flex-wrap ${content ? 'text-white' : 'text-slate-400 uppercase tracking-widest opacity-60'} ${isPlacedInSlot ? 'text-xs md:text-sm lg:text-base px-4' : 'text-[9px] md:text-[10px] px-2'}">
               ${content ? formattedContent : type}
             </span>
           </div>
@@ -642,7 +719,7 @@
         html += renderPz('subject', '#3b82f6', s.subject, 'SUBJ_MID');
         html += renderPz('verb', '#ef4444', s.verb || s.ingVerb, 'VERB_SIMPLE');
         html += renderPz('object', '#22c55e', s.object, 'OBJ_END');
-        html += `<span class="text-6xl font-black text-indigo-600 ml-10">?</span>`;
+        html += `<span class="text-6xl font-black text-indigo-600 ml-6 md:ml-10">?</span>`;
       } else if (m === 'negative') {
         html += renderPz('subject', '#3b82f6', s.subject, 'SUBJ_START');
         html += renderPz('aux', '#ec4899', s.aux, 'BE_MODAL');
@@ -665,22 +742,82 @@
       return html;
     };
 
+    const getAuxItems = () => {
+      const cData = CATEGORIES[state.activeCategory];
+      if (state.mode === 'question') return cData.auxiliaries || [];
+      if (state.mode === 'negative') return ["don't", "doesn't"];
+      if (state.mode === 'modal') return cData.modals || [];
+      if (state.mode === 'status' || state.mode === 'continuous') return cData.statusAux || [];
+      return [];
+    };
+
+    const getVerbItems = () => {
+      const cData = CATEGORIES[state.activeCategory];
+      if (state.mode === 'status') return [];
+      return cData.verbs || [];
+    };
+
+    const renderFooterPanels = () => {
+      const sp = state.selectedPiece;
+      const auxItems = getAuxItems();
+      const verbItems = getVerbItems();
+
+      const renderAuxCol = (items, wClass) => `
+        <div class="${wClass} flex flex-col border-r border-slate-100">
+          <h3 class="bg-indigo-600 text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest text-center py-1 md:py-2 flex items-center justify-center gap-1">
+             <i data-lucide="zap" class="w-2.5 h-2.5"></i> YARDIMCILAR
+          </h3>
+          <div class="flex-1 overflow-y-auto p-2 custom-scrollbar">
+             <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 justify-items-center w-full">
+               ${items.map(a => renderPuzzlePiece({ 
+                  type: state.mode === 'modal' ? 'modal' : 'aux', 
+                  color: state.mode === 'negative' ? '#ec4899' : (state.mode === 'modal' ? '#f59e0b' : (state.mode === 'question' ? '#6366f1' : '#0d9488')), 
+                  content: a, 
+                  isSelected: state.mode === 'modal' ? state.sentence.modal === a : state.sentence.aux === a, 
+                  isSelectedPiece: sp?.type === (state.mode === 'modal' ? 'modal' : 'aux') && sp?.value === a, 
+                  shape: state.mode === 'question' ? 'AUX_START' : 'BE_MODAL' 
+                })).join('')}
+             </div>
+          </div>
+        </div>
+      `;
+
+      const renderVerbCol = (items, wClass) => `
+        <div class="${wClass} flex flex-col">
+          <h3 class="bg-red-600 text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest text-center py-1 md:py-2 flex items-center justify-center gap-1">
+             <i data-lucide="puzzle" class="w-2.5 h-2.5"></i> EYLEMLER
+          </h3>
+          <div class="flex-1 overflow-y-auto p-2 custom-scrollbar">
+             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 justify-items-center w-full">
+               ${items.map(v => {
+                 if (state.mode === 'continuous') {
+                   const ingVal = v.split(' ')[0] + 'ing ' + (v.split(' ')[1] || '');
+                   return renderPuzzlePiece({ type: 'ingVerb', color: '#f97316', content: ingVal, isSelected: state.sentence.ingVerb === ingVal, isSelectedPiece: sp?.type === 'ingVerb' && sp?.value === ingVal, shape: 'VERB_ING' });
+                 }
+                 return renderPuzzlePiece({ type: 'verb', color: state.mode === 'negative' ? '#f97316' : '#ef4444', content: v, isSelected: state.sentence.verb === v, isSelectedPiece: sp?.type === 'verb' && sp?.value === v, shape: (state.mode === 'modal' || state.mode === 'negative') ? 'VERB_BASE' : 'VERB_SIMPLE' });
+               }).join('')}
+             </div>
+          </div>
+        </div>
+      `;
+
+      let html = '';
+      if (auxItems.length > 0 && verbItems.length > 0) {
+        html += renderAuxCol(auxItems, 'w-1/3');
+        html += renderVerbCol(verbItems, 'w-2/3');
+      } else if (auxItems.length > 0) {
+        html += renderAuxCol(auxItems, 'w-full border-r-0');
+      } else if (verbItems.length > 0) {
+        html += renderVerbCol(verbItems, 'w-full');
+      }
+      return html;
+    };
+
     const renderApp = () => {
       const cData = CATEGORIES[state.activeCategory];
       const sp = state.selectedPiece;
 
       return `
-        ${state.funnyMistake ? `
-          <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all" data-action="close-funny-mistake">
-            <div class="bg-white rounded-[3rem] p-6 md:p-8 max-w-sm w-full shadow-2xl flex flex-col items-center text-center border-8 border-amber-300 transform transition-all animate-bounce" onclick="event.stopPropagation()">
-              <div class="text-6xl md:text-7xl mb-4">${state.funnyMistake.emoji}</div>
-              <h3 class="text-2xl md:text-3xl font-black text-amber-500 mb-2">Hoppala! 🤡</h3>
-              <p class="text-slate-700 font-bold text-base md:text-lg leading-snug">${state.funnyMistake.message}</p>
-              <button data-action="close-funny-mistake" class="mt-6 bg-amber-400 hover:bg-amber-500 text-white font-black px-6 py-3 rounded-2xl active:scale-95 transition-transform">Tekrar Dene!</button>
-            </div>
-          </div>
-        ` : ''}
-
         ${(state.leftDrawerOpen || state.rightDrawerOpen) ? `<div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 md:hidden" data-action="close-drawers"></div>` : ''}
 
         <div class="absolute left-0 top-[40%] -translate-y-1/2 z-20 md:hidden">
@@ -699,131 +836,114 @@
         ${renderHeader()}
 
         <div class="flex-1 flex overflow-hidden">
-          <!-- SOL MENÜ -->
-          <aside class="fixed md:relative inset-y-0 left-0 w-64 md:w-72 bg-white border-r border-slate-200 flex flex-col shadow-2xl md:shadow-inner z-40 transform transition-transform duration-300 md:translate-x-0 shrink-0 ${state.leftDrawerOpen ? 'translate-x-0' : '-translate-x-full'}">
-            <div class="bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest text-center py-3 italic shadow-sm flex items-center justify-center relative">
-              KİM? (SUBJECT)
-              <button class="md:hidden absolute right-3 text-blue-200 hover:text-white" data-action="close-drawers"><i data-lucide="x-circle" class="w-4 h-4"></i></button>
-            </div>
-            <div class="flex-1 overflow-y-auto p-4 flex flex-wrap content-start gap-2 custom-scrollbar">
-              ${getDynamicSubjects().map(s => renderPuzzlePiece({ type: 'subject', color: '#3b82f6', content: s, isSelected: state.sentence.subject === s, isSelectedPiece: sp?.type === 'subject' && sp?.value === s, shape: state.mode === 'question' ? 'SUBJ_MID' : 'SUBJ_START' })).join('')}
-            </div>
-          </aside>
-
-          <!-- ORTA ALAN -->
-          <main class="flex-1 flex flex-col bg-slate-50 relative min-w-0">
-            <div class="flex-1 flex flex-col items-center justify-start pt-2 md:pt-4 p-2 md:p-4 overflow-y-auto w-full">
-              
-              <!-- SİHİRLİ KURAL -->
-              <div class="mb-2 md:mb-4 w-full max-w-xl transition-all duration-500 px-4">
-                  <div class="p-2 md:p-3 rounded-2xl border-2 flex items-center justify-center gap-2 md:gap-3 shadow-md transition-all ${state.isComplete ? 'bg-amber-100 border-amber-300 scale-105' : 'bg-indigo-50 border-indigo-100'}">
-                    ${state.score % 10 === 0 && state.score > 0 && state.isComplete ? '<i data-lucide="party-popper" class="w-5 h-5 text-indigo-500 animate-bounce"></i>' : `<i data-lucide="sparkles" class="w-4 h-4 md:w-5 md:h-5 ${state.isComplete ? 'text-amber-500 animate-pulse' : 'text-indigo-400'}"></i>`}
-                    <p class="text-[10px] md:text-[12px] font-black uppercase tracking-wide text-center ${state.score % 10 === 0 && state.score > 0 && state.isComplete ? 'text-indigo-700' : (state.isComplete ? 'text-amber-800' : 'text-indigo-700')}">
-                      ${getMagicRule()}
-                    </p>
-                  </div>
-              </div>
-
-              <!-- MONTAJ ALANI -->
-              <div class="bg-white rounded-[2rem] md:rounded-[3rem] w-full max-w-5xl p-2 md:p-6 shadow-xl border-2 border-slate-200 flex flex-col items-center justify-center min-h-[140px] md:min-h-[220px] relative overflow-hidden transition-all z-10">
-                <div class="flex flex-row items-center justify-center transition-all duration-300 transform scale-[0.55] sm:scale-[0.8] md:scale-90 lg:scale-100 origin-center -space-x-[55px] w-full">
-                  ${renderAssemblyArea()}
+          
+          <!-- SOL VE ORTA KISIM İÇİN KAPSAYICI -->
+          <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            
+            <div class="flex-1 flex overflow-hidden">
+              <!-- SOL MENÜ (KİM?) ÇİFT SIRA -->
+              <aside class="fixed md:relative inset-y-0 left-0 w-[370px] bg-white border-r border-slate-200 flex flex-col shadow-2xl md:shadow-inner z-40 transform transition-transform duration-300 md:translate-x-0 shrink-0 ${state.leftDrawerOpen ? 'translate-x-0' : '-translate-x-full'}">
+                <div class="bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest text-center py-3 italic shadow-sm flex items-center justify-center relative">
+                  KİM? (SUBJECT)
+                  <button class="md:hidden absolute right-3 text-blue-200 hover:text-white" data-action="close-drawers"><i data-lucide="x-circle" class="w-4 h-4"></i></button>
                 </div>
-              </div>
+                <div class="flex-1 overflow-y-auto p-2 custom-scrollbar">
+                  <!-- Çift Sıra Grid -->
+                  <div class="grid grid-cols-2 gap-2 justify-items-center w-full">
+                    ${[state.userName, ...cData.subjects].map(s => renderPuzzlePiece({ type: 'subject', color: '#3b82f6', content: s, isSelected: state.sentence.subject === s, isSelectedPiece: sp?.type === 'subject' && sp?.value === s, shape: state.mode === 'question' ? 'SUBJ_MID' : 'SUBJ_START' })).join('')}
+                  </div>
+                </div>
+              </aside>
 
-              <div class="mt-4 md:mt-4 w-full flex flex-col items-center justify-center gap-2 text-center z-10 px-2 max-w-2xl mx-auto">
-                ${state.isComplete ? `
-                  <div class="p-3 md:p-4 rounded-3xl border-2 w-full animate-in slide-in-from-bottom duration-500 shadow-sm flex items-center justify-between gap-2 ${state.score % 10 === 0 && state.score > 0 ? 'bg-indigo-100 border-indigo-300' : 'bg-green-100 border-green-200'}">
-                    <div class="flex-1">
-                      <div class="bg-white/60 p-2 rounded-xl border border-green-200 flex items-start gap-2 shadow-inner">
-                        <i data-lucide="languages" class="w-4 h-4 md:w-5 md:h-5 text-indigo-600 shrink-0 mt-0.5"></i>
-                        <p class="text-xs md:text-sm font-black text-slate-800 italic leading-tight text-left">
-                           ${state.isTranslating ? '<span class="flex items-center gap-2 text-slate-400"><i data-lucide="loader-2" class="w-3 h-3 md:w-4 md:h-4 animate-spin"></i> Bakıyorum...</span>' : state.translation}
+              <!-- ORTA ALAN -->
+              <main class="flex-1 flex flex-col bg-slate-50 relative min-w-0">
+                <div class="flex-1 flex flex-col items-center justify-start pt-2 md:pt-4 p-2 md:p-4 overflow-y-auto w-full">
+                  
+                  <div class="mb-2 md:mb-4 w-full max-w-xl transition-all duration-500 px-4">
+                      <div class="p-2 md:p-3 rounded-2xl border-2 flex items-center justify-center gap-2 md:gap-3 shadow-md transition-all ${state.isComplete ? 'bg-amber-100 border-amber-300 scale-105' : 'bg-indigo-50 border-indigo-100'}">
+                        ${state.score % 10 === 0 && state.score > 0 && state.isComplete ? '<i data-lucide="party-popper" class="w-5 h-5 text-indigo-500 animate-bounce"></i>' : `<i data-lucide="sparkles" class="w-4 h-4 md:w-5 md:h-5 ${state.isComplete ? 'text-amber-500 animate-pulse' : 'text-indigo-400'}"></i>`}
+                        <p class="text-[10px] md:text-[12px] font-black uppercase tracking-wide text-center ${state.score % 10 === 0 && state.score > 0 && state.isComplete ? 'text-indigo-700' : (state.isComplete ? 'text-amber-800' : 'text-indigo-700')}">
+                          ${getMagicRule()}
                         </p>
                       </div>
-                    </div>
-                    <div class="p-3 rounded-full transition-all shrink-0 ${state.isSpeaking ? 'bg-amber-100 animate-pulse scale-110' : 'bg-white/50'}">
-                      <i data-lucide="volume-2" class="${state.isSpeaking ? 'text-amber-600' : 'text-slate-400'} w-5 h-5"></i>
+                  </div>
+
+                  <!-- MONTAJ ALANI -->
+                  <div class="bg-white rounded-[2rem] md:rounded-[3rem] w-full max-w-5xl p-2 md:p-6 shadow-xl border-2 border-slate-200 flex flex-col items-center justify-center min-h-[120px] md:min-h-[180px] relative overflow-hidden transition-all z-10">
+                    <div class="flex flex-row items-center justify-center transition-all duration-300 transform scale-[0.55] sm:scale-[0.8] md:scale-90 lg:scale-100 origin-center -space-x-[45px] w-full">
+                      ${renderAssemblyArea()}
                     </div>
                   </div>
-                  
-                  <div class="w-full bg-blue-50 border-2 border-blue-200 rounded-3xl p-3 shadow-sm flex flex-col items-center gap-2 animate-in slide-in-from-bottom duration-700 delay-300 fill-mode-both">
-                    <div class="flex items-center justify-center gap-3 w-full">
-                      <div class="flex flex-col items-end text-right">
-                        <span class="font-black text-blue-700 text-sm md:text-base">Konuşma Sırası Sende! 🎤</span>
-                        <span class="text-[10px] md:text-xs text-blue-500 font-bold">
-                          ${state.isRecording ? "Dinliyorum, bitirince tekrar dokun..." : "Mikrofona dokun ve cümleyi oku"}
-                        </span>
+
+                  <div class="mt-4 md:mt-4 w-full flex flex-col items-center justify-center gap-2 text-center z-10 px-2 max-w-2xl mx-auto">
+                    ${state.isComplete ? `
+                      <div class="p-3 md:p-4 rounded-3xl border-2 w-full animate-in slide-in-from-bottom duration-500 shadow-sm flex items-center justify-between gap-2 ${state.score % 10 === 0 && state.score > 0 ? 'bg-indigo-100 border-indigo-300' : 'bg-green-100 border-green-200'}">
+                        <div class="flex-1">
+                          <div class="bg-white/60 p-2 rounded-xl border border-green-200 flex items-start gap-2 shadow-inner">
+                            <i data-lucide="languages" class="w-4 h-4 md:w-5 md:h-5 text-indigo-600 shrink-0 mt-0.5"></i>
+                            <p class="text-xs md:text-sm font-black text-slate-800 italic leading-tight text-left">
+                               ${state.translation}
+                            </p>
+                          </div>
+                        </div>
+                        <div class="p-3 rounded-full transition-all shrink-0 ${state.isSpeaking ? 'bg-amber-100 animate-pulse scale-110' : 'bg-white/50'}">
+                          <i data-lucide="volume-2" class="${state.isSpeaking ? 'text-amber-600' : 'text-slate-400'} w-5 h-5"></i>
+                        </div>
                       </div>
-                      <button data-action="toggle-recording" class="p-3 md:p-4 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${state.isRecording ? 'bg-red-500 text-white animate-pulse scale-110 shadow-red-200' : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105'}">
-                        <i data-lucide="mic" class="w-6 h-6"></i>
-                      </button>
-                    </div>
-                    ${state.isEvaluating ? `
-                      <div class="flex items-center justify-center gap-2 text-indigo-600 font-bold text-xs md:text-sm animate-pulse w-full bg-white/60 p-2 rounded-xl">
-                        <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Yapay Zeka Sesini İnceliyor...
+                      
+                      <div class="w-full bg-blue-50 border-2 border-blue-200 rounded-3xl p-3 shadow-sm flex flex-col items-center gap-2 animate-in slide-in-from-bottom duration-700 delay-300 fill-mode-both">
+                        ${(!state.micSuccess && state.micAttempts < 3) ? `
+                        <div class="flex items-center justify-center gap-3 w-full">
+                          <div class="flex flex-col items-end text-right">
+                            <span class="font-black text-blue-700 text-sm md:text-base">Konuşma Sırası Sende! 🎤</span>
+                            <span class="text-[10px] md:text-xs text-blue-500 font-bold">
+                              ${state.isRecording ? "Dinliyorum, bitirince tekrar dokun..." : "Mikrofona dokun ve cümleyi oku"}
+                            </span>
+                          </div>
+                          <button data-action="toggle-recording" class="p-3 md:p-4 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${state.isRecording ? 'bg-red-500 text-white animate-pulse scale-110 shadow-red-200' : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105'}">
+                            <i data-lucide="mic" class="w-6 h-6"></i>
+                          </button>
+                        </div>
+                        ` : ''}
+                        ${state.pronunciationFeedback ? `
+                          <div class="bg-white px-3 py-2 md:py-3 rounded-2xl border-2 ${state.micSuccess ? 'border-green-300 bg-green-50' : (state.micAttempts >= 3 ? 'border-slate-300 bg-slate-50' : 'border-indigo-200')} font-black text-xs md:text-sm text-center shadow-inner animate-in fade-in zoom-in w-full">
+                            ${state.pronunciationFeedback}
+                          </div>
+                        ` : ''}
                       </div>
-                    ` : ''}
-                    ${state.pronunciationFeedback && !state.isEvaluating ? `
-                      <div class="bg-white px-3 py-2 md:py-3 rounded-2xl border-2 border-indigo-200 text-indigo-800 font-black text-xs md:text-sm text-center shadow-inner animate-in fade-in zoom-in w-full">
-                        ${state.pronunciationFeedback}
+                    ` : `
+                      <div class="text-slate-400 font-bold uppercase text-[9px] md:text-[10px] tracking-[0.2em] flex flex-col items-center gap-2 animate-pulse bg-slate-100 p-2 rounded-xl w-full">
+                        <div class="flex items-center gap-2"><i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5"></i> Dokunarak veya sürükleyerek oyna!</div>
                       </div>
-                    ` : ''}
+                    `}
                   </div>
-                ` : `
-                  <div class="text-slate-400 font-bold uppercase text-[9px] md:text-[10px] tracking-[0.2em] flex flex-col items-center gap-2 animate-pulse bg-slate-100 p-2 rounded-xl w-full">
-                    <div class="flex items-center gap-2"><i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5"></i> Dokunarak veya sürükleyerek oyna!</div>
-                  </div>
-                `}
-              </div>
+                </div>
+              </main>
             </div>
 
-            <!-- ALT MENÜ -->
-            <footer class="h-40 md:h-56 bg-white border-t border-slate-200 flex flex-row shadow-inner shrink-0 relative z-20">
-              <div class="w-1/3 border-r border-slate-100 flex flex-col">
-                <h3 class="bg-indigo-600 text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest text-center py-1 md:py-2 flex items-center justify-center gap-1">
-                   <i data-lucide="zap" class="w-2.5 h-2.5"></i> BEKÇİLER
-                </h3>
-                <div class="flex-1 overflow-y-auto p-1 md:p-2 flex flex-wrap gap-1 md:gap-2 content-start justify-center custom-scrollbar">
-                  ${(() => {
-                    if (state.mode === 'question') return (cData.auxiliaries || []).map(a => renderPuzzlePiece({ type: 'aux', color: '#6366f1', content: a, isSelectedPiece: sp?.type === 'aux' && sp?.value === a, shape: 'AUX_START' })).join('');
-                    if (state.mode === 'negative') return ["don't", "doesn't"].map(a => renderPuzzlePiece({ type: 'aux', color: '#ec4899', content: a, isSelectedPiece: sp?.type === 'aux' && sp?.value === a, shape: 'BE_MODAL' })).join('');
-                    if (state.mode === 'modal') return (cData.modals || []).map(a => renderPuzzlePiece({ type: 'modal', color: '#f59e0b', content: a, isSelected: state.sentence.modal === a, isSelectedPiece: sp?.type === 'modal' && sp?.value === a, shape: 'BE_MODAL' })).join('');
-                    if (state.mode === 'status' || state.mode === 'continuous') return (cData.statusAux || []).map(a => renderPuzzlePiece({ type: 'aux', color: '#0d9488', content: a, isSelected: state.sentence.aux === a, isSelectedPiece: sp?.type === 'aux' && sp?.value === a, shape: 'BE_MODAL' })).join('');
-                    return `<div class="text-[9px] md:text-[10px] text-slate-300 italic text-center mt-6">Bekçi yok! ✨</div>`;
-                  })()}
-                </div>
-              </div>
-
-              <div class="w-2/3 flex flex-col">
-                <h3 class="bg-red-600 text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest text-center py-1 md:py-2 flex items-center justify-center gap-1">
-                   <i data-lucide="puzzle" class="w-2.5 h-2.5"></i> EYLEMLER
-                </h3>
-                <div class="flex-1 overflow-y-auto p-1 md:p-2 flex flex-wrap gap-1 md:gap-2 content-start justify-center custom-scrollbar">
-                  ${state.mode !== 'status' ? (cData.verbs || []).map(v => {
-                    if (state.mode === 'continuous') {
-                      const ingVal = v.split(' ')[0] + 'ing ' + (v.split(' ')[1] || '');
-                      return renderPuzzlePiece({ type: 'ingVerb', color: '#f97316', content: ingVal, isSelected: state.sentence.ingVerb === ingVal, isSelectedPiece: sp?.type === 'ingVerb' && sp?.value === ingVal, shape: 'VERB_ING' });
-                    }
-                    return renderPuzzlePiece({ type: 'verb', color: state.mode === 'negative' ? '#f97316' : '#ef4444', content: v, isSelected: state.sentence.verb === v, isSelectedPiece: sp?.type === 'verb' && sp?.value === v, shape: (state.mode === 'modal' || state.mode === 'negative') ? 'VERB_BASE' : 'VERB_SIMPLE' });
-                  }).join('') : `<div class="text-[9px] md:text-[10px] text-slate-300 italic text-center mt-6">Durumda hareket olmaz! 🌉</div>`}
-                </div>
-              </div>
+            <!-- ALT MENÜ (SADECE SOL VE ORTAYI KAPLAR) -->
+            <footer class="h-44 md:h-56 bg-white border-t border-slate-200 flex flex-row shadow-inner shrink-0 relative z-20 w-full">
+              ${renderFooterPanels()}
               <button data-action="reset" class="absolute bottom-2 right-2 md:bottom-4 md:right-4 bg-slate-900 text-white p-2 md:p-3 rounded-full hover:bg-orange-600 shadow-lg active:scale-95 group z-30"><i data-lucide="refresh-cw" class="w-5 h-5 md:w-6 md:h-6 group-hover:rotate-180 transition-transform duration-500"></i></button>
             </footer>
-          </main>
 
-          <!-- SAĞ MENÜ -->
-          <aside class="fixed md:relative inset-y-0 right-0 w-64 md:w-72 bg-white border-l border-slate-200 flex flex-col shadow-2xl md:shadow-inner z-40 transform transition-transform duration-300 md:translate-x-0 shrink-0 ${state.rightDrawerOpen ? 'translate-x-0' : 'translate-x-full'}">
+          </div>
+
+          <!-- SAĞ MENÜ (NEYİ/NASIL?) TÜM YÜKSEKLİĞİ KAPLAR VE ÇİFT SIRA -->
+          <aside class="fixed md:relative inset-y-0 right-0 w-[370px] bg-white border-l border-slate-200 flex flex-col shadow-2xl md:shadow-inner z-40 transform transition-transform duration-300 md:translate-x-0 shrink-0 ${state.rightDrawerOpen ? 'translate-x-0' : 'translate-x-full'} h-full">
             <div class="bg-green-600 text-white text-[10px] font-black uppercase tracking-widest text-center py-3 italic shadow-sm flex items-center justify-center relative">
               <button class="md:hidden absolute left-3 text-green-200 hover:text-white" data-action="close-drawers"><i data-lucide="x-circle" class="w-4 h-4"></i></button>
               ${state.mode === 'status' ? "NASIL? (ADJECTIVE)" : "NEYİ? (OBJECT)"}
             </div>
-            <div class="flex-1 overflow-y-auto p-4 flex flex-wrap content-start gap-2 custom-scrollbar">
-              ${state.mode === 'status' ? (cData.adjectives || []).map(adj => renderPuzzlePiece({ type: 'adjective', color: '#8b5cf6', content: adj, isSelected: state.sentence.adjective === adj, isSelectedPiece: sp?.type === 'adjective' && sp?.value === adj, shape: 'ADJECTIVE' })).join('') :
-                (cData.objects || []).map(o => renderPuzzlePiece({ type: 'object', color: '#22c55e', content: o, isSelected: state.sentence.object === o, isSelectedPiece: sp?.type === 'object' && sp?.value === o, shape: 'OBJ_END' })).join('')}
+            <div class="flex-1 overflow-y-auto p-2 custom-scrollbar">
+              <!-- Çift Sıra Grid -->
+              <div class="grid grid-cols-2 gap-2 justify-items-center w-full">
+                ${state.mode === 'status' ? (cData.adjectives || []).map(adj => renderPuzzlePiece({ type: 'adjective', color: '#8b5cf6', content: adj, isSelected: state.sentence.adjective === adj, isSelectedPiece: sp?.type === 'adjective' && sp?.value === adj, shape: 'ADJECTIVE' })).join('') :
+                  (cData.objects || []).map(o => renderPuzzlePiece({ type: 'object', color: '#22c55e', content: o, isSelected: state.sentence.object === o, isSelectedPiece: sp?.type === 'object' && sp?.value === o, shape: 'OBJ_END' })).join('')}
+              </div>
             </div>
           </aside>
+
         </div>
       `;
     };
@@ -864,8 +984,6 @@
         state.rightDrawerOpen = true; updateUI();
       } else if (action === 'close-drawers') {
         state.leftDrawerOpen = false; state.rightDrawerOpen = false; updateUI();
-      } else if (action === 'close-funny-mistake') {
-        state.funnyMistake = null; updateUI();
       } else if (action === 'piece-click') {
         state.selectedPiece = { type: actionEl.dataset.type, value: actionEl.dataset.value };
         updateUI();
@@ -918,79 +1036,6 @@
         try {
           processPlacement(slot.dataset.type, JSON.parse(dataStr));
         } catch(err) {}
-      }
-    });
-
-    // --- MOBİL/TABLET İÇİN DOKUNMATİK SÜRÜKLE-BIRAK (TOUCH EVENTS) ---
-    let initialTouch = null;
-    let touchDragData = null;
-    let touchClone = null;
-    let currentTouchSlot = null;
-
-    document.addEventListener('touchstart', (e) => {
-      const piece = e.target.closest('.puzzle-piece');
-      if (piece && piece.hasAttribute('draggable')) {
-        initialTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY, target: piece };
-      }
-    }, { passive: false });
-
-    document.addEventListener('touchmove', (e) => {
-      if (!initialTouch) return;
-      const touch = e.touches[0];
-      
-      // Parmağın 10px'den fazla kayması durumunda sürüklemeyi başlatır
-      if (!touchClone) {
-         const dx = touch.clientX - initialTouch.x;
-         const dy = touch.clientY - initialTouch.y;
-         if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-             touchDragData = { type: initialTouch.target.dataset.type, value: initialTouch.target.dataset.value };
-             touchClone = initialTouch.target.cloneNode(true);
-             touchClone.style.position = 'fixed';
-             touchClone.style.pointerEvents = 'none'; // Elementin altındakileri görebilmek için
-             touchClone.style.zIndex = '9999';
-             touchClone.style.opacity = '0.9';
-             touchClone.style.transform = 'scale(1.1)';
-             document.body.appendChild(touchClone);
-             
-             // Sürükleme başladığında tıklama (tap-to-place) seçimini iptal et
-             state.selectedPiece = null; updateUI(); 
-         }
-      }
-
-      if (touchClone) {
-        e.preventDefault(); // Sayfanın kaymasını durdur
-        touchClone.style.left = (touch.clientX - touchClone.offsetWidth / 2) + 'px';
-        touchClone.style.top = (touch.clientY - touchClone.offsetHeight / 2) + 'px';
-
-        const elemUnder = document.elementFromPoint(touch.clientX, touch.clientY);
-        const slot = elemUnder ? elemUnder.closest('.puzzle-slot') : null;
-
-        if (currentTouchSlot !== slot) {
-          if (currentTouchSlot) currentTouchSlot.classList.remove('scale-105', 'drop-shadow-2xl', 'z-20', 'brightness-105');
-          if (slot) slot.classList.add('scale-105', 'drop-shadow-2xl', 'z-20', 'brightness-105');
-          currentTouchSlot = slot;
-        }
-      }
-    }, { passive: false });
-
-    document.addEventListener('touchend', (e) => {
-      initialTouch = null;
-      if (touchClone) {
-        if (currentTouchSlot) {
-          currentTouchSlot.classList.remove('scale-105', 'drop-shadow-2xl', 'z-20', 'brightness-105');
-          try {
-            processPlacement(currentTouchSlot.dataset.type, touchDragData);
-          } catch(err) {}
-          currentTouchSlot = null;
-        }
-        touchClone.remove();
-        touchClone = null;
-        touchDragData = null;
-        
-        // Sürükleme sonrası tıklama event'ini iptal et
-        if (e.cancelable) {
-           e.preventDefault(); 
-        }
       }
     });
 
